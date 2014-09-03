@@ -1,0 +1,14 @@
+---
+title: "STA 523: Exercise 2"
+author: Radhika Anand, Minjung Park, Sophie Lee
+output: html_document
+---
+
+```{r}
+result<-list(firstname="John", lastname="Smith", age=25, address=list(streetaddress="21 2nd Street", city="New York", state="NY", postalCode=10021), phoneNumber=list(home=list(type="home",number="212 555-1239"), fax=list(type="fax", number="646 555-4567")))
+
+result
+
+str(result)
+
+```
