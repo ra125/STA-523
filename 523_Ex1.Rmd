@@ -1,0 +1,21 @@
+---
+title: "Exercise 1"
+author: Radhika, Minjung, Sophie
+output: html_document
+---
+
+```{r}
+
+### exercise 1
+typeof(c(1, NA+1L, "C"))
+#double (1) and integer (NA+1L) coerced to double and then double and character ("C") coerced to character 
+typeof(c(1L / 0, NA))
+#double and logical coerced to double
+typeof(c(1:3, 5))
+#integer and double coerced to double
+typeof(c(3L, NaN+1L))
+#integer and  double coerced to double
+typeof(c(NA, TRUE))
+#logical and logical => logical
+
+```
