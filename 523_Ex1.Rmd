@@ -6,7 +6,7 @@ output: html_document
 
 ```{r}
 
-### exercise 1
+### exercise 1 (try)
 typeof(c(1, NA+1L, "C"))
 #double (1) and integer (NA+1L) coerced to double and then double and character ("C") coerced to character 
 typeof(c(1L / 0, NA))
