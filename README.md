@@ -11,4 +11,4 @@ Radhika Anand ra125@duke.edu
 
 Kungang Zhang-kz29duke@gmail.com
 
-Sophie Lee sophie.lee@duke.edu
+Sophie Lee sophie.lee@duke.edu   (919-491-2034)
