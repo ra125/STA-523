@@ -34,7 +34,7 @@ typeof(c(NA,1L))
 typeof(c(NA,T))
 
 
-#coercion priority: character>double>integer>logic; NaN and Inf are double; NA's default is logical and can be any type.
+#coercion priority: character>double>integer>logic; NaN and Inf are double; NA'sdefault is logical and can be any type.
 
 
 ```
