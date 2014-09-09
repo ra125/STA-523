@@ -1,3 +1,9 @@
+---
+atitle: "Sept8-excis"
+output: html_document
+---
+
+```{r}
 ##read the data file
 d = read.csv("~cr173/Sta523/data/evals.csv")
 
@@ -25,3 +31,6 @@ d[d==-999.0]=NA
 #mean of evalutation
 mean(d[,1][!is.na(d[,1])])
 mean(d[,2][!is.na(d[,2])])
+
+
+```
