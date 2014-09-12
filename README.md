@@ -5,7 +5,7 @@ Statistical Programming Team6
 
 Team6's Repository
 
-Minjung Park mp259@duke.edu
+Minjung Park mp259@duke.edu (919 308 3713)
 
 Radhika Anand ra125@duke.edu (919 949 4795)
 
