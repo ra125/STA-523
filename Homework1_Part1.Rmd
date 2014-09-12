@@ -44,4 +44,11 @@ for (i in 1:193)
 
 print(dataset)
 
+
+
+data=cbind(id=dataset[,1], pig=dataset[,2], class=dataset[,3], pid=dataset[,4], mid=dataset[,5], pname=dataset[,6], pteam=dataset[,7], ptime=dataset[,8], paddtime=dataset[,9], ptype=dataset[,10], pmatch=dataset[,11], style=dataset[,12])
+
+data=data.frame(data)
+
+
 ```
