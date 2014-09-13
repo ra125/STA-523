@@ -9,21 +9,26 @@ library('stringr')
 
 d <- readLines("~cr173/Sta523/data/world_cup_goals_raw.txt")
 
-l <- str_match_all(d, " id=\"([a-z0-9]*)\"")
-m <- str_match_all(d, " pig=\"([0-9]*)\"")
-n <- str_match_all(d, " class=\"([a-z ]*)\"")
-o <- str_match_all(d, " pid=\"([0-9]*)\"")
-p <- str_match_all(d, " mid=\"([0-9]*)\"")
-q <- gsub(".*pname=\"(([^\\x00-\\x7F]|[A-Za-z0-9 ?&;-])*)\".*", "\\1", d, perl=TRUE)
-r <- gsub(".*pteam=\"(([^\\x00-\\x7F]|[A-Za-z0-9 &;'])*)\".*", "\\1", d, perl=TRUE)
-s <- str_match_all(d, " ptime=\"([0-9]*)\"")
-t <- str_match_all(d, " paddtime=\"([0-9]*)\"")
-u <- str_match_all(d, " ptype=\"([[a-zA-Z -]*)\"")
-v <- str_match_all(d, " pmatch=\"([0-9]*)\"")
-w <- str_match_all(d, " style=\"([a-zA-Z0-9:; ]*)\"")
+
+id <- str_match_all(d, " id=\"([a-z0-9]*)\"")
+pig <- str_match_all(d, " pig=\"([0-9]*)\"")
+class <- str_match_all(d, " class=\"([a-z ]*)\"")
+pid <- str_match_all(d, " pid=\"([0-9]*)\"")
+mid <- str_match_all(d, " mid=\"([0-9]*)\"")
+pname <- gsub(".*pname=\"(([^\\x00-\\x7F]|[A-Za-z0-9 ?&;-])*)\".*", "\\1", d, perl=TRUE)
+pteam <- gsub(".*pteam=\"(([^\\x00-\\x7F]|[A-Za-z0-9 &;'])*)\".*", "\\1", d, perl=TRUE)
+ptime <- str_match_all(d, " ptime=\"([0-9]*)\"")
+paddtime <- str_match_all(d, " paddtime=\"([0-9]*)\"")
+ptype <- str_match_all(d, " ptype=\"([[a-zA-Z -]*)\"")
+right <- gsub("(.*right:[ ]*(([0-9]*)px).*)?(?(1)|.*)", "\\3", d, perl=TRUE)
+left <- gsub("(.*left:[ ]*(([0-9]*)px).*)?(?(1)|.*)", "\\3", d, perl=TRUE)
+top <- str_match_all(d, "top: ([0-9]*)px")
 
 
-dataset <- matrix(data=NA,nrow=193,ncol=13)
+
+## insert values to the matrix called "dataset"
+
+dataset <- matrix(data=NA,nrow=length(d)-1,ncol=14)
 dataset <- data.frame(dataset)
 
 for (i in 1:193)
@@ -43,13 +48,76 @@ for (i in 1:193)
   
 }
 
-print(dataset)
+# print(dataset)
 
 
 
-### adding variable names
-data=cbind(id=dataset[,1], pig=dataset[,2], class=dataset[,3], pid=dataset[,4], mid=dataset[,5], pname=dataset[,6], pteam=dataset[,7], ptime=dataset[,8], paddtime=dataset[,9], ptype=dataset[,10], pmatch=dataset[,11], style=dataset[,12])
+## adding variable names
+data=cbind(id=dataset[,1], pig=dataset[,2], class=dataset[,3], pid=dataset[,4], mid=dataset[,5], 
+           pname=dataset[,6], pteam=dataset[,7], ptime=dataset[,8], paddtime=dataset[,9], 
+           ptype=dataset[,10], pmatch=dataset[,11], style=dataset[,12])
+
 data=data.frame(data)
+
+
+## creating right, left, top variables (extracting the numbers in style var)
+
+
+index <- seq(1,length(d)-1,1)
+
+dataset[1]<-unlist(id)[2*index]
+dataset[2]<-unlist(pig)[2*index]
+dataset[3]<-550-as.numeric(unlist(dataset[2]))
+dataset[4]<-unlist(class)[2*index]
+dataset[5]<-unlist(pid)[2*index]
+dataset[6]<-unlist(mid)[2*index]
+dataset[7]<-pname[index]
+dataset[8]<-pteam[index]
+dataset[9]<-unlist(ptime)[2*index]
+dataset[10]<-unlist(paddtime)[2*index]
+dataset[11]<-unlist(ptype)[2*index]  
+dataset[12]<-right[index]
+dataset[13]<-left[index]
+dataset[14]<-unlist(top)[2*index]
+
+## convert the data[1,13] value in terms of the right coordiate and add the value to data[1,12]
+right=c(495, dataset[2:193,12])
+
+
+## coerce the type of variables
+data=cbind(id=as.character(dataset[,1]), pig=as.integer(dataset[,2]), 
+           pig_right=as.integer(dataset[,3]), class=as.character(dataset[,4]), 
+           pid=as.factor(dataset[,5]), mid=as.factor(dataset[,6]), 
+           pname=as.factor(dataset[,7]), pteam=as.factor(dataset[,8]), 
+           ptime=as.integer(dataset[,9]), paddtime=dataset[,10], 
+           ptype=as.character(dataset[,11]), right=as.integer(right), 
+           left=as.integer(dataset[,13]), top=as.integer(dataset[,14]))
+data=data.frame(data)
+
+
+# preserve THE ORIGINAL data with all the irrelevant info
+original=data 
+
+## get rid of irrelevant rows ("own goal" in ptype, "ISPEN" in class)
+test.ispen<-str_match_all(data$class, "ispen")
+no.ispen<-which(test.ispen=="ispen")
+test.owngoal<-str_match_all(data$ptype, "Own goal")
+no.owngoal<-which(test.owngoal=="Own goal")
+no<-c(no.ispen, no.owngoal)
+sequence<-(1:193)
+relevant<-match(sequence, no, nomatch=0)
+keep<-which(relevant==0)
+data=data[keep,]
+rm(test.ispen)
+rm(no.ispen)
+rm(test.owngoal)
+rm(no.owngoal)
+rm(no)
+rm(sequence)
+rm(relevant)
+rm(keep)
+dim(original)
+dim(data)
 
 
 ```{r}
