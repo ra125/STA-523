@@ -18,30 +18,31 @@ pteam <- gsub(".*pteam=\"(([^\\x00-\\x7F]|[A-Za-z0-9 &;'])*)\".*", "\\1", d, per
 ptime <- str_match_all(d, " ptime=\"([0-9]*)\"")
 paddtime <- str_match_all(d, " paddtime=\"([0-9]*)\"")
 ptype <- str_match_all(d, " ptype=\"([[a-zA-Z -]*)\"")
-left <- gsub("(.*left:[ ]*(([0-9]*)px).*)?(?(1)|.*)", "\\3", d, perl=TRUE)
 right <- gsub("(.*right:[ ]*(([0-9]*)px).*)?(?(1)|.*)", "\\3", d, perl=TRUE)
+left <- gsub("(.*left:[ ]*(([0-9]*)px).*)?(?(1)|.*)", "\\3", d, perl=TRUE)
 top <- str_match_all(d, "top: ([0-9]*)px")
  
-dataset <- matrix(data=NA,nrow=length(d)-1,ncol=13)
+dataset <- matrix(data=NA,nrow=length(d)-1,ncol=14)
 dataset <- data.frame(dataset)
 
 index <- seq(1,length(d)-1,1)
 
 dataset[1]<-unlist(id)[2*index]
 dataset[2]<-unlist(pig)[2*index]
-dataset[3]<-unlist(class)[2*index]
-dataset[4]<-unlist(pid)[2*index]
-dataset[5]<-unlist(mid)[2*index]
-dataset[6]<-pname[index]
-dataset[7]<-pteam[index]
-dataset[8]<-unlist(ptime)[2*index]
-dataset[9]<-unlist(paddtime)[2*index]
-dataset[10]<-unlist(ptype)[2*index]  
-dataset[11]<-new_rightpxs[index]
-dataset[12]<-new_leftpxs[index]
-dataset[13]<-unlist(top)[2*index]
+dataset[3]<-550-as.numeric(unlist(dataset[2]))
+dataset[4]<-unlist(class)[2*index]
+dataset[5]<-unlist(pid)[2*index]
+dataset[6]<-unlist(mid)[2*index]
+dataset[7]<-pname[index]
+dataset[8]<-pteam[index]
+dataset[9]<-unlist(ptime)[2*index]
+dataset[10]<-unlist(paddtime)[2*index]
+dataset[11]<-unlist(ptype)[2*index]  
+dataset[12]<-right[index]
+dataset[13]<-left[index]
+dataset[14]<-unlist(top)[2*index]
 
-data=cbind(id=dataset[,1], pig=dataset[,2], class=dataset[,3], pid=dataset[,4], mid=dataset[,5], pname=dataset[,6], pteam=dataset[,7], ptime=dataset[,8], paddtime=dataset[,9], ptype=dataset[,10], right=dataset[,11], left=dataset[,12], top=dataset[,13])
+data=cbind(id=dataset[,1], pig=dataset[,2], pig_right=dataset[,3], class=dataset[,4], pid=dataset[,5], mid=dataset[,6], pname=dataset[,7], pteam=dataset[,8], ptime=dataset[,9], paddtime=dataset[,10], ptype=dataset[,11], right=dataset[,12], left=dataset[,13], top=dataset[,14])
 
 
 ```
