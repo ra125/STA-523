@@ -9,6 +9,7 @@ library('stringr')
 
 d <- readLines("~cr173/Sta523/data/world_cup_goals_raw.txt")
 
+## extracting all data and creating right, left, top variables (extracting the numbers in style var)
 
 id <- str_match_all(d, " id=\"([a-z0-9]*)\"")
 pig <- str_match_all(d, " pig=\"([0-9]*)\"")
@@ -26,79 +27,45 @@ top <- str_match_all(d, "top: ([0-9]*)px")
 
 
 
-## insert values to the matrix called "dataset"
+## insert values to the matrix called "data"
 
-dataset <- matrix(data=NA,nrow=length(d)-1,ncol=14)
-dataset <- data.frame(dataset)
-
-for (i in 1:193)
-{
-  dataset[i, 1]<-l[[i]][,2]
-  dataset[i, 2]<-m[[i]][,2]
-  dataset[i, 3]<-n[[i]][,2]
-  dataset[i, 4]<-o[[i]][,2]
-  dataset[i, 5]<-p[[i]][,2]
-  dataset[i, 6]<-q[i]
-  dataset[i, 7]<-r[i]
-  dataset[i, 8]<-s[[i]][,2]
-  dataset[i, 9]<-t[[i]][,2]
-  dataset[i, 10]<-u[[i]][,2]
-  dataset[i, 11]<-v[[i]][,2]
-  dataset[i, 12]<-w[[i]][,2]
-  
-}
-
-# print(dataset)
-
-
-
-## adding variable names
-data=cbind(id=dataset[,1], pig=dataset[,2], class=dataset[,3], pid=dataset[,4], mid=dataset[,5], 
-           pname=dataset[,6], pteam=dataset[,7], ptime=dataset[,8], paddtime=dataset[,9], 
-           ptype=dataset[,10], pmatch=dataset[,11], style=dataset[,12])
-
-data=data.frame(data)
-
-
-## creating right, left, top variables (extracting the numbers in style var)
-
+data <- matrix(data=NA,nrow=length(d)-1,ncol=14)
+data <- data.frame(data)
 
 index <- seq(1,length(d)-1,1)
 
-dataset[1]<-unlist(id)[2*index]
-dataset[2]<-unlist(pig)[2*index]
-dataset[3]<-550-as.numeric(unlist(dataset[2]))
-dataset[4]<-unlist(class)[2*index]
-dataset[5]<-unlist(pid)[2*index]
-dataset[6]<-unlist(mid)[2*index]
-dataset[7]<-pname[index]
-dataset[8]<-pteam[index]
-dataset[9]<-unlist(ptime)[2*index]
-dataset[10]<-unlist(paddtime)[2*index]
-dataset[11]<-unlist(ptype)[2*index]  
-dataset[12]<-right[index]
-dataset[13]<-left[index]
-dataset[14]<-unlist(top)[2*index]
-
-## convert the data[1,13] value in terms of the right coordiate and add the value to data[1,12]
-right=c(495, dataset[2:193,12])
+data[1]<-unlist(id)[2*index]
+data[2]<-unlist(pig)[2*index]
+data[3]<-550-as.numeric(unlist(data[2]))
+data[4]<-unlist(class)[2*index]
+data[5]<-unlist(pid)[2*index]
+data[6]<-unlist(mid)[2*index]
+data[7]<-pname[index]
+data[8]<-pteam[index]
+data[9]<-unlist(ptime)[2*index]
+data[10]<-unlist(paddtime)[2*index]
+data[11]<-unlist(ptype)[2*index]  
+data[12]<-right[index]
+data[13]<-left[index]
+data[14]<-unlist(top)[2*index]
 
 
-## coerce the type of variables
-data=cbind(id=as.character(dataset[,1]), pig=as.integer(dataset[,2]), 
-           pig_right=as.integer(dataset[,3]), class=as.character(dataset[,4]), 
-           pid=as.factor(dataset[,5]), mid=as.factor(dataset[,6]), 
-           pname=as.factor(dataset[,7]), pteam=as.factor(dataset[,8]), 
-           ptime=as.integer(dataset[,9]), paddtime=dataset[,10], 
-           ptype=as.character(dataset[,11]), right=as.integer(right), 
-           left=as.integer(dataset[,13]), top=as.integer(dataset[,14]))
-data=data.frame(data)
+## coerce the type of variables and store as original
 
+data <- cbind(id=data[,1], pig=data[,2], pig_right=data[,3], class=data[,4], pid=data[,5], mid=data[,6], pname=data[,7], pteam=data[,8], ptime=data[,9], paddtime=data[,10], ptype=data[,11], right=data[,12], left=data[,13], top=data[,14])
+data <- data.frame(data)
+original <- data
 
-# preserve THE ORIGINAL data with all the irrelevant info
-original=data 
+#dataset <- cbind(id=as.character(dataset[,1]), pig=as.integer(dataset[,2]), 
+#           pig_right=as.integer(dataset[,3]), class=as.character(dataset[,4]), 
+#           pid=as.factor(dataset[,5]), mid=as.factor(dataset[,6]), 
+#           pname=as.factor(dataset[,7]), pteam=as.factor(dataset[,8]), 
+#           ptime=as.integer(dataset[,9]), paddtime=as.integer(dataset[,10]), 
+#           ptype=as.character(dataset[,11]), right=as.integer(right), 
+#           left=as.integer(dataset[,13]), top=as.integer(dataset[,14]))
 
 ## get rid of irrelevant rows ("own goal" in ptype, "ISPEN" in class)
+
 test.ispen<-str_match_all(data$class, "ispen")
 no.ispen<-which(test.ispen=="ispen")
 test.owngoal<-str_match_all(data$ptype, "Own goal")
@@ -119,8 +86,7 @@ rm(keep)
 dim(original)
 dim(data)
 
-
-```{r}
+```
 
 
 
