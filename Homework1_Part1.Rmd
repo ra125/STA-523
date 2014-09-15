@@ -150,7 +150,7 @@ dat.scr[["ptime"]]=as.double(dat.scr[["ptime"]])
 attr(dat.scr,"names")[ncol]="pig_right"
 dat.scr["pig_right"]=pig_right
 
-ncol=ncol+1L
+ncol=ncol+1L 
 
 attr(dat.scr,"names")[ncol]="right"
 dat.scr["right"]=right
