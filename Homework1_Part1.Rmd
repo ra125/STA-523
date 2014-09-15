@@ -13,8 +13,8 @@ m <- str_match_all(d, " pig=\"([0-9]*)\"")
 n <- str_match_all(d, " class=\"([a-z ]*)\"")
 o <- str_match_all(d, " pid=\"([0-9]*)\"")
 p <- str_match_all(d, " mid=\"([0-9]*)\"")
-q <- gsub(".*pname=\"(([^\\x00-\\x7F]|[A-Za-z0-9 ?&;-])*)\".*", "\\1", d, perl=TRUE)
-r <- gsub(".*pteam=\"(([^\\x00-\\x7F]|[A-Za-z0-9 &;'])*)\".*", "\\1", d, perl=TRUE)
+q <- gsub(".*pname=\"(([^\\x00-\\x7F]|[A-Za-z0-9 ?&;-])*)\".*", "\\1", d, perl=TRUE) #why using "perl=TRUE" here?
+r <- gsub(".*pteam=\"(([^\\x00-\\x7F]|[A-Za-z0-9 &;'])*)\".*", "\\1", d, perl=TRUE) #what does .* means? What does \\1 means? Why substitute?
 s <- str_match_all(d, " ptime=\"([0-9]*)\"")
 t <- str_match_all(d, " paddtime=\"([0-9]*)\"")
 u <- str_match_all(d, " ptype=\"([[a-zA-Z -]*)\"")
