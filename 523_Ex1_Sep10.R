@@ -1,0 +1,28 @@
+'op' = function(x,y)
+{
+  stopifnot(length(x)==length(y))
+  n=length(x)
+  res=matrix(NA,nrow=n,ncol=n)
+  for (i in 1:n)
+  {
+    for (j in 1:n)
+    {
+      res[i,j]<-x[i]*y[j]
+    }
+  }
+  return (res)
+}
+
+'inp' = function(x,y)
+{
+  stopifnot(length(x)==length(y))
+  n=length(x)
+  res=0
+  
+  for (i in 1:length(x))
+  {
+    res=res+x[i]*y[i]
+  }
+  return (res)
+}
+  
