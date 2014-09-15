@@ -110,20 +110,22 @@ dim(data)
 library('stringr')
 d <- readLines("~cr173/Sta523/data/world_cup_goals_raw.txt")
 c_name<-str_match_all(d[1]," ([a-z]*)=")#extract column names
+c_name.sorted<-c_name[[1]][,2][c_name[[1]][,2][]!="pteamimg"]#c_name.sorted becomes an atomic vector
+numc=length(c_name.sorted)#better not to name number of column as ncol, since it is parameter name of matrix. 
 #must create a new data.frame, otherwise will report error
-dat <- matrix(data=NA,nrow=length(d),ncol=length(c_name[[1]][2]))
+dat <- matrix(data=NA,nrow=length(d),ncol=numc)
 dat <- data.frame(dat)
 #extract all raw data
 flag.na=rep(F,length(d))#rule out NA rows
-ncol=length(c_name[[1]][,2])
-for (i in 1:ncol)
+
+for (i in 1:numc)
   {
-  con=str_match(d,paste(" ",c_name[[1]][i,2],"=\"([^\"]*)\"",sep=""))#str_match return a matrix, instead of a list, easier to manipulate
+  con=str_match(d,paste(" ",c_name.sorted[i],"=\"([^\"]*)\"",sep=""))#str_match return a matrix, instead of a list, easier to manipulate
   dat[i]=con[,2]
-  attr(dat,"names")[i]=c_name[[1]][i,2]
+  attr(dat,"names")[i]=c_name.sorted[i]
   flag.na=flag.na|is.na(dat[[i]])
   }
-ncol=ncol+1L
+numc=numc+1L
 
 ispen=str_match(dat[["class"]],"ispen")
 flag.ispen=!is.na(ispen)
@@ -147,30 +149,30 @@ dis=sqrt((right-pig_right)^2+top^2)
 
 dat.scr[["ptime"]]=as.double(dat.scr[["ptime"]])
 
-attr(dat.scr,"names")[ncol]="pig_right"
-dat.scr["pig_right"]=pig_right
+#attr(dat.scr,"names")[numc]="pig_right"
+dat.scr["pig_right"]=pig_right #automattically bind a column on the end of dat.scr with given name.
 
-ncol=ncol+1L 
+numc=numc+1L 
 
-attr(dat.scr,"names")[ncol]="right"
+#attr(dat.scr,"names")[numc]="right"
 dat.scr["right"]=right
 
-ncol=ncol+1L
+numc=numc+1L
 
-attr(dat.scr,"names")[ncol]="left"
+#attr(dat.scr,"names")[numc]="left"
 dat.scr["left"]=left
 
-ncol=ncol+1L
+numc=numc+1L
 
-attr(dat.scr,"names")[ncol]="top"
+#attr(dat.scr,"names")[numc]="top"
 dat.scr["top"]=top
 
-ncol=ncol+1L
+numc=numc+1L
 
-attr(dat.scr,"names")[ncol]="dis"
+#attr(dat.scr,"names")[numc]="dis"
 dat.scr["dis"]=dis
 
-ncol=ncol+1L
+numc=numc+1L
 
 #Visulization of distance goals travel v.s. time, with goaler's name and national flag as background.
 ge<-which(dat.scr["pteam"]=="Germany")
