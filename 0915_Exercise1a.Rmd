@@ -21,26 +21,48 @@ d$cat = sample(LETTERS[1:5], n, replace=TRUE)
 
 
 benchmark(
-  # 1) apply, 
 
+
+
+  # 1) apply, 
+  apply(d[-11],1,max)
+  ,
   # 2) sapply
-  sapply(d[1:n,1:10], max), #Sophie's part
+  #   sapply(d[,1:10],max)  #column
   
+  sapply(as.data.frame(t(as.matrix(d[,1:10]))),max)
+  , 
+
+  ### alternatively, we can create a function 
+#   s_apply function()
+#     {
+#   sapply(1:nrow(d), function(x) max(d[x,-11]))
+# }
+
   # 3) vapply, 
 
   # 4) single for loop:
-  for(i in 1:nrow(d)) { print(max(d[i,1:10]))},
-
+for1= function() {
+  for(i in 1:nrow(d)) { 
+    for1=rep(NA,nrow(d))  #Colin recommends that we define the matrix size at the beginning.
+    for1[i]=(max(d[i,-11]))
+    }
+}
+,
   # 5) double for loop:
+for2 =function(){
   for(i in 1:nrow(d)) {
-    maxval <- -Inf;   
+    cur= d[i,i]   
     for(j in 1:(ncol(d)-1))
         { 
-        if(d[i,j] > maxval) {
-            maxval<-d[i,j]
+      cur=max(cur, d[i,j])    
         }
     } 
-    print(maxval); },
+res[i]=cur
+}
+,
+
+
 
 replications=n,
 order="relative"
