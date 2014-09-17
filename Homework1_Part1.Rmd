@@ -149,7 +149,7 @@ dis=sqrt((right-pig_right)^2+top^2)
 
 dat.scr[["ptime"]]=as.double(dat.scr[["ptime"]])
 
-#attr(dat.scr,"names")[numc]="pig_right"
+#attr(dat.scr,"names")[numc]="pig_right" #could get error
 dat.scr["pig_right"]=pig_right #automattically bind a column on the end of dat.scr with given name.
 
 numc=numc+1L 
