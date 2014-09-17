@@ -1,0 +1,33 @@
+---
+title: "0914_Exercise1a"
+author: "Sophie Lee"
+date: "September 17, 2014"
+output: html_document
+---
+
+
+
+```{r}
+
+#Exercise 1 
+
+# install.packages("rbenchmark")
+library(rbenchmark)
+
+set.seed(666)
+n=1000
+d = data.frame(matrix(rnorm(n * 10), ncol=10))
+d$cat = sample(LETTERS[1:5], 100, replace=TRUE)
+
+
+benchmark(
+# add apply, 
+  sapply(d[1:n,1:10], max), #Sophie's part
+# add vapply, 
+# add for loops,
+replications=n,
+order="relative"
+)
+
+
+```
