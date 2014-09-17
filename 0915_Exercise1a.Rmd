@@ -27,7 +27,7 @@ benchmark(
   sapply(d[1:n,1:10], max), #Sophie's part
   
   # 3) vapply, 
-
+  vapply(d[,1:10], function(x) x[x==1], max)
   # 4) single for loop:
   for(i in 1:nrow(d)) { print(max(d[i,1:10]))},
 

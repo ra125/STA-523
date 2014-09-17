@@ -1,54 +1,234 @@
----
-title: "Homework1_Part1"
-output: html_document
----
-
-```r
 library('stringr')
 
 d <- readLines("~cr173/Sta523/data/world_cup_goals_raw.txt")
 
+<<<<<<< HEAD
 l <- str_match_all(d, " id=\"([a-z0-9]*)\"")
 m <- str_match_all(d, " pig=\"([0-9]*)\"")
 n <- str_match_all(d, " class=\"([a-z ]*)\"")
 o <- str_match_all(d, " pid=\"([0-9]*)\"")
 p <- str_match_all(d, " mid=\"([0-9]*)\"")
-q <- gsub(".*pname=\"(([^\\x00-\\x7F]|[A-Za-z0-9 ?&;-])*)\".*", "\\1", d, perl=TRUE)
-r <- gsub(".*pteam=\"(([^\\x00-\\x7F]|[A-Za-z0-9 &;'])*)\".*", "\\1", d, perl=TRUE)
+q <- gsub(".*pname=\"(([^\\x00-\\x7F]|[A-Za-z0-9 ?&;-])*)\".*", "\\1", d, perl=TRUE) #why using "perl=TRUE" here?
+r <- gsub(".*pteam=\"(([^\\x00-\\x7F]|[A-Za-z0-9 &;'])*)\".*", "\\1", d, perl=TRUE) #what does .* means? What does \\1 means? Why substitute?
 s <- str_match_all(d, " ptime=\"([0-9]*)\"")
 t <- str_match_all(d, " paddtime=\"([0-9]*)\"")
 u <- str_match_all(d, " ptype=\"([[a-zA-Z -]*)\"")
 v <- str_match_all(d, " pmatch=\"([0-9]*)\"")
 w <- str_match_all(d, " style=\"([a-zA-Z0-9:; ]*)\"")
+=======
+## extracting all data and creating right, left, top variables (extracting the numbers in style var)
+
+id <- str_match_all(d, " id=\"([a-z0-9]*)\"")
+pig <- str_match_all(d, " pig=\"([0-9]*)\"")
+class <- str_match_all(d, " class=\"([a-z ]*)\"")
+pid <- str_match_all(d, " pid=\"([0-9]*)\"")
+mid <- str_match_all(d, " mid=\"([0-9]*)\"")
+pname <- gsub(".*pname=\"(([^\\x00-\\x7F]|[A-Za-z0-9 ?&;-])*)\".*", "\\1", d, perl=TRUE)
+pteam <- gsub(".*pteam=\"(([^\\x00-\\x7F]|[A-Za-z0-9 &;'])*)\".*", "\\1", d, perl=TRUE)
+ptime <- str_match_all(d, " ptime=\"([0-9]*)\"")
+paddtime <- str_match_all(d, " paddtime=\"([0-9]*)\"")
+ptype <- str_match_all(d, " ptype=\"([[a-zA-Z -]*)\"")
+right <- as.double(gsub("(.*right:[ ]*(([0-9]*)px).*)?(?(1)|.*)", "\\3", d, perl=TRUE))#what does this line mean?
+left <- as.double(gsub("(.*left:[ ]*(([0-9]*)px).*)?(?(1)|.*)", "\\3", d, perl=TRUE))#corcion to integer
+top <- as.double(str_match_all(d, "top: ([0-9]*)px"))
+
+right[1-is.na(left)]=1000-left[1-is.na(left)]#make right column complete because of the pig_right
+
+>>>>>>> ed3ecc9bb22518c9f5a2b09d537cb82d164ad748
+
+## insert values to the matrix called "data"
+
+data <- matrix(data=NA,nrow=length(d)-1,ncol=14)
+#only 193 out of 194 rows have data; expand columns becasue of partition of "style"
+data <- data.frame(data)
+
+index <- seq(1,length(d)-1,1)
+
+data[1]<-unlist(id)[2*index]
+data[2]<-unlist(pig)[2*index]
+data[3]<-550-as.numeric(unlist(data[2]))
+data[4]<-unlist(class)[2*index]
+data[5]<-unlist(pid)[2*index]
+data[6]<-unlist(mid)[2*index]
+data[7]<-pname[index]
+data[8]<-pteam[index]
+data[9]<-unlist(ptime)[2*index]
+data[10]<-unlist(paddtime)[2*index]
+data[11]<-unlist(ptype)[2*index]  
+data[12]<-right[index]
+data[13]<-left[index]
+data[14]<-unlist(top)[2*index]
 
 
-dataset <- matrix(data=NA,nrow=193,ncol=13)
-dataset <- data.frame(dataset)
+## coerce the type of variables and store as original #Is this trying to give a name to each column?
 
-for (i in 1:193)
-{
-  dataset[i, 1]<-l[[i]][,2]
-  dataset[i, 2]<-m[[i]][,2]
-  dataset[i, 3]<-n[[i]][,2]
-  dataset[i, 4]<-o[[i]][,2]
-  dataset[i, 5]<-p[[i]][,2]
-  dataset[i, 6]<-q[i]
-  dataset[i, 7]<-r[i]
-  dataset[i, 8]<-s[[i]][,2]
-  dataset[i, 9]<-t[[i]][,2]
-  dataset[i, 10]<-u[[i]][,2]
-  dataset[i, 11]<-v[[i]][,2]
-  dataset[i, 12]<-w[[i]][,2]
-  
-}
+data <- cbind(id=data[,1], pig=data[,2], pig_right=data[,3], class=data[,4], pid=data[,5], mid=data[,6], pname=data[,7], pteam=data[,8], ptime=data[,9], paddtime=data[,10], ptype=data[,11], right=data[,12], left=data[,13], top=data[,14])
+data <- data.frame(data)
+original <- data
 
-print(dataset)
+#dataset <- cbind(id=as.character(dataset[,1]), pig=as.integer(dataset[,2]), 
+#           pig_right=as.integer(dataset[,3]), class=as.character(dataset[,4]), 
+#           pid=as.factor(dataset[,5]), mid=as.factor(dataset[,6]), 
+#           pname=as.factor(dataset[,7]), pteam=as.factor(dataset[,8]), 
+#           ptime=as.integer(dataset[,9]), paddtime=as.integer(dataset[,10]), 
+#           ptype=as.character(dataset[,11]), right=as.integer(right), 
+#           left=as.integer(dataset[,13]), top=as.integer(dataset[,14]))
+
+## get rid of irrelevant rows ("own goal" in ptype, "ISPEN" in class)
+
+test.ispen<-str_match_all(data$class, "ispen")
+no.ispen<-which(test.ispen=="ispen")
+test.owngoal<-str_match_all(data$ptype, "Own goal")
+no.owngoal<-which(test.owngoal=="Own goal")
+no<-c(no.ispen, no.owngoal)
+sequence<-(1:193)
+relevant<-match(sequence, no, nomatch=0)
+keep<-which(relevant==0)
+data=data[keep,]
+rm(test.ispen)
+rm(no.ispen)
+rm(test.owngoal)
+rm(no.owngoal)
+rm(no)
+rm(sequence)
+rm(relevant)
+rm(keep)
+dim(original)
+dim(data)
 
 
 
-data=cbind(id=dataset[,1], pig=dataset[,2], class=dataset[,3], pid=dataset[,4], mid=dataset[,5], pname=dataset[,6], pteam=dataset[,7], ptime=dataset[,8], paddtime=dataset[,9], ptype=dataset[,10], pmatch=dataset[,11], style=dataset[,12])
+#simplier code for matching and data matching and sorting.
+#add pig_right, right, left, top data in to data.scr, so that original data wouldn't lost
+#add visulization
+library('stringr')
+d <- readLines("~cr173/Sta523/data/world_cup_goals_raw.txt")
+c_name<-str_match_all(d[1]," ([a-z]*)=")#extract column names
+c_name.sorted<-c_name[[1]][,2][c_name[[1]][,2][]!="pteamimg"]#c_name.sorted becomes an atomic vector
+numc=length(c_name.sorted)#better not to name number of column as ncol, since it is parameter name of matrix. 
+#must create a new data.frame, otherwise will report error
+dat <- matrix(data=NA,nrow=length(d),ncol=numc)
+dat <- matrix(data=NA,nrow=length(d),ncol=length(c_name[[1]][2]))
+dat <- data.frame(dat)
+#extract all raw data
+flag.na=rep(F,length(d))#rule out NA rows
 
-data=data.frame(data)
+for (i in 1:numc)
+ncol=length(c_name[[1]][,2])
+for (i in 1:ncol)
+  {
+  con=str_match(d,paste(" ",c_name.sorted[i],"=\"([^\"]*)\"",sep=""))#str_match return a matrix, instead of a list, easier to manipulate
+  con=str_match(d,paste(" ",c_name[[1]][i,2],"=\"([^\"]*)\"",sep=""))#str_match return a matrix, instead of a list, easier to manipulate
+  dat[i]=con[,2]
+  attr(dat,"names")[i]=c_name.sorted[i]
+  attr(dat,"names")[i]=c_name[[1]][i,2]
+  flag.na=flag.na|is.na(dat[[i]])
+  }
+numc=numc+1L
+ncol=ncol+1L
 
+ispen=str_match(dat[["class"]],"ispen")
+flag.ispen=!is.na(ispen)
+owngoal=str_match(dat[["ptype"]],"Own goal")
+flag.owngoal=!is.na(owngoal)
+#rule out all data not satisfying requirment
+flag=!(flag.na|flag.ispen|flag.owngoal)
+dat.scr=dat[flag,]
 
-```
+#pre-processe pig, right, left, and top; and time
+pig_right=550-as.double(dat.scr[["pig"]])
+leftc=str_match(dat.scr[["style"]],"left: ([0-9]*)px")#character matrix
+left=as.double(leftc[,2])#double matrix
+rightc=str_match(dat.scr[["style"]],"right: ([0-9]*)px")
+right=as.double(rightc[,2])
+topc=str_match(dat.scr[["style"]],"top: ([0-9]*)px")
+top=as.double(topc[,2])
+
+right[!is.na(left)]=1000-left[!is.na(left)]#make right column complete because of the pig_right
+dis=sqrt((right-pig_right)^2+top^2)
+
+dat.scr[["ptime"]]=as.double(dat.scr[["ptime"]])
+
+#attr(dat.scr,"names")[numc]="pig_right"
+dat.scr["pig_right"]=pig_right #automattically bind a column on the end of dat.scr with given name.
+attr(dat.scr,"names")[ncol]="pig_right"
+dat.scr["pig_right"]=pig_right
+
+numc=numc+1L 
+ncol=ncol+1L 
+
+#attr(dat.scr,"names")[numc]="right"
+attr(dat.scr,"names")[ncol]="right"
+dat.scr["right"]=right
+
+numc=numc+1L
+ncol=ncol+1L
+
+#attr(dat.scr,"names")[numc]="left"
+attr(dat.scr,"names")[ncol]="left"
+dat.scr["left"]=left
+
+numc=numc+1L
+ncol=ncol+1L
+
+#attr(dat.scr,"names")[numc]="top"
+attr(dat.scr,"names")[ncol]="top"
+dat.scr["top"]=top
+
+numc=numc+1L
+ncol=ncol+1L
+
+#attr(dat.scr,"names")[numc]="dis"
+attr(dat.scr,"names")[ncol]="dis"
+dat.scr["dis"]=dis
+
+numc=numc+1L
+ncol=ncol+1L
+
+#Visulization of distance goals travel v.s. time, with goaler's name and national flag as background.
+ge<-which(dat.scr["pteam"]=="Germany")
+ar<-which(dat.scr["pteam"]=="Argentina")
+ne<-which(dat.scr["pteam"]=="Netherlands")
+br<-which(dat.scr["pteam"]=="Brazil")
+
+library(png)
+par(mfrow=c(2,2))
+#Germany
+geimg<-readPNG("GeT.png")
+op<-par(ps=10)
+plot(dat.scr[["ptime"]][ge], dat.scr[["dis"]][ge],ylim=c(0,max(dat.scr[["dis"]][ge])*1.1),xlab="Time (minutes)", ylab="Distance of goal",main="Germany")
+lim <- par()
+rasterImage(geimg, lim$usr[1], lim$usr[3], lim$usr[2], lim$usr[4])
+#grid()
+points(dat.scr[["ptime"]][ge],dat.scr[["dis"]][ge],pch=21, col=1, bg=2)
+segments(x0=dat.scr[["ptime"]][ge], y0=dat.scr[["dis"]][ge], y1=0, col=8)
+
+#Argentina
+arimg<-readPNG("ArT.png")
+op<-par(ps=10)
+plot(dat.scr[["ptime"]][ar], dat.scr[["dis"]][ar],ylim=c(0,max(dat.scr[["dis"]][ar])*1.1),xlab="Time (minutes)", ylab="Distance of goal",main="Argentina")
+lim <- par()
+rasterImage(arimg, lim$usr[1], lim$usr[3], lim$usr[2], lim$usr[4])
+#grid()
+points(dat.scr[["ptime"]][ar],dat.scr[["dis"]][ar],pch=21, col=1, bg=2)
+segments(x0=dat.scr[["ptime"]][ar], y0=dat.scr[["dis"]][ar], y1=0, col=8)
+
+#Netherland
+neimg<-readPNG("NeT.png")
+op<-par(ps=10)
+plot(dat.scr[["ptime"]][ne], dat.scr[["dis"]][ne],ylim=c(0,max(dat.scr[["dis"]][ne])*1.1),xlab="Time (minutes)", ylab="Distance of goal",main="Netherland")
+lim <- par()
+rasterImage(neimg, lim$usr[1], lim$usr[3], lim$usr[2], lim$usr[4])
+#grid()
+points(dat.scr[["ptime"]][ne],dat.scr[["dis"]][ne],pch=21, col=1, bg=2)
+segments(x0=dat.scr[["ptime"]][ne], y0=dat.scr[["dis"]][ne], y1=0, col=8)
+
+#Brazil
+brimg<-readPNG("BrT.png")
+op<-par(ps=10)
+plot(dat.scr[["ptime"]][br], dat.scr[["dis"]][br],ylim=c(0,max(dat.scr[["dis"]][br])*1.1),xlab="Time (minutes)", ylab="Distance of goal",main="Brazil")
+lim <- par()
+rasterImage(brimg, lim$usr[1], lim$usr[3], lim$usr[2], lim$usr[4])
+#grid()
+points(dat.scr[["ptime"]][br],dat.scr[["dis"]][br],pch=21, col=1, bg=2)
+segments(x0=dat.scr[["ptime"]][br], y0=dat.scr[["dis"]][br], y1=0, col=8)
