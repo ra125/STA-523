@@ -1,0 +1,23 @@
+---
+title: "Exercise 3"
+author: Minjung, Radhika, Kungang
+output: html_document
+---
+
+```{r}
+x=c(1L,2L,1L,4L,3L,2L,1L)
+attr(x,"levels")=c("sunny","cloudy","rain","snow")
+attr(x,"class")="factor" 
+x
+str(x)
+attributes(x)
+
+x=c(1L,1L,1L,3L,2L,1L,1L)
+attr(x,"levels")=c("sunny/cloudy","rain","snow")
+attr(x,"class")="factor"
+x
+str(x)
+attributes(x)
+
+
+```

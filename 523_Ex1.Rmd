@@ -1,0 +1,40 @@
+---
+title: "Exercise 1"
+author: Radhika, Minjung, Sophie, Kungang
+output: html_document
+---
+
+```{r}
+
+### exercise 1
+#double (1) and integer (NA+1L) coerced to double and then double and character ("C") coerced to character
+typeof(c(1, NA+1L, "C"))
+#double and logical coerced to double
+typeof(c(1L / 0, NA))
+#integer and double coerced to double
+typeof(c(1:3, 5))
+#integer and  double coerced to double
+typeof(c(3L, NaN+1L))
+#NA(lack of value) and logical => logical
+typeof(c(NA, TRUE))
+#integer and logical to integer
+typeof(c(1L,T))
+#NaN is a double
+typeof(c(NaN,"c"))
+typeof(c(NaN,1L))
+
+#Inf is a double
+typeof(c(Inf,"c"))
+typeof(c(Inf,1L))
+
+#NA can be any value
+typeof(c(NA,"c"))
+typeof(c(NA,1.0))
+typeof(c(NA,1L))
+typeof(c(NA,T))
+
+
+#coercion priority: character>double>integer>logic; NaN and Inf are double; NA'sdefault is logical and can be any type.
+
+
+```
