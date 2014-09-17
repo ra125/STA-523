@@ -15,16 +15,33 @@ output: html_document
 library(rbenchmark)
 
 set.seed(666)
-n=1000
+n=10
 d = data.frame(matrix(rnorm(n * 10), ncol=10))
-d$cat = sample(LETTERS[1:5], 100, replace=TRUE)
+d$cat = sample(LETTERS[1:5], n, replace=TRUE)
 
 
 benchmark(
-# add apply, 
+  # 1) apply, 
+
+  # 2) sapply
   sapply(d[1:n,1:10], max), #Sophie's part
-# add vapply, 
-# add for loops,
+  
+  # 3) vapply, 
+
+  # 4) single for loop:
+  for(i in 1:nrow(d)) { print(max(d[i,1:10]))},
+
+  # 5) double for loop:
+  for(i in 1:nrow(d)) {
+    maxval <- -Inf;   
+    for(j in 1:(ncol(d)-1))
+        { 
+        if(d[i,j] > maxval) {
+            maxval<-d[i,j]
+        }
+    } 
+    print(maxval); },
+
 replications=n,
 order="relative"
 )
