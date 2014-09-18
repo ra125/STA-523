@@ -38,6 +38,7 @@ flag.owngoal=!is.na(owngoal)
 flag=!(flag.na|flag.ispen|flag.owngoal)
 dat.scr=dat[flag,]
 
+#remove temporary variables
 rm(ispen)
 rm(owngoal)
 rm(flag.na)
@@ -55,8 +56,8 @@ right=as.double(rightc[,2])
 topc=str_match(dat.scr[["style"]],"top: ([0-9]*)px")
 top=as.double(topc[,2])
 
-right[!is.na(left)]=1000-left[!is.na(left)]#make right column complete because of the pig_right
-dis=sqrt((right-pig_right)^2+top^2)
+right[!is.na(left)]=1000-left[!is.na(left)]#make "right" column complete based on the pig_right
+dis=sqrt((right-pig_right)^2+top^2)#distance goal travelled
 
 dat.scr[["ptime"]]=as.double(dat.scr[["ptime"]])
 
@@ -84,6 +85,16 @@ numc=numc+1L
 dat.scr["dis"]=dis
 
 numc=numc+1L
+
+#remove temporary variables
+rm(pig_right)
+rm(right)
+rm(left)
+rm(top)
+rm(dis)
+rm(rightc)
+rm(leftc)
+rm(topc)
 
 #Visulization of distance goals travel v.s. time, with goaler's name and national flag as background.
 ge<-which(dat.scr["pteam"]=="Germany")
