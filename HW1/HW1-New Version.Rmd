@@ -13,7 +13,7 @@ output: html_document
 library('stringr')
 d <- readLines("~cr173/Sta523/data/world_cup_goals_raw.txt")
 c_name<-str_match_all(d[1]," ([a-z]*)=")#extract column names
-c_name.sorted<-c_name[[1]][,2][c_name[[1]][,2][]!="pteamimg"]#c_name.sorted becomes an atomic vector
+c_name.sorted<-c_name[[1]][,2]#c_name.sorted becomes an atomic vector
 numc=length(c_name.sorted)#better not to name number of column as ncol, since it is parameter name of matrix. 
 #must create a new data.frame, otherwise will report error
 dat <- matrix(data=NA,nrow=length(d),ncol=numc)
@@ -39,13 +39,7 @@ flag=!(flag.na|flag.ispen|flag.owngoal)
 dat.scr=dat[flag,]
 
 #remove temporary variables
-rm(ispen)
-rm(owngoal)
-rm(flag.na)
-rm(flag.ispen)
-rm(flag.owngoal)
-rm(flag)
-rm(c_name)
+rm(ispen, owngoal, flag.na, flag.ispen, flag.owngoal, flag, c_name)
 
 #pre-processe pig, right, left, and top; and time
 pig_right=550-as.double(dat.scr[["pig"]])
@@ -61,47 +55,25 @@ dis=sqrt((right-pig_right)^2+top^2)#distance goal travelled
 
 dat.scr[["ptime"]]=as.double(dat.scr[["ptime"]])
 
-#attr(dat.scr,"names")[numc]="pig_right" #could get error
 dat.scr["pig_right"]=pig_right #automattically bind a column on the end of dat.scr with given name.
-
 numc=numc+1L 
 
-#attr(dat.scr,"names")[numc]="right"
 dat.scr["right"]=right
-
 numc=numc+1L
 
-#attr(dat.scr,"names")[numc]="left"
-dat.scr["left"]=left
+#no need of keeping left in the data frame coz we use only right (again left is redundant)
 
-numc=numc+1L
-
-#attr(dat.scr,"names")[numc]="top"
 dat.scr["top"]=top
-
 numc=numc+1L
 
-#attr(dat.scr,"names")[numc]="dis"
 dat.scr["dis"]=dis
-
 numc=numc+1L
 
 #remove columns of "pig"" and "style", "class", "pmatch", "pteam"
-dat.scr["pig"]<-NULL
-dat.scr["style"]<-NULL
-dat.scr["class"]<-NULL
-dat.scr["pmatch"]<-NULL
-dat.scr["pteam"]
+dat.scr<-dat.scr[-c(2,3,11,12,13)]
 
 #remove temporary variables
-rm(pig_right)
-rm(right)
-rm(left)
-rm(top)
-rm(dis)
-rm(rightc)
-rm(leftc)
-rm(topc)
+rm(pig_right, right, left, top, dis, rightc, leftc, topc)
 
 #Visulization of distance goals travel v.s. time, with goaler's name and national flag as background.
 ge<-which(dat.scr["pteam"]=="Germany")
@@ -115,7 +87,7 @@ img<-readPNG("HW1/GeT.png")
 mark<-ge
 coun="Germany"
 op<-par(ps=15)
-plot(dat.scr[["ptime"]][mark], dat.scr[["dis"]][mark],ylim=c(0,400),xlim=c(0,125),xlab="Time (minutes)", ylab="Distance of goal",main=coun)
+plot(dat.scr[["ptime"]][mark], dat.scr[["dis"]][mark],ylim=c(0,400),xlim=c(0,125),xlab="Time (minutes)", ylab="Length of goal",main=coun)
 lim <- par()
 rasterImage(img, lim$usr[1], lim$usr[3], lim$usr[2], lim$usr[4])
 #grid()
@@ -123,13 +95,14 @@ segments(x0=dat.scr[["ptime"]][mark], y0=dat.scr[["dis"]][mark], y1=0, col="#303
 points(dat.scr[["ptime"]][mark],dat.scr[["dis"]][mark],pch=21, col=1, bg="#1D10FC")
 text(dat.scr[["ptime"]][mark], dat.scr[["dis"]][mark], dat.scr[["pname"]][mark], cex=0.53, pos=4, col="black")
 abline(v=90,lty=2,col="#050505")
+axis(1, at=90,labels=90)
 
 #Argentina
 img<-readPNG("HW1/ArT.png")
 mark<-ar
 coun="Argentina"
 op<-par(ps=15)
-plot(dat.scr[["ptime"]][mark], dat.scr[["dis"]][mark],ylim=c(0,400),xlim=c(0,125),xlab="Time (minutes)", ylab="Distance of goal",main=coun)
+plot(dat.scr[["ptime"]][mark], dat.scr[["dis"]][mark],ylim=c(0,400),xlim=c(0,125),xlab="Time (minutes)", ylab="Length of goal",main=coun)
 lim <- par()
 rasterImage(img, lim$usr[1], lim$usr[3], lim$usr[2], lim$usr[4])
 #grid()
@@ -137,13 +110,14 @@ segments(x0=dat.scr[["ptime"]][mark], y0=dat.scr[["dis"]][mark], y1=0, col="#303
 points(dat.scr[["ptime"]][mark],dat.scr[["dis"]][mark],pch=21, col=1, bg="#1D10FC")
 text(dat.scr[["ptime"]][mark], dat.scr[["dis"]][mark], dat.scr[["pname"]][mark], cex=0.53, pos=4, col="black")
 abline(v=90,lty=2,col="#050505")
+axis(1, at=90,labels=90)
 
 #Netherlands
 img<-readPNG("HW1/NeT.png")
 mark<-ne
 coun="Netherlands"
 op<-par(ps=15)
-plot(dat.scr[["ptime"]][mark], dat.scr[["dis"]][mark],ylim=c(0,400),xlim=c(0,125),xlab="Time (minutes)", ylab="Distance of goal",main=coun)
+plot(dat.scr[["ptime"]][mark], dat.scr[["dis"]][mark],ylim=c(0,400),xlim=c(0,125),xlab="Time (minutes)", ylab="Length of goal",main=coun)
 lim <- par()
 rasterImage(img, lim$usr[1], lim$usr[3], lim$usr[2], lim$usr[4])
 #grid()
@@ -151,14 +125,14 @@ segments(x0=dat.scr[["ptime"]][mark], y0=dat.scr[["dis"]][mark], y1=0, col="#303
 points(dat.scr[["ptime"]][mark],dat.scr[["dis"]][mark],pch=21, col=1, bg="#1D10FC")
 text(dat.scr[["ptime"]][mark], dat.scr[["dis"]][mark], dat.scr[["pname"]][mark], cex=0.53, pos=4, col="black")
 abline(v=90,lty=2,col="#050505")
-
+axis(1, at=90,labels=90)
 
 #Brazil
 img<-readPNG("HW1/BrT.png")
 mark<-br
 coun="Brazil"
 op<-par(ps=15)
-plot(dat.scr[["ptime"]][mark], dat.scr[["dis"]][mark],ylim=c(0,400),xlim=c(0,125),xlab="Time (minutes)", ylab="Distance of goal",main=coun)
+plot(dat.scr[["ptime"]][mark], dat.scr[["dis"]][mark],ylim=c(0,400),xlim=c(0,125),xlab="Time (minutes)", ylab="Length of goal",main=coun)
 lim <- par()
 rasterImage(img, lim$usr[1], lim$usr[3], lim$usr[2], lim$usr[4])
 #grid()
@@ -166,5 +140,35 @@ segments(x0=dat.scr[["ptime"]][mark], y0=dat.scr[["dis"]][mark], y1=0, col="#303
 points(dat.scr[["ptime"]][mark],dat.scr[["dis"]][mark],pch=21, col=1, bg="#1D10FC")
 text(dat.scr[["ptime"]][mark], dat.scr[["dis"]][mark], dat.scr[["pname"]][mark], cex=0.53, pos=4, col="black")
 abline(v=90,lty=2,col="#050505")
+axis(1, at=90,labels=90)
+
+library('jsonlite')
+
+jsondata <- list()
+for(i in 1:nrow(dat.scr)) { 
+  country <- toString(dat.scr[i, "pteam"]);
+  if(is.null(jsondata[[country]])) { 
+    jsondata[[country]] <- list() 
+    jsondata[[country]][["Totals Goals"]] <- 0
+    jsondata[[country]][["Players"]] <- list()
+  }
+  jsondata[[country]][["Totals Goals"]] = jsondata[[country]][["Totals Goals"]] + 1
+  player <- toString(dat.scr[i, "pname"]);
+  players <- jsondata[[country]][["Players"]]
+  if(is.null(players[[player]])) { 
+    players[[player]] <- list()
+    players[[player]][["ID"]] <- toString(dat.scr[i, "pid"]);
+    players[[player]][["Goals"]] <- list()
+  }
+  
+  goal <- list(Type=toString(dat.scr[i, "ptype"]), MatchID=toString(dat.scr[i, "mid"]), Time=as.numeric(toString(dat.scr[i, "ptime"])), ExtraTime=as.numeric(toString(dat.scr[i, "paddtime"])), PIG_right=as.numeric(toString(dat.scr[i, "pig_right"])), Right=as.numeric(toString(dat.scr[i, "right"])), Top=as.numeric(toString(dat.scr[i, "top"]))) 
+  
+  players[[player]][["Goals"]] <- c(players[[player]][["Goals"]], list(goal))
+  jsondata[[country]][["Players"]] <- players
+}
+
+final_json <- toJSON(jsondata)
+prettify(final_json)
+
 ```
 
