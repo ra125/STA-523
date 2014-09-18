@@ -86,6 +86,11 @@ dat.scr["dis"]=dis
 
 numc=numc+1L
 
+#remove column of "pig"" and "style"
+dat.scr["pig"]<-NULL
+dat.scr["style"]<-NULL
+
+
 #remove temporary variables
 rm(pig_right)
 rm(right)
