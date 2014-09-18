@@ -90,7 +90,6 @@ numc=numc+1L
 dat.scr["pig"]<-NULL
 dat.scr["style"]<-NULL
 
-
 #remove temporary variables
 rm(pig_right)
 rm(right)
