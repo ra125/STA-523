@@ -5,7 +5,7 @@ date: "September 17, 2014"
 output: html_document
 ---
 Task 1: Parsing
-The parsing process consists of four steps: 1. Extracting categorical names for column names; 2. Extracting content for each column name by designing matching patterns, so that common features of these categories can be used; 3. Excluding unwanted entries by using subsetting; 4. Pre-process the data for distance calculation.
+The parsing process consists of four steps: 1. Extracting categorical names for column names; 2. Extracting content for each column name by designing matching patterns, so that common features of these categories can be used; 3. Excluding unwanted entries by using subsetting; 4. Pre-process the data for distance calculation. The data frame ready to be used is "dat.scr" with original columns and newly added columns replacing some older ones (i.e. "style", "pig").
 
 1.
 By using the first row of data, the categorical names can be extracted by applying matching condition “ ([a-z]*)=”, because the column names are outside of double quote, and followed with a “=”. Using “str_match_all” can return all those categorical names for future column names.
