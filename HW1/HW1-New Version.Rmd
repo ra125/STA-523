@@ -1,0 +1,152 @@
+---
+title: "HW1-New Version"
+author: "Radhika Anand, Sophie Lee, Minjung Park, Kungang Zhang"
+date: "9/17/2014"
+output: html_document
+---
+
+
+```{r}
+#simplier code for matching and data matching and sorting.
+
+
+library('stringr')
+d <- readLines("~cr173/Sta523/data/world_cup_goals_raw.txt")
+c_name<-str_match_all(d[1]," ([a-z]*)=")#extract column names
+c_name.sorted<-c_name[[1]][,2][c_name[[1]][,2][]!="pteamimg"]#c_name.sorted becomes an atomic vector
+numc=length(c_name.sorted)#better not to name number of column as ncol, since it is parameter name of matrix. 
+#must create a new data.frame, otherwise will report error
+dat <- matrix(data=NA,nrow=length(d),ncol=numc)
+dat <- data.frame(dat)
+#extract all raw data
+flag.na=rep(F,length(d))#rule out NA rows
+
+for (i in 1:numc)
+  {
+  con=str_match(d,paste(" ",c_name.sorted[i],"=\"([^\"]*)\"",sep=""))#str_match return a matrix, instead of a list, easier to manipulate
+  dat[i]=con[,2]
+  attr(dat,"names")[i]=c_name.sorted[i]
+  flag.na=flag.na|is.na(dat[[i]])
+  }
+numc=numc+1L
+
+ispen=str_match(dat[["class"]],"ispen")
+flag.ispen=!is.na(ispen)
+owngoal=str_match(dat[["ptype"]],"Own goal")
+flag.owngoal=!is.na(owngoal)
+#rule out all data not satisfying requirment
+flag=!(flag.na|flag.ispen|flag.owngoal)
+dat.scr=dat[flag,]
+
+rm(ispen)
+rm(owngoal)
+rm(flag.na)
+rm(flag.ispen)
+rm(flag.owngoal)
+rm(flag)
+rm(c_name)
+
+#pre-processe pig, right, left, and top; and time
+pig_right=550-as.double(dat.scr[["pig"]])
+leftc=str_match(dat.scr[["style"]],"left: ([0-9]*)px")#character matrix
+left=as.double(leftc[,2])#double matrix
+rightc=str_match(dat.scr[["style"]],"right: ([0-9]*)px")
+right=as.double(rightc[,2])
+topc=str_match(dat.scr[["style"]],"top: ([0-9]*)px")
+top=as.double(topc[,2])
+
+right[!is.na(left)]=1000-left[!is.na(left)]#make right column complete because of the pig_right
+dis=sqrt((right-pig_right)^2+top^2)
+
+dat.scr[["ptime"]]=as.double(dat.scr[["ptime"]])
+
+#attr(dat.scr,"names")[numc]="pig_right" #could get error
+dat.scr["pig_right"]=pig_right #automattically bind a column on the end of dat.scr with given name.
+
+numc=numc+1L 
+
+#attr(dat.scr,"names")[numc]="right"
+dat.scr["right"]=right
+
+numc=numc+1L
+
+#attr(dat.scr,"names")[numc]="left"
+dat.scr["left"]=left
+
+numc=numc+1L
+
+#attr(dat.scr,"names")[numc]="top"
+dat.scr["top"]=top
+
+numc=numc+1L
+
+#attr(dat.scr,"names")[numc]="dis"
+dat.scr["dis"]=dis
+
+numc=numc+1L
+
+#Visulization of distance goals travel v.s. time, with goaler's name and national flag as background.
+ge<-which(dat.scr["pteam"]=="Germany")
+ar<-which(dat.scr["pteam"]=="Argentina")
+ne<-which(dat.scr["pteam"]=="Netherlands")
+br<-which(dat.scr["pteam"]=="Brazil")
+
+library(png)
+#Germany
+img<-readPNG("HW1/GeT.png")
+mark<-ge
+coun="Germany"
+op<-par(ps=15)
+plot(dat.scr[["ptime"]][mark], dat.scr[["dis"]][mark],ylim=c(0,400),xlim=c(0,125),xlab="Time (minutes)", ylab="Distance of goal",main=coun)
+lim <- par()
+rasterImage(img, lim$usr[1], lim$usr[3], lim$usr[2], lim$usr[4])
+#grid()
+segments(x0=dat.scr[["ptime"]][mark], y0=dat.scr[["dis"]][mark], y1=0, col="#303030")
+points(dat.scr[["ptime"]][mark],dat.scr[["dis"]][mark],pch=21, col=1, bg="#1D10FC")
+text(dat.scr[["ptime"]][mark], dat.scr[["dis"]][mark], dat.scr[["pname"]][mark], cex=0.53, pos=4, col="black")
+abline(v=90,lty=2,col="#050505")
+
+#Argentina
+img<-readPNG("HW1/ArT.png")
+mark<-ar
+coun="Argentina"
+op<-par(ps=15)
+plot(dat.scr[["ptime"]][mark], dat.scr[["dis"]][mark],ylim=c(0,400),xlim=c(0,125),xlab="Time (minutes)", ylab="Distance of goal",main=coun)
+lim <- par()
+rasterImage(img, lim$usr[1], lim$usr[3], lim$usr[2], lim$usr[4])
+#grid()
+segments(x0=dat.scr[["ptime"]][mark], y0=dat.scr[["dis"]][mark], y1=0, col="#303030")
+points(dat.scr[["ptime"]][mark],dat.scr[["dis"]][mark],pch=21, col=1, bg="#1D10FC")
+text(dat.scr[["ptime"]][mark], dat.scr[["dis"]][mark], dat.scr[["pname"]][mark], cex=0.53, pos=4, col="black")
+abline(v=90,lty=2,col="#050505")
+
+#Netherlands
+img<-readPNG("HW1/NeT.png")
+mark<-ne
+coun="Netherlands"
+op<-par(ps=15)
+plot(dat.scr[["ptime"]][mark], dat.scr[["dis"]][mark],ylim=c(0,400),xlim=c(0,125),xlab="Time (minutes)", ylab="Distance of goal",main=coun)
+lim <- par()
+rasterImage(img, lim$usr[1], lim$usr[3], lim$usr[2], lim$usr[4])
+#grid()
+segments(x0=dat.scr[["ptime"]][mark], y0=dat.scr[["dis"]][mark], y1=0, col="#303030")
+points(dat.scr[["ptime"]][mark],dat.scr[["dis"]][mark],pch=21, col=1, bg="#1D10FC")
+text(dat.scr[["ptime"]][mark], dat.scr[["dis"]][mark], dat.scr[["pname"]][mark], cex=0.53, pos=4, col="black")
+abline(v=90,lty=2,col="#050505")
+
+
+#Brazil
+img<-readPNG("HW1/BrT.png")
+mark<-br
+coun="Brazil"
+op<-par(ps=15)
+plot(dat.scr[["ptime"]][mark], dat.scr[["dis"]][mark],ylim=c(0,400),xlim=c(0,125),xlab="Time (minutes)", ylab="Distance of goal",main=coun)
+lim <- par()
+rasterImage(img, lim$usr[1], lim$usr[3], lim$usr[2], lim$usr[4])
+#grid()
+segments(x0=dat.scr[["ptime"]][mark], y0=dat.scr[["dis"]][mark], y1=0, col="#303030")
+points(dat.scr[["ptime"]][mark],dat.scr[["dis"]][mark],pch=21, col=1, bg="#1D10FC")
+text(dat.scr[["ptime"]][mark], dat.scr[["dis"]][mark], dat.scr[["pname"]][mark], cex=0.53, pos=4, col="black")
+abline(v=90,lty=2,col="#050505")
+```
+
