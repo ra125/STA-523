@@ -6,8 +6,16 @@
 
 # R data files from past sessions
 .Rdata
+<<<<<<< HEAD
+.Rproj.user
+.RData
+=======
 
 
 # HTML files
 *.html
+<<<<<<< HEAD
+>>>>>>> 69f1d61b4cee602a17260d931e05d5a74254a3bb
+=======
 .Rproj.user
+>>>>>>> b3e83f234735a4e8373124cd457c2e4ef54729d8

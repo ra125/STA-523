@@ -1,10 +1,4 @@
-######
-# title: "Homework1_Part1"
-# output: html_document
-######
-
-```{r}
-
+<<<<<<< HEAD
 library('stringr')
 
 d <- readLines("~cr173/Sta523/data/world_cup_goals_raw.txt")
@@ -45,7 +39,8 @@ right[1-is.na(left)]=1000-left[1-is.na(left)]#make right column complete because
 
 ## insert values to the matrix called "data"
 
-data <- matrix(data=NA,nrow=length(d)-1,ncol=14)#only 193 out of 194 rows have data; expand columns becasue of partition of "style"
+data <- matrix(data=NA,nrow=length(d)-1,ncol=14)
+#only 193 out of 194 rows have data; expand columns becasue of partition of "style"
 data <- data.frame(data)
 
 index <- seq(1,length(d)-1,1)
@@ -103,6 +98,14 @@ dim(original)
 dim(data)
 
 
+=======
+######
+# title: "Homework1_Part1"
+# output: html_document
+######
+
+```{r}
+>>>>>>> 20570af9fd0f417d5c3da923073695a656a7f9dc
 
 #simplier code for matching and data matching and sorting.
 #add pig_right, right, left, top data in to data.scr, so that original data wouldn't lost
@@ -114,18 +117,24 @@ c_name.sorted<-c_name[[1]][,2][c_name[[1]][,2][]!="pteamimg"]#c_name.sorted beco
 numc=length(c_name.sorted)#better not to name number of column as ncol, since it is parameter name of matrix. 
 #must create a new data.frame, otherwise will report error
 dat <- matrix(data=NA,nrow=length(d),ncol=numc)
+dat <- matrix(data=NA,nrow=length(d),ncol=length(c_name[[1]][2]))
 dat <- data.frame(dat)
 #extract all raw data
 flag.na=rep(F,length(d))#rule out NA rows
 
 for (i in 1:numc)
+ncol=length(c_name[[1]][,2])
+for (i in 1:ncol)
   {
   con=str_match(d,paste(" ",c_name.sorted[i],"=\"([^\"]*)\"",sep=""))#str_match return a matrix, instead of a list, easier to manipulate
+  con=str_match(d,paste(" ",c_name[[1]][i,2],"=\"([^\"]*)\"",sep=""))#str_match return a matrix, instead of a list, easier to manipulate
   dat[i]=con[,2]
   attr(dat,"names")[i]=c_name.sorted[i]
+  attr(dat,"names")[i]=c_name[[1]][i,2]
   flag.na=flag.na|is.na(dat[[i]])
   }
 numc=numc+1L
+ncol=ncol+1L
 
 ispen=str_match(dat[["class"]],"ispen")
 flag.ispen=!is.na(ispen)
@@ -149,30 +158,41 @@ dis=sqrt((right-pig_right)^2+top^2)
 
 dat.scr[["ptime"]]=as.double(dat.scr[["ptime"]])
 
-#attr(dat.scr,"names")[numc]="pig_right" #could get error
+#attr(dat.scr,"names")[numc]="pig_right"
 dat.scr["pig_right"]=pig_right #automattically bind a column on the end of dat.scr with given name.
+attr(dat.scr,"names")[ncol]="pig_right"
+dat.scr["pig_right"]=pig_right
 
 numc=numc+1L 
+ncol=ncol+1L 
 
 #attr(dat.scr,"names")[numc]="right"
+attr(dat.scr,"names")[ncol]="right"
 dat.scr["right"]=right
 
 numc=numc+1L
+ncol=ncol+1L
 
 #attr(dat.scr,"names")[numc]="left"
+attr(dat.scr,"names")[ncol]="left"
 dat.scr["left"]=left
 
 numc=numc+1L
+ncol=ncol+1L
 
 #attr(dat.scr,"names")[numc]="top"
+attr(dat.scr,"names")[ncol]="top"
 dat.scr["top"]=top
 
 numc=numc+1L
+ncol=ncol+1L
 
 #attr(dat.scr,"names")[numc]="dis"
+attr(dat.scr,"names")[ncol]="dis"
 dat.scr["dis"]=dis
 
 numc=numc+1L
+ncol=ncol+1L
 
 #Visulization of distance goals travel v.s. time, with goaler's name and national flag as background.
 ge<-which(dat.scr["pteam"]=="Germany")
@@ -221,8 +241,3 @@ rasterImage(brimg, lim$usr[1], lim$usr[3], lim$usr[2], lim$usr[4])
 #grid()
 points(dat.scr[["ptime"]][br],dat.scr[["dis"]][br],pch=21, col=1, bg=2)
 segments(x0=dat.scr[["ptime"]][br], y0=dat.scr[["dis"]][br], y1=0, col=8)
-
-```
-
-
-
