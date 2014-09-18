@@ -4,6 +4,22 @@ author: "Sophie Lee"
 date: "September 17, 2014"
 output: html_document
 ---
+Task 1: Parsing
+The parsing process consists of four steps: 1. Extracting categorical names for column names; 2. Extracting content for each column name by designing matching patterns, so that common features of these categories can be used; 3. Excluding unwanted entries by using subsetting; 4. Pre-process the data for distance calculation.
+
+1.
+By using the first row of data, the categorical names can be extracted by applying matching condition “ ([a-z]*)=”, because the column names are outside of double quote, and followed with a “=”. Using “str_match_all” can return all those categorical names for future column names.
+
+2.
+The contents of those categories have some common features: (1) Before the “”, there is a “ “ and a categorical name followed by a “=”.By using function “paste”, I can concatenate those patterns together, with a vector entry “c_name.sorted[i]”, so that “for” loop can be used to run across columns. This can make code more concise. (2) They all are enclosed by “”, within which there are no “, so we can use "=\"([^\"]*)\"" as matching pattern inside “”. (3) Neighboring categories are separated by “ “, so that we can specify sep=” “. Using “str_match” instead of “str_match_all” can return the one content corresponding to that categorical name. 
+
+3.
+During “for” loop, the “flag.na” is used to match the NA entries. After “for” loop, “ispen” of “class” column and “Own goal” of “ptype” column are matched. Those index are returned and used to generate a vector to subset valid rows. 
+
+4. Some data are not ready to use, for example, “pig”, “style”. First, their type are not numeric, so that directly calculation by referring them would report errors. Second, some of them are not simple enough, because in “style”, three categories are enclosed, and “right” or “left” are not completed. Matching them, and adding them as columns to dataset, with more processing, make the dataset ready to be used.  
+
+
+Task 2: Visulization
 
 The graph we generated summarizes the information of the goals by the players of the final four countries: Germany (champion), Argentina (runner up), Netherlands (third place), and Brazil (fourth place). Represented by its own flag, each country graph shows the range of goals and the time (in minutes) that the goal was scored, as well as the name of the goaler. As the champion, Germany made the most goals among the four countries. In contrast, Argentina has made its way up as a good defensive team. In terms of the style in aggression, Germany scored many of its goals early on while the Netherlands scored many of its goals later towards the end of the second half.    
 
