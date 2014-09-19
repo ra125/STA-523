@@ -7,7 +7,7 @@ output: html_document
 
 
 ```{r}
-#simplier code for matching and data matching and sorting.
+#simpler code for matching and data matching and sorting.
 
 
 library('stringr')
@@ -41,7 +41,7 @@ dat.scr=dat[flag,]
 #remove temporary variables
 rm(ispen, owngoal, flag.na, flag.ispen, flag.owngoal, flag, c_name)
 
-#pre-processe pig, right, left, and top; and time
+#pre-process pig, right, left, and top; and time
 pig_right=550-as.double(dat.scr[["pig"]])
 leftc=str_match(dat.scr[["style"]],"left: ([0-9]*)px")#character matrix
 left=as.double(leftc[,2])#double matrix
