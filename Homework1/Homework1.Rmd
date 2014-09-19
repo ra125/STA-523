@@ -144,6 +144,7 @@ abline(v=90,lty=2,col="#050505")
 axis(1, at=90,labels=90)
 
 library('jsonlite')
+library('rjson')
 
 jsondata <- list()
 for(i in 1:nrow(dat.scr)) { 
@@ -158,17 +159,17 @@ for(i in 1:nrow(dat.scr)) {
   players <- jsondata[[country]][["Players"]]
   if(is.null(players[[player]])) { 
     players[[player]] <- list()
-    players[[player]][["ID"]] <- toString(dat.scr[i, "pid"]);
+    players[[player]][["ID"]] <- as.numeric(toString(dat.scr[i, "pid"]));
     players[[player]][["Goals"]] <- list()
   }
   
-  goal <- list(Type=toString(dat.scr[i, "ptype"]), MatchID=toString(dat.scr[i, "mid"]), Time=as.numeric(toString(dat.scr[i, "ptime"])), ExtraTime=as.numeric(toString(dat.scr[i, "paddtime"])), PIG_right=as.numeric(toString(dat.scr[i, "pig_right"])), Right=as.numeric(toString(dat.scr[i, "right"])), Top=as.numeric(toString(dat.scr[i, "top"]))) 
+  goal <- list(Type=toString(dat.scr[i, "ptype"]), MatchID=as.numeric(toString(dat.scr[i, "mid"])), Time=as.numeric(toString(dat.scr[i, "ptime"])), ExtraTime=as.numeric(toString(dat.scr[i, "paddtime"])), PIG_right=as.numeric(toString(dat.scr[i, "pig_right"])), Right=as.numeric(toString(dat.scr[i, "right"])), Top=as.numeric(toString(dat.scr[i, "top"]))) 
   
   players[[player]][["Goals"]] <- c(players[[player]][["Goals"]], list(goal))
   jsondata[[country]][["Players"]] <- players
 }
 
-final_json <- toJSON(jsondata)
+final_json <- rjson::toJSON(jsondata)
 prettify(final_json)
 
 ```
