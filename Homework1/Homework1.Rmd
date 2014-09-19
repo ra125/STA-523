@@ -83,7 +83,7 @@ br<-which(dat.scr["pteam"]=="Brazil")
 
 library(png)
 #Germany
-img<-readPNG("HW1/GeT.png")
+img<-readPNG("Homework1/GeT.png")
 mark<-ge
 coun="Germany"
 op<-par(ps=15)
@@ -98,7 +98,7 @@ abline(v=90,lty=2,col="#050505")
 axis(1, at=90,labels=90)
 
 #Argentina
-img<-readPNG("HW1/ArT.png")
+img<-readPNG("Homework1/ArT.png")
 mark<-ar
 coun="Argentina"
 op<-par(ps=15)
@@ -113,7 +113,7 @@ abline(v=90,lty=2,col="#050505")
 axis(1, at=90,labels=90)
 
 #Netherlands
-img<-readPNG("HW1/NeT.png")
+img<-readPNG("Homework1/NeT.png")
 mark<-ne
 coun="Netherlands"
 op<-par(ps=15)
@@ -128,7 +128,7 @@ abline(v=90,lty=2,col="#050505")
 axis(1, at=90,labels=90)
 
 #Brazil
-img<-readPNG("HW1/BrT.png")
+img<-readPNG("Homework1/BrT.png")
 mark<-br
 coun="Brazil"
 op<-par(ps=15)
