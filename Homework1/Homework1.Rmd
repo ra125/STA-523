@@ -81,7 +81,6 @@ ar<-which(dat.scr["pteam"]=="Argentina")
 ne<-which(dat.scr["pteam"]=="Netherlands")
 br<-which(dat.scr["pteam"]=="Brazil")
 
-setwd("~/home/vis/kz29/Team6/Homework")
 library(png)
 #Germany
 img<-readPNG("HW1/GeT.png")
@@ -151,10 +150,10 @@ for(i in 1:nrow(dat.scr)) {
   country <- toString(dat.scr[i, "pteam"]);
   if(is.null(jsondata[[country]])) { 
     jsondata[[country]] <- list() 
-    jsondata[[country]][["Totals Goals"]] <- 0
+    jsondata[[country]][["Total Goals"]] <- 0
     jsondata[[country]][["Players"]] <- list()
   }
-  jsondata[[country]][["Totals Goals"]] = jsondata[[country]][["Totals Goals"]] + 1
+  jsondata[[country]][["Total Goals"]] = jsondata[[country]][["Total Goals"]] + 1
   player <- toString(dat.scr[i, "pname"]);
   players <- jsondata[[country]][["Players"]]
   if(is.null(players[[player]])) { 
