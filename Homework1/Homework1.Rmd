@@ -104,7 +104,7 @@ img<-readPNG("GeT.png")
 mark<-ge
 coun="Germany"
 op<-par(ps=15)
-plot(dat.scr[["ptime"]][mark], dat.scr[["dis"]][mark],ylim=c(0,400),xlim=c(0,125),xlab="Time (minutes)", ylab="Length of goal",main=coun)
+plot(dat.scr[["ptime"]][mark], dat.scr[["dis"]][mark],ylim=c(0,400),xlim=c(0,125),xlab="Time (minutes)", ylab="Length of goal (pixel)",main=coun)
 lim <- par()
 rasterImage(img, lim$usr[1], lim$usr[3], lim$usr[2], lim$usr[4])
 #grid()
@@ -119,7 +119,7 @@ img<-readPNG("ArT.png")
 mark<-ar
 coun="Argentina"
 op<-par(ps=15)
-plot(dat.scr[["ptime"]][mark], dat.scr[["dis"]][mark],ylim=c(0,400),xlim=c(0,125),xlab="Time (minutes)", ylab="Length of goal",main=coun)
+plot(dat.scr[["ptime"]][mark], dat.scr[["dis"]][mark],ylim=c(0,400),xlim=c(0,125),xlab="Time (minutes)", ylab="Length of goal (pixel)",main=coun)
 lim <- par()
 rasterImage(img, lim$usr[1], lim$usr[3], lim$usr[2], lim$usr[4])
 #grid()
@@ -134,7 +134,7 @@ img<-readPNG("NeT.png")
 mark<-ne
 coun="Netherlands"
 op<-par(ps=15)
-plot(dat.scr[["ptime"]][mark], dat.scr[["dis"]][mark],ylim=c(0,400),xlim=c(0,125),xlab="Time (minutes)", ylab="Length of goal",main=coun)
+plot(dat.scr[["ptime"]][mark], dat.scr[["dis"]][mark],ylim=c(0,400),xlim=c(0,125),xlab="Time (minutes)", ylab="Length of goal (pixel)",main=coun)
 lim <- par()
 rasterImage(img, lim$usr[1], lim$usr[3], lim$usr[2], lim$usr[4])
 #grid()
@@ -149,7 +149,7 @@ img<-readPNG("BrT.png")
 mark<-br
 coun="Brazil"
 op<-par(ps=15)
-plot(dat.scr[["ptime"]][mark], dat.scr[["dis"]][mark],ylim=c(0,400),xlim=c(0,125),xlab="Time (minutes)", ylab="Length of goal",main=coun)
+plot(dat.scr[["ptime"]][mark], dat.scr[["dis"]][mark],ylim=c(0,400),xlim=c(0,125),xlab="Time (minutes)", ylab="Length of goal (pixel)",main=coun)
 lim <- par()
 rasterImage(img, lim$usr[1], lim$usr[3], lim$usr[2], lim$usr[4])
 #grid()
