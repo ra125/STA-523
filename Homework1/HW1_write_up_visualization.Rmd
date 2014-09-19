@@ -5,18 +5,36 @@ date: "September 17, 2014"
 output: html_document
 ---
 Task 1: Parsing
-The parsing process consists of four steps: 1. Extracting categorical names for column names; 2. Extracting content for each column name by designing matching patterns, so that common features of these categories can be used; 3. Excluding unwanted entries by using subsetting; 4. Pre-process the data for distance calculation. The data frame ready to be used is "dat.scr" with original columns and newly added columns replacing some older ones (i.e. "style", "pig").
+The parsing process consists of four steps: 1. Extracting column names; 2. Extracting content for each column by designing matching patterns, so that common features of these categories can be used; 3. Excluding unwanted entries by using subsetting; 4. Pre-processing the data for goal-length calculation. 
+
+The full extracted data is in the dataframe called "dat" which has all the rows and columns as in the raw data. 
+
+The data frame ready to be used with all the processed data is "dat.scr". 
+
+Steps explaination:
 
 1.
-By using the first row of data, the categorical names can be extracted by applying matching condition “ ([a-z]*)=”, because the column names are outside of double quote, and followed with a “=”. Using “str_match_all” can return all those categorical names for future column names.
+By using the first row of data, the column names can be extracted by applying matching condition “ ([a-z]*)=”, because the column names are outside of double quote, and followed with a “=”. Using “str_match_all” can return all those categorical names for future column names.
 
 2.
-The contents of those categories have some common features: (1) Before the “”, there is a “ “ and a categorical name followed by a “=”.By using function “paste”, I can concatenate those patterns together, with a vector entry “c_name.sorted[i]”, so that “for” loop can be used to run across columns. This can make code more concise. (2) They all are enclosed by “”, within which there are no “, so we can use "=\"([^\"]*)\"" as matching pattern inside “”. (3) Neighboring categories are separated by “ “, so that we can specify sep=” “. Using “str_match” instead of “str_match_all” can return the one content corresponding to that categorical name. 
+The contents of those columns have some common features: (1) Before the “”, there is a “ “ and a column name followed by a “=”.By using function “paste”, we can concatenate those patterns together, with a vector entry “c_name.sorted[i]”, so that “for” loop can be used to run across columns. This can make code more concise. (2) They all are enclosed by “”, within which there are no “, so we can use "=\"([^\"]*)\"" as matching pattern inside “”. (3) Neighboring categories are separated by “ “, so that we can specify sep=” “. Using “str_match” instead of “str_match_all” can return the one content corresponding to that column name. 
 
 3.
-During “for” loop, the “flag.na” is used to match the NA entries. After “for” loop, “ispen” of “class” column and “Own goal” of “ptype” column are matched. Those index are returned and used to generate a vector to subset valid rows. 
+During “for” loop, the “flag.na” is used to match the NA entries so as to remove the last row which has NA entries. 
 
-4. Some data are not ready to use, for example, “pig”, “style”. First, their type are not numeric, so that directly calculation by referring them would report errors. Second, some of them are not simple enough, because in “style”, three categories are enclosed, and “right” or “left” are not completed. Matching them, and adding them as columns to dataset, with more processing, make the dataset ready to be used.  
+Next, we remove the data about "Own goal" because in this data own goals are considered to be countries' goals whereas it should be the opposite (we need more documentation to be sure of this). We also remove th data for penalty shootouts for the purpose of our visualizations. This is done as: After “for” loop, “ispen” of “class” column and “Own goal” of “ptype” column are matched. Those indices are returned and used to generate a vector to subset only the  required rows. 
+
+4. Further, some data are not ready to use, for example, “pig”, “style”. First, their type are not numeric, so that directly calculation by referring them would report errors. Second, some of them are not simple enough, because in “style”, three categories are enclosed (right, left and top). Therfore we preprocess as follows:
+
+Add "pig_right"" and remove "pig". "pig_right" gives the position in goal from the right axis of the field.
+
+Remove "style" and instead add "right" and "top" columns to get coordinates of goal from right and top axis.
+
+Remove "pmatch" as it is the same as "mid".
+
+Remove "pteaming" as we dont need it. We have separately extracted the 4 country flags we need for our visualizations.
+
+Remove "class" as it provides the same information as "pteam".
 
 
 Task 2: Visulization
