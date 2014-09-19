@@ -21,7 +21,20 @@ During “for” loop, the “flag.na” is used to match the NA entries. After 
 
 Task 2: Visulization
 
-The graph we generated summarizes the information of the goals by the players of the final four countries: Germany (champion), Argentina (runner up), Netherlands (third place), and Brazil (fourth place). Represented by its own flag, each country graph shows the range of goals and the time (in minutes) that the goal was scored, as well as the name of the goaler. As the champion, Germany made the most goals among the four countries. In contrast, Argentina has made its way up as a good defensive team. In terms of the style in aggression, Germany scored many of its goals early on while the Netherlands scored many of its goals later towards the end of the second half.    
+The graphs we generate, as part of the visualization task, summarize the information of the goals scored by the final four countries: Germany (champion), Argentina (runner up), Netherlands (third place), and Brazil (fourth place). Represented by its own flag, each country graph shows the length of goals and the time (in minutes) at which the goal was scored, as well as the name of the goaler.
+
+ASSUMPTION (after looking at the source code of the data): To find the length of each goal, we assume the field length to be 0 to 1000 pixels (on the screen) and the goal-post length to be 100 pixels (from 450 to 550 pixels in the field). Next we use pig and style to calculate goal length.
+. 
+We believe that we can figure out each team’s strengths and weaknesses by comparing the patterns of goal distances by time. 
+
+As we can see from the 4 visualizations, Germany (the champion) scores the most goals among the four countries. Relatively, most of goals were made in the first half and were mid-ranged (not too long, not too short) It is clear that Germany adopted a very attacking strategy.
+
+On the other hand, even though Argentina scored the least goals (amongst the 4), it made its way up as a good defensive team. It didn’t let its opponents score too and hence was the runner ups. Also, most of Argentina’s goals were long-ranged.
+
+Next, we see that Netherlands scores most of its goals in the second half of the game. This implies that Netherlands would never give up and is very capable of getting back towards the finishing time.
+
+Brazil made its goals in various ranges and times. They have some long and some short goals and there is no striking trend in the time at which they score goals. This could also be true because one of their players was injured and the other was penalized in the semi-finals (the period for which we are making our visualizations)
+
 
 
 

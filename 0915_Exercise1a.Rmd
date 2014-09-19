@@ -40,6 +40,7 @@ benchmark(
 # }
 
   # 3) vapply, 
+  vsupply(d[,1:10],function(x) x[x==1], max)
 
   # 4) single for loop:
 for1= function() {
