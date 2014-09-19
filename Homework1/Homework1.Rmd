@@ -131,7 +131,6 @@ axis(1, at=90,labels=90)
 
 #Netherlands
 img<-readPNG("NeT.png")
->>>>>>> 8170730c87b777d22797f83b557ae8bc93c7b0e1
 mark<-ne
 coun="Netherlands"
 op<-par(ps=15)
