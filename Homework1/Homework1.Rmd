@@ -1,5 +1,5 @@
 ---
-title: "HW1-New Version"
+title: "Homework1"
 author: "Radhika Anand, Sophie Lee, Minjung Park, Kungang Zhang"
 date: "9/17/2014"
 output: html_document
@@ -72,6 +72,23 @@ numc=numc+1L
 #remove columns of "pig"" and "style", "class", "pmatch", "pteam"
 dat.scr<-dat.scr[-c(2,3,11,12,13)]
 
+dat.scr[["pid"]]<-as.integer(dat.scr[["pid"]])
+dat.scr[["mid"]]<-as.integer(dat.scr[["mid"]])
+
+#Change the html formatted characters in name to foreign characters 
+#Germany name
+dat.scr[["pname"]]<-sub("Mesut &Ouml;zil","Mesut Özil",dat.scr[["pname"]])
+dat.scr[["pname"]]<-sub("Thomas M&uuml;ller","Thomas Müller",dat.scr[["pname"]])
+dat.scr[["pname"]]<-sub("Mario G&ouml;tze","Mario Götze",dat.scr[["pname"]])
+dat.scr[["pname"]]<-sub("Andr&eacute; Sch&uuml;rrle","André Schürrle",dat.scr[["pname"]])
+
+#Argentina name
+dat.scr[["pname"]]<-sub("Gonzalo Higua&iacute;n","Gonzalo Higuaín",dat.scr[["pname"]])
+dat.scr[["pname"]]<-sub("&Aacute;ngel Di Mar&iacute;a","Gonzalo Higuaín",dat.scr[["pname"]])
+
+#Brazil name
+dat.scr[["pname"]]<-sub("Osc&aacute;r","Oscar",dat.scr[["pname"]])
+
 #remove temporary variables
 rm(pig_right, right, left, top, dis, rightc, leftc, topc)
 
@@ -81,10 +98,9 @@ ar<-which(dat.scr["pteam"]=="Argentina")
 ne<-which(dat.scr["pteam"]=="Netherlands")
 br<-which(dat.scr["pteam"]=="Brazil")
 
-setwd("~/home/vis/kz29/Team6/Homework")
 library(png)
 #Germany
-img<-readPNG("HW1/GeT.png")
+img<-readPNG("GeT.png")
 mark<-ge
 coun="Germany"
 op<-par(ps=15)
@@ -99,7 +115,7 @@ abline(v=90,lty=2,col="#050505")
 axis(1, at=90,labels=90)
 
 #Argentina
-img<-readPNG("HW1/ArT.png")
+img<-readPNG("ArT.png")
 mark<-ar
 coun="Argentina"
 op<-par(ps=15)
@@ -114,7 +130,7 @@ abline(v=90,lty=2,col="#050505")
 axis(1, at=90,labels=90)
 
 #Netherlands
-img<-readPNG("HW1/NeT.png")
+img<-readPNG("NeT.png")
 mark<-ne
 coun="Netherlands"
 op<-par(ps=15)
@@ -129,7 +145,7 @@ abline(v=90,lty=2,col="#050505")
 axis(1, at=90,labels=90)
 
 #Brazil
-img<-readPNG("HW1/BrT.png")
+img<-readPNG("BrT.png")
 mark<-br
 coun="Brazil"
 op<-par(ps=15)
