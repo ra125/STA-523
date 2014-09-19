@@ -81,9 +81,9 @@ ar<-which(dat.scr["pteam"]=="Argentina")
 ne<-which(dat.scr["pteam"]=="Netherlands")
 br<-which(dat.scr["pteam"]=="Brazil")
 
+setwd("~/home/vis/kz29/Team6/Homework")
 library(png)
 #Germany
-setwd("~/home/vis/kz29/Team6/")
 img<-readPNG("HW1/GeT.png")
 mark<-ge
 coun="Germany"
