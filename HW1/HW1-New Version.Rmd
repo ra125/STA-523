@@ -29,6 +29,7 @@ for (i in 1:numc)
   flag.na=flag.na|is.na(dat[[i]])
   }
 numc=numc+1L
+dat
 
 ispen=str_match(dat[["class"]],"ispen")
 flag.ispen=!is.na(ispen)
@@ -75,6 +76,8 @@ dat.scr<-dat.scr[-c(2,3,11,12,13)]
 #remove temporary variables
 rm(pig_right, right, left, top, dis, rightc, leftc, topc)
 
+dat.scr
+
 #Visulization of distance goals travel v.s. time, with goaler's name and national flag as background.
 ge<-which(dat.scr["pteam"]=="Germany")
 ar<-which(dat.scr["pteam"]=="Argentina")
@@ -83,7 +86,7 @@ br<-which(dat.scr["pteam"]=="Brazil")
 
 library(png)
 #Germany
-img<-readPNG("HW1/GeT.png")
+img<-readPNG("~/Team_6/HW1/GeT.png")
 mark<-ge
 coun="Germany"
 op<-par(ps=15)
@@ -98,7 +101,7 @@ abline(v=90,lty=2,col="#050505")
 axis(1, at=90,labels=90)
 
 #Argentina
-img<-readPNG("HW1/ArT.png")
+img<-readPNG("~/Team_6/HW1/ArT.png")
 mark<-ar
 coun="Argentina"
 op<-par(ps=15)
@@ -113,7 +116,7 @@ abline(v=90,lty=2,col="#050505")
 axis(1, at=90,labels=90)
 
 #Netherlands
-img<-readPNG("HW1/NeT.png")
+img<-readPNG("~/Team_6/HW1/NeT.png")
 mark<-ne
 coun="Netherlands"
 op<-par(ps=15)
@@ -128,7 +131,7 @@ abline(v=90,lty=2,col="#050505")
 axis(1, at=90,labels=90)
 
 #Brazil
-img<-readPNG("HW1/BrT.png")
+img<-readPNG("~/Team_6/HW1/BrT.png")
 mark<-br
 coun="Brazil"
 op<-par(ps=15)
@@ -157,11 +160,11 @@ for(i in 1:nrow(dat.scr)) {
   players <- jsondata[[country]][["Players"]]
   if(is.null(players[[player]])) { 
     players[[player]] <- list()
-    players[[player]][["ID"]] <- toString(dat.scr[i, "pid"]);
+    players[[player]][["ID"]] <- as.numeric(toString(dat.scr[i, "pid"]));
     players[[player]][["Goals"]] <- list()
   }
   
-  goal <- list(Type=toString(dat.scr[i, "ptype"]), MatchID=toString(dat.scr[i, "mid"]), Time=as.numeric(toString(dat.scr[i, "ptime"])), ExtraTime=as.numeric(toString(dat.scr[i, "paddtime"])), PIG_right=as.numeric(toString(dat.scr[i, "pig_right"])), Right=as.numeric(toString(dat.scr[i, "right"])), Top=as.numeric(toString(dat.scr[i, "top"]))) 
+  goal <- list(Type=toString(dat.scr[i, "ptype"]), MatchID=as.numeric(toString(dat.scr[i, "mid"])), Time=as.numeric(toString(dat.scr[i, "ptime"])), ExtraTime=as.numeric(toString(dat.scr[i, "paddtime"])), PIG_right=as.numeric(toString(dat.scr[i, "pig_right"])), Right=as.numeric(toString(dat.scr[i, "right"])), Top=as.numeric(toString(dat.scr[i, "top"]))) 
   
   players[[player]][["Goals"]] <- c(players[[player]][["Goals"]], list(goal))
   jsondata[[country]][["Players"]] <- players
