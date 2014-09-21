@@ -209,11 +209,11 @@ axis(1, at=90,labels=90)
 
 As we can see from the 4 graphs, Germany (the champion) scored the most goals amongst the four countries. Relatively, most of goals were made in the first half and were mid-ranged (not too long, not too short). It is clear that Germany adopted a very offensive strategy.
 
-On the other hand, Argentina scored the least goals, amongst the final four. It made its way up as a good defensive team. One can infer that Argentina did not let its opponents score either and hence became the runner-up. We also see that most of Argentina’s goals were long-ranged.
+On the other hand, even though Argentina scored the least goals amongst the final four, it made its way up as a very good defensive team. One can infer that Argentina did not let its opponents score either and hence became the runner-up. We also see that most of Argentina’s goals were long-ranged.
 
-Next, we see that the Netherlands scored most of its goals during the second half of the game. This implies that the Netherlands was the team that never gave up till the end and was capable of coming back in the game even when the game was almost over.
+Next, we see that the Netherlands scored most of its goals during the second half of the game. This implies that the Netherlands was the team that never gave up and was capable of coming back in the game even when the game was almost over.
 
-Brazil was the 'hard-to-predict' team because its goals were in various ranges and times. They have some long as well as short ranged goals and there was no striking trend in the time at which they scored goals. This could also be true because one of their key players was injured and another one was penalized in the semi-final, the period of which we are making our visualizations.
+Brazil was the 'hard-to-predict' team because its goals were in various ranges and times. They have some long as well as short ranged goals and there was no striking trend in the time at which they scored goals. This could also be true because one of their key players was injured and another one was penalized in the semi-final, the period for which we are making our visualizations.
 
 # Task 3: Translating to JSON
 
