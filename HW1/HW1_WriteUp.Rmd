@@ -1,0 +1,102 @@
+---
+title: "Write up"
+author: "Radhika Anand, Sophie Lee, Minjung Park, Kungang Zhang"
+date: "September 17, 2014"
+output: html_document
+---
+Task 1: Parsing
+
+The parsing process consists of four steps: 1. Extracting column names; 2. Extracting content for each column by designing matching patterns; 3. Excluding unwanted entries by using subsetting; 4. Pre-processing the data for goal-length calculation. 
+
+The full extracted data is in the dataframe called "dat" which has all the rows and columns as in the raw data. 
+
+The data frame ready to be used with all the processed data is "dat.scr". 
+
+Steps explanation:
+
+1) By using the first row of data, the column names can be extracted by applying matching condition “ ([a-z]*)=”, because the column names are outside of double quote, and followed with a “=”. Using “str_match_all” can return all the column names.
+
+2) The contents of those columns have some common features: (1) Before the “”, there is a “ “ and a column name followed by a “=”.By using function “paste”, we can concatenate those patterns together, with a vector entry “c_name.sorted[i]”, so that “for” loop can be used to run across columns. This can make code more concise. (2) They all are enclosed by “”, within which there are no “, so we can use "=\"([^\"]*)\"" as matching pattern inside “”. (3) Neighboring categories are separated by “ “, so that we can specify sep=” “. Using “str_match” instead of “str_match_all” can return the one content corresponding to that column name. 
+
+3) During “for” loop, the “flag.na” is used to match the NA entries so as to remove the last row of "dat" which has NA entries. 
+
+Next, we remove the data about "Own goal" because in this raw data, own goals are considered to be countries' goals whereas it should be the opposite (we need more documentation to be sure of this). We also remove the data for penalty shootouts for the purpose of our visualizations. This is done as: After “for” loop, “ispen” of “class” column and “Own goal” of “ptype” column are matched. Those indices are returned and used to generate a vector to subset only the required rows. 
+
+4) Further, some data colums are not ready to use, for example, “pig”, “style”. First, their types are not numeric, so calculations referring to them would report errors. Second, some of them are not simple enough to use directly, example in “style”, three categories are enclosed (right, left and top). Therefore, we preprocess them.
+
+PREPROCESSING ASSUMPTION (deduced after looking at the source code of the data): The field length is 0 to 1000 pixels (on screen) and goal- post is 100 pixels in the field  i.e. from 450 to 550 pixels.
+
+We, hence, do the following:
+
+a) Add "pig_right" and remove "pig". "pig_right" gives the position in goal from the right side of the field (i.e. the distance, from the right side of the field, of the point at which ball entered the goal-post). It is calculated by subtracting pig from 550. Note: The vertical coordinate of the point at which ball enters the goal is always 0 from the top.
+
+b) Remove "style" and instead add "right" and "top" columns to get coordinates of the point from where goal was shot (distance reported from right and top axis). Any "left" coordinate in style is converted to right by subtracting from 1000.
+
+NOTE: "pig_right", "right" and "top" columns are all in pixels.
+
+c) Remove "pmatch" as it is the same as "mid".
+
+d) Remove "pteaming" as we dont need it. We have separately extracted the 4 country flags we need for our visualizations.
+
+e) Remove "class" as it provides the same information as "pteam".
+
+
+Task 2: Visualization
+
+The graphs we generate, as part of the visualization task, summarize the information of the goals scored by the final four countries: Germany (champion), Argentina (runners up), Netherlands (third place), and Brazil (fourth place). 
+
+Represented by its own flag, each country graph shows the length of goals and the time (in minutes) at which the goal was scored, as well as the name of the goaler. The length of the goal is calculated by finding the distance between the coordinates of the point from where the goal was shot (stored in columns "right" and "top") and the point where it entered the goal-post (stored in "pig_right", we only need horizontal coordinate for this point because vertical is 0)
+
+We believe that we can figure out each team’s strengths and weaknesses by comparing the patterns of goal-lengths and time. 
+
+As we can see from the 4 visualizations, Germany (the champion) scores the most goals amongst the four countries. Relatively, most of goals were made in the first half and were mid-ranged (not too long, not too short). It is clear that Germany adopted a very attacking strategy.
+
+On the other hand, even though Argentina scored the least goals (amongst the 4), it made its way up as a good defensive team. It didn’t let its opponents score too and hence Argentina was the runners up. We also see that most of Argentina’s goals were long-ranged.
+
+Next, we see that Netherlands scored most of its goals in the second half of the game. This implies that Netherlands would never give up and is very capable of getting back towards the finishing time.
+
+Brazil made its goals in various ranges and times. They have some long and some short goals and there is no striking trend in the time at which they scored goals. This could also be true because one of their players was injured and the other was penalized in the semi-finals (the period for which we are making our visualizations)
+
+Task 3: Translating to JSON
+
+The general idea is to group all the information by countries and then individual players. The JSON structure provides country-level information like total number of goals made by the country during all the matches and also provides data about each of the player's individual goals. To make the country-level data easily accessible via lookup, the countries are made as top-level keys and each value is again a dictionary with fields "Total Goals" and "Players". The "Players" field again has a dictionary value wherein each player's name is the key, and the value contains the player's "ID", total number of goals score by him "Total Goals" and "Goals" information. The "Goals" field contains information about the goals made by that player and since there can be multiple goals, its a list data structure with individual goals as the list elements. Ultimately, each goal is represented by a dictinary having keys like "Type", "Match ID", "Time", etc and the appropriate values for that goal One interesting field is "Coordinates" which captures the coordinates of the points from where the goal was shot ("Begin") and the point where it finally entered the goalpost ("End"). Each point is a dictionary with two fields - "x" and "y" representing the horizontal and vertical coordinates in the 2D field. We used two JSON packages "rjson" and "jsonlite". "jsonlite" was only use to pretty-print the final json output. If we were to write a JSON template for this, it would look like this:
+
+{ 
+  "<country A>" : {
+    "Total Goals": <number of goals made by country A>,
+  	"Players": { 
+			"<player 1 of country A>": {
+        	"ID": <id of player 1>,
+        	"Total Goals" : <total number of goals scored by that player>,
+        	"Goals": [
+					{
+						"Type": "<type of the goal made by player 1>",
+						"MatchID": "<id of match in which the goal was made>",
+						"Time": "<time of the goal>",
+						"ExtraTime": "<if the goal was made during extra time, then its recorded here>",
+						"Coordinates": {
+							"Begin": {
+								"x": <horizontal coordinate of the point from where the goal was shot (measured from right side of the field)>
+								"y": <vertical coordinate of the point from where the goal was shot (measured from top of the field)>
+							},
+							"End": {
+								"x": <horizontal coordinate of the point when the goal entered the post (measured from right side of the field)>,
+								"y": <vertical coordinate of the point when the goal entered the post (always 0) (measured from top of the field)>
+							}
+						}
+					}, 
+					{
+						<... information about the next goal ...>
+					}
+				]
+			}
+		}
+	}
+}
+
+
+
+```{r}
+
+```
+
