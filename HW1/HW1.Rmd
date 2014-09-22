@@ -1,5 +1,5 @@
 ---
-title: "Homework1"
+title: "HW1"
 author: "Radhika Anand, Sophie Lee, Minjung Park, Kungang Zhang"
 date: "9/17/2014"
 output: html_document
@@ -14,6 +14,8 @@ The parsing process consists of four steps:
 3. Excluding unwanted entries by using subsetting 
 4. Pre-processing the data for goal-length calculation
 
+The first 2 steps are for extracting the data and the next 2 steps are for pre-processing.
+
 The full extracted data is in the dataframe called **"dat"** which has all the rows and columns as in the raw data. The data frame ready to be used with all the processed data is **"dat.scr"**. 
 
 Steps explanation:
@@ -24,6 +26,8 @@ Steps explanation:
   + Before the double-quotes, there is a space and a column name followed by a "=".By using function `paste`, we can concatenate those patterns together, with a vector entry `c_name.sorted[i]`, so that `for` loop can be used to run across columns. This can make code more concise.
   + They all are enclosed by “”, within which there are no “, so we can use `=\"([^\"]*)\"` as matching pattern inside “”. 
   + Neighboring categories are separated by “ “, so that we can specify sep=” “. Using `str_match` instead of `str_match_all` can return the one content corresponding to that column name. 
+  
+We now have the dataframe called **"dat"** which has all the rows and columns as in the raw data. We will now preprocess it to get **"dat.scr"**.
 
 3) During `for` loop, the `flag.na` is used to match the NA entries so as to remove the last row of "dat" which has NA entries. Next, we remove the data about "Own goal" because in this raw data, own goals are considered to be countries' goals whereas it should be the opposite (we need more documentation to be sure of this). We also remove the data for penalty shootouts for the purpose of our visualizations. This is done as: After `for` loop, "ispen" of "class" column and “Own goal” of “ptype” column are matched. Those indices are returned and used to generate a vector to subset only the required rows. 
 
@@ -41,6 +45,7 @@ Steps explanation:
 
   + Remove "class" as it provides the same information as "pteam".
 
+We now have the dataframe called **"dat.scr"** (with all the necessary rows and columns), ready to be used for visualization and translation to JSON.
 
 ```{r}
 #code for data matching
@@ -238,8 +243,8 @@ The general idea is to group all the information by countries and then individua
 								"y": <vertical coordinate of the point from where the goal was shot (measured from top of the field)>
 							},
 							"End": {
-								"x": <horizontal coordinate of the point when the goal entered the post (measured from right side of the field)>,
-								"y": <vertical coordinate of the point when the goal entered the post (always 0) (measured from top of the field)>
+								"x": <horizontal coordinate of the point where the goal entered the post (measured from right side of the field)>,
+								"y": <vertical coordinate of the point where the goal entered the post (always 0) (measured from top of the field)>
 							}
 						}
 					}, 

@@ -6,40 +6,45 @@ output: html_document
 ---
 Task 1: Parsing
 
-The parsing process consists of four steps: 1. Extracting column names; 2. Extracting content for each column by designing matching patterns; 3. Excluding unwanted entries by using subsetting; 4. Pre-processing the data for goal-length calculation. 
+The parsing process consists of four steps: 
 
-The full extracted data is in the dataframe called "dat" which has all the rows and columns as in the raw data. 
+1. Extracting column names 
+2. Extracting content for each column by designing matching patterns
+3. Excluding unwanted entries by using subsetting 
+4. Pre-processing the data for goal-length calculation
 
-The data frame ready to be used with all the processed data is "dat.scr". 
+The first 2 steps are for extracting the data and the next 2 steps are for pre-processing.
+
+The full extracted data is in the dataframe called **"dat"** which has all the rows and columns as in the raw data. The data frame ready to be used with all the processed data is **"dat.scr"**. 
 
 Steps explanation:
 
-1) By using the first row of data, the column names can be extracted by applying matching condition “ ([a-z]*)=”, because the column names are outside of double quote, and followed with a “=”. Using “str_match_all” can return all the column names.
+1) By using the first row of data, the column names can be extracted by applying matching condition `([a-z]*)=`, because the column names are outside of double quote, and followed with a "=". Using `str_match_all` can return all the column names.
 
-2) The contents of those columns have some common features: (1) Before the “”, there is a “ “ and a column name followed by a “=”.By using function “paste”, we can concatenate those patterns together, with a vector entry “c_name.sorted[i]”, so that “for” loop can be used to run across columns. This can make code more concise. (2) They all are enclosed by “”, within which there are no “, so we can use "=\"([^\"]*)\"" as matching pattern inside “”. (3) Neighboring categories are separated by “ “, so that we can specify sep=” “. Using “str_match” instead of “str_match_all” can return the one content corresponding to that column name. 
+2) The contents of those columns have some common features: 
+  + Before the double-quotes, there is a space and a column name followed by a "=".By using function `paste`, we can concatenate those patterns together, with a vector entry `c_name.sorted[i]`, so that `for` loop can be used to run across columns. This can make code more concise.
+  + They all are enclosed by “”, within which there are no “, so we can use `=\"([^\"]*)\"` as matching pattern inside “”. 
+  + Neighboring categories are separated by “ “, so that we can specify sep=” “. Using `str_match` instead of `str_match_all` can return the one content corresponding to that column name. 
+  
+We now have the dataframe called **"dat"** which has all the rows and columns as in the raw data. We will now preprocess it to get **"dat.scr"**.
 
-3) During “for” loop, the “flag.na” is used to match the NA entries so as to remove the last row of "dat" which has NA entries. 
+3) During `for` loop, the `flag.na` is used to match the NA entries so as to remove the last row of "dat" which has NA entries. Next, we remove the data about "Own goal" because in this raw data, own goals are considered to be countries' goals whereas it should be the opposite (we need more documentation to be sure of this). We also remove the data for penalty shootouts for the purpose of our visualizations. This is done as: After `for` loop, "ispen" of "class" column and “Own goal” of “ptype” column are matched. Those indices are returned and used to generate a vector to subset only the required rows. 
 
-Next, we remove the data about "Own goal" because in this raw data, own goals are considered to be countries' goals whereas it should be the opposite (we need more documentation to be sure of this). We also remove the data for penalty shootouts for the purpose of our visualizations. This is done as: After “for” loop, “ispen” of “class” column and “Own goal” of “ptype” column are matched. Those indices are returned and used to generate a vector to subset only the required rows. 
+4) Further, some data colums are not ready to use, for example, “pig”, “style”. First, their types are not numeric, so calculations referring to them would report errors. Second, some of them are not simple enough to use directly, example in “style”, three categories are enclosed (right, left and top). Therefore, we preprocess them. 
 
-4) Further, some data colums are not ready to use, for example, “pig”, “style”. First, their types are not numeric, so calculations referring to them would report errors. Second, some of them are not simple enough to use directly, example in “style”, three categories are enclosed (right, left and top). Therefore, we preprocess them.
+>  **PREPROCESSING ASSUMPTION** (deduced after looking at the source code of the data): The field length is 0 to 1000 pixels (on screen) and goal- post is 100 pixels in the field  i.e. from 450 to 550 pixels. 
 
-PREPROCESSING ASSUMPTION (deduced after looking at the source code of the data): The field length is 0 to 1000 pixels (on screen) and goal- post is 100 pixels in the field  i.e. from 450 to 550 pixels.
+  + Add "pig_right" and remove "pig". "pig_right" gives the position in goal from the right side of the field (i.e. the distance, from the right side of the field, of the point at which ball entered the goal-post). It is calculated by subtracting pig from 550. Note: The vertical coordinate of the point at which ball enters the goal is always 0 from the top.
 
-We, hence, do the following:
+  + Remove "style" and instead add "right" and "top" columns to get coordinates of the point from where goal was shot (distance reported from right and top axis). Any "left" coordinate in style is converted to right by subtracting from 1000. **NOTE**: "pig_right", "right" and "top" columns are all in pixels.
+ 
+  + Remove "pmatch" as it is the same as "mid".
 
-a) Add "pig_right" and remove "pig". "pig_right" gives the position in goal from the right side of the field (i.e. the distance, from the right side of the field, of the point at which ball entered the goal-post). It is calculated by subtracting pig from 550. Note: The vertical coordinate of the point at which ball enters the goal is always 0 from the top.
+  +  Remove "pteaming" as we dont need it. We have separately extracted the 4 country flags we need for our visualizations.
 
-b) Remove "style" and instead add "right" and "top" columns to get coordinates of the point from where goal was shot (distance reported from right and top axis). Any "left" coordinate in style is converted to right by subtracting from 1000.
+  + Remove "class" as it provides the same information as "pteam".
 
-NOTE: "pig_right", "right" and "top" columns are all in pixels.
-
-c) Remove "pmatch" as it is the same as "mid".
-
-d) Remove "pteaming" as we dont need it. We have separately extracted the 4 country flags we need for our visualizations.
-
-e) Remove "class" as it provides the same information as "pteam".
-
+We now have the dataframe called **"dat.scr"** (with all the necessary rows and columns), ready to be used for visualization and translation to JSON.
 
 Task 2: Visualization
 
@@ -80,8 +85,8 @@ The general idea is to group all the information by countries and then individua
 								"y": <vertical coordinate of the point from where the goal was shot (measured from top of the field)>
 							},
 							"End": {
-								"x": <horizontal coordinate of the point when the goal entered the post (measured from right side of the field)>,
-								"y": <vertical coordinate of the point when the goal entered the post (always 0) (measured from top of the field)>
+								"x": <horizontal coordinate of the point where the goal entered the post (measured from right side of the field)>,
+								"y": <vertical coordinate of the point where the goal entered the post (always 0) (measured from top of the field)>
 							}
 						}
 					}, 
