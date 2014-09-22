@@ -212,6 +212,8 @@ abline(v=90,lty=2,col="#050505")
 axis(1, at=90,labels=90)
 ```
 
+#### Visualization inference:
+
 As we can see from the 4 graphs, Germany (the champion) scored the most goals amongst the four countries. Relatively, most of goals were made in the first half and were mid-ranged (not too long, not too short). It is clear that Germany adopted a very offensive strategy.
 
 On the other hand, even though Argentina scored the least goals amongst the final four, it made its way up as a very good defensive team. One can infer that Argentina did not let its opponents score either and hence became the runner-up. We also see that most of Argentina’s goals were long-ranged.
