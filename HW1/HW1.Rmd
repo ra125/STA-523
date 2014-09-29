@@ -257,8 +257,8 @@ The general idea is to group all the information by countries and then individua
 
 ```{r}
 #JSON
-library('jsonlite')
-library('rjson')
+library('jsonlite', quietly=TRUE, warn.conflicts=FALSE)
+library('rjson', quietly=TRUE, warn.conflicts=FALSE)
 
 #creating the structure
 jsondata <- list()
