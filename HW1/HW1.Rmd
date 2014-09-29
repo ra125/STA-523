@@ -69,7 +69,6 @@ for (i in 1:numc)
   attr(dat,"names")[i]<-c_name.sorted[i]
   flag.na<-flag.na|is.na(dat[[i]])
 }
-numc<-numc+1L
 
 ispen<-str_match(dat[["class"]],"ispen")
 flag.ispen<-!is.na(ispen)
@@ -100,18 +99,11 @@ dat.scr[["ptime"]]<-as.double(dat.scr[["ptime"]])
 
 #automatically bind a column at the end of dat.scr with given name.
 dat.scr["pig_right"]<-pig_right 
-numc<-numc+1L 
-
 dat.scr["right"]<-right
-numc<-numc+1L
 
 #no need of keeping left in the data frame because we use only right (left is converted to right by subtracting from 1000)
-
 dat.scr["top"]<-top
-numc<-numc+1L
-
 dat.scr["dis"]<-dis
-numc<-numc+1L
 
 #remove temporary variables
 rm(pig_right, right, left, top, dis, rightc, leftc, topc)
