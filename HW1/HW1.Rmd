@@ -62,13 +62,13 @@ dat <- data.frame(dat)
 flag.na<-rep(F,length(d))#to rule out NA rows
 
 for (i in 1:numc)
-  {
-  con<-str_match(d,paste(" ",c_name.sorted[i],"=\"([^\"]*)\"",sep=""))#str_match returns a matrix, instead of a list, easier to manipulate
+{
+  #str_match returns a matrix, instead of a list, easier to manipulate
+  con<-str_match(d,paste(" ",c_name.sorted[i],"=\"([^\"]*)\"",sep=""))
   dat[i]<-con[,2]
   attr(dat,"names")[i]<-c_name.sorted[i]
   flag.na<-flag.na|is.na(dat[[i]])
-  }
-numc<-numc+1L
+}
 
 ispen<-str_match(dat[["class"]],"ispen")
 flag.ispen<-!is.na(ispen)
@@ -91,24 +91,19 @@ right<-as.double(rightc[,2])
 topc<-str_match(dat.scr[["style"]],"top: ([0-9]*)px")
 top<-as.double(topc[,2])
 
-right[!is.na(left)]<-1000-left[!is.na(left)]#make "right" column complete based on the pig_right
+#make "right" column complete based on the pig_right
+right[!is.na(left)]<-1000-left[!is.na(left)] 
 dis<-sqrt((right-pig_right)^2+top^2)#length of goal
 
 dat.scr[["ptime"]]<-as.double(dat.scr[["ptime"]])
 
-dat.scr["pig_right"]<-pig_right #automatically bind a column at the end of dat.scr with given name.
-numc<-numc+1L 
-
+#automatically bind a column at the end of dat.scr with given name.
+dat.scr["pig_right"]<-pig_right 
 dat.scr["right"]<-right
-numc<-numc+1L
 
-#no need of keeping left in the data frame coz we use only right (left is converted to right by subtracting from 1000)
-
+#no need of keeping left in the data frame because we use only right (left is converted to right by subtracting from 1000)
 dat.scr["top"]<-top
-numc<-numc+1L
-
 dat.scr["dis"]<-dis
-numc<-numc+1L
 
 #remove temporary variables
 rm(pig_right, right, left, top, dis, rightc, leftc, topc)
@@ -262,8 +257,8 @@ The general idea is to group all the information by countries and then individua
 
 ```{r}
 #JSON
-library('jsonlite')
-library('rjson')
+library('jsonlite', quietly=TRUE, warn.conflicts=FALSE)
+library('rjson', quietly=TRUE, warn.conflicts=FALSE)
 
 #creating the structure
 jsondata <- list()
