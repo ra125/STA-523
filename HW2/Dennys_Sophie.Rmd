@@ -6,7 +6,7 @@ output: html_document
 ---
   This is my attempt!
   
-  ```{r}
+```{r}
 
 ## load required packages
 
@@ -21,22 +21,21 @@ check_packages = function(names)
   }
 }
 
-check_packages(c("httr","XML","stringr","jsonlite","rgeos","maptools", "rgdal","ggplot2","spatsta","utils"))
-# library(maptools)
-install.packages("rgeos")
+check_packages(c("httr","XML","stringr","jsonlite","rgeos","maptools", "rgdal","ggplot2","utils","jsonlite","sp"))
 
 
 
-### download the map file 
-## or you can mannually download the file at the following url, save it in your wd.
+
+### download the US map file 
+## or you can mannually download the file from the following url and save it in your working directory.
+
 temp<-tempfile()
 download.file("http://www.arcgis.com/sharing/rest/content/items/f7f805eb65eb4ab787a0a3e1116ca7e5/data", temp)
 unzip(temp)
+
 ####
 
-
-library(maptools)
-us = readShapeSpatial("states")
+us = readShapeSpatial("states") #this function requires maptools
 c1=rep(1:length(us$STATE_NAME))==which(us$STATE_NAME=="Hawaii")
 c2=rep(1:length(us$STATE_NAME))==which(us$STATE_NAME=="Alaska")
 cs=cbind(c1,c2)
@@ -46,12 +45,12 @@ rm(c1)
 rm(c2)
 rm(cs)
 
-### plotting the mainland
+### plotting the mainland  
 plot(mainland)
 
 ### Plot the centers of each state
 
-state.center=coordinates(gCentroid(mainland, byid=TRUE))
+state.center=coordinates(gCentroid(us, byid=TRUE)) #coordinates require sp package, gCentroid function requires rgeos package (rgeos -not avaialbe for Maverick yet)
 state.center=as.data.frame(state.center)
 rownames(state.center)=as.character(mainland$STATE_NAME)
 plot(state.center)
@@ -59,16 +58,12 @@ plot(state.center)
 ## plot the mainland with state centers
 plot(mainland)
 points(state.center, pch=19, cex=0.3)
-states=as.data.frame(mainland$STATE_ABBR)
+states_abbr=as.data.frame(mainland$STATE_ABBR)
+states_name=as.data.frame(mainland$STATE_NAME)
 
 
-key="8D6F0428-F3A9-11DD-8BF2-659237ABAA09"
-
+key="8D6F0428-F3A9-11DD-8BF2-659237ABAA09"  
   
-  
-
-library(jsonlite)  
- 
 
 
 for(i in 1:nrow(county_loc))
@@ -82,7 +77,7 @@ for(i in 1:nrow(county_loc))
     
     repeat 
     {
-      cat("Fetching", name, "- Page",j,"...\n")
+      cat("Fetching", name, "- Page",j,"...\n")   #Fetchinig requires jsonlite
       
       url = paste0("http://hosted.where2getit.com/dennys/ajax?&xml_request=%3Crequest%3E%3Cappkey%3E",
         key,
@@ -121,9 +116,6 @@ for(i in 1:nrow(county_loc))
 
 
 
-
-
-
   
   
   
@@ -134,7 +126,10 @@ for(i in 1:nrow(county_loc))
 
 
 ```{r, echo=FALSE}
-plot(cars)
+
+
+
+
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
