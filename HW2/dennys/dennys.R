@@ -82,7 +82,7 @@ data=unique(data)
 
 
 
-table(data[,2]))
+table(data[,2])
 
 
 
