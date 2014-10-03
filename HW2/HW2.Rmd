@@ -1,0 +1,32 @@
+---
+title: "HW2"
+author: "Sophie Lee"
+date: "October 3, 2014"
+output: html_document
+---
+
+
+Here, we are collecting Denny's location data. Since the location service provider for Denny's has a fairly high limit for radius, which is 1000 miles, we base the focal points for location collection in the following five states: Utah, DC, Kansas, Hawaii, and Alaska. 
+
+```{r}
+
+###### Dennys Data
+load(file="dennys/dennys.r")
+
+```
+
+
+```{r}
+
+##### La Quinta Data
+load(file="lq/lq_data.Rdata")
+
+```
+
+
+```{r}
+
+##### Visualization
+
+```
+
