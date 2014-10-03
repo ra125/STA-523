@@ -12,7 +12,7 @@ check_packages = function(names)
   }
 }
 
-check_packages(c("httr","XML","sp","stringr","jsonlite","rgeos","maptools", "rgdal","ggplot2","spatsta","jsonlite","stringr"))
+check_packages(c("httr","XML","sp","stringr","jsonlite","rgeos","maptools", "rgdal","ggplot2","spatsta","stringr"))
 
 
 
@@ -39,7 +39,7 @@ for(i in names) {
   stopifnot(d$status_code == 200)
   s = content(d, as="text")
   # Save the file locally
-  file = paste0("dennys/",name,".json")
+  file = paste0("dennys/",name,".xml")
   write(s, file=file)
   
 }

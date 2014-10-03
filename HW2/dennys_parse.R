@@ -7,7 +7,10 @@ names=c("UT","DC","KS","AL","HI")
 
 for(i in names){
 
-load("dennys/names.json")
+# name=names 
+
+fileName <- paste0("dennys/",i,".json")
+s <- readChar(fileName, file.info(fileName)$size)
 
 # Clean up jQuery wrapper to get valid json
 
@@ -42,6 +45,8 @@ assign(i, data)
 
 
 }
+
+
 
 
 ################### add them together and make the final data
