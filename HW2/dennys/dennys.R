@@ -78,16 +78,7 @@ for(i in names) {
 ################### add them together and make the final data
 
 data=rbind(data.UT, data.DC, data.AL, data.HI, data.KS)
-data=unique(data)
-
-
-
-table(data[,2]))
-
-
-
-
-
+data=data[!duplicated(data$uid),]
 
 ```
 
