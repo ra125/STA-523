@@ -10,17 +10,6 @@ Here, we are collecting Denny's location data. Since the location service provid
 
 ## load required packages
 
-check_packages = function(names)
-{
-  for(name in names)
-  {
-    if (!(name %in% installed.packages()))
-      install.packages(name, repos="http://cran.us.r-project.org")
-
-    library(name, character.only=TRUE)
-  }
-}
-
 check_packages(c("httr","XML","sp","stringr","jsonlite","rgeos","maptools", "rgdal","ggplot2","spatsta","jsonlite","stringr"))
 
 
