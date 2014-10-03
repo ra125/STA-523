@@ -5,12 +5,8 @@ date: "October 1, 2014"
 output: html_document
 ---
 
-As explained in the blog, Denny's location finder allows 3000miles of radius. So, I searched the stores on the West Coast and the East Coast just like the blogger did.
-After running the following codes, you get the data with longitude and latitudes of the Denny's restaurants in the US. The name of the data is "data" here.
-
+Here, we are collecting Denny's location data. Since the location service provider for Denny's has a fairly high limit for radius, which is 1000 miles, we base the focal points for location collection in the following five states: Utah, DC, Kansas, Hawaii, and Alaska. 
 ```{r}
-
-
 
 ## load required packages
 
@@ -20,7 +16,7 @@ check_packages = function(names)
   {
     if (!(name %in% installed.packages()))
       install.packages(name, repos="http://cran.us.r-project.org")
-    
+
     library(name, character.only=TRUE)
   }
 }
@@ -29,16 +25,18 @@ check_packages(c("httr","XML","sp","stringr","jsonlite","rgeos","maptools", "rgd
 
 
 
-
-
 dir.create("json/", showWarnings = FALSE)
 key="8D6F0428-F3A9-11DD-8BF2-659237ABAA09"
+# names=c("UT","DC","KS","AL","HI")
+# dir.create("data/", showWarnings=FALSE)
+# data1=data2=data3=data4=data5=as.data.frame(matrix(0, nrow=1000, ncol=6))
 
-########## Round 1
 
+################ Round 1: Utah (West Coast)
 
-name="UT"    
-
+# for(i in 1:length(names)) {
+  
+name=UT
 url = paste0("http://hosted.where2getit.com/dennys/ajax?&xml_request=%3Crequest%3E%3Cappkey%3E",
              key,
              "%3C%2Fappkey%3E%3Cformdata+id%3D%22locatorsearch%22%3E%3Cdataview%3Estore_default%3C%2Fdataview%3E%3Climit%3E3000%3C%2Flimit%3E%3Cgeolocs%3E%3Cgeoloc%3E%3Caddressline%3E,%20",
@@ -50,18 +48,21 @@ stopifnot(d$status_code == 200)
 
 # Clean up jQuery wrapper to get valid json
 s = content(d, as="text")
-#     s=as.matrix(as.data.frame(s))
-#     s=str_replace(s, "<", " ")
-# city=as.data.frame(str_match_all(s,"city>([A-Z]*)</"))
-# address = as.data.frame(str_match_all(s, "address1>([0-9 A-Z]*)</address1"))
-lat=as.data.frame(str_match_all(s,"latitude>([0-9.0-9]*)</latitude"))
-long=as.data.frame(str_match_all(s,"longitude>(-[0-9.0-9]*)</longitude"))
-# phone=as.data.frame(str_match_all(s,"phone>([0-9]*)</phone"))
-lat=lat[,2]
-lat=as.data.frame(lat)
-long=long[,2]
-long=as.data.frame(long)
-data.UT=cbind(lat=lat, long=long)
+each=as.character(str_match_all(s,"<name>(.*?)</uid>"))
+uid=as.data.frame(str_match_all(each,"<uid>(.*?)</uid>"))
+uid=as.data.frame(uid[1:1000,2])
+state=as.data.frame(str_match_all(each,"<state>(.*?)</state>"))
+state=as.data.frame(state[1:1000,2])
+address=as.data.frame(str_match_all(each,"<address1>(.*?)</address1>"))
+address=as.data.frame(address[1:1000,2])
+phone=as.data.frame(str_match_all(each,"<phone>(.*?)</phone>"))
+phone=as.data.frame(phone[1:1000,2])
+lat=as.data.frame(str_match_all(each, "<latitude>([0-9.0-9]*)</latitude>"))
+lat=as.data.frame(lat[1:1000,2])
+long=as.data.frame(str_match_all(each,"<longitude>(-[0-9.0-9]*)</longitude>"))
+long=as.data.frame(long[1:1000,2])
+
+data.UT=cbind("uid"=uid, "state"=state, "address"=address, "phone"=phone, "lat"=lat, "long"=long)
 
 # Save the file locally
 file = paste0("json/",name,".json")
@@ -71,7 +72,7 @@ write(s, file=file)
 
 
 
-########## Round 2
+########## Round 2 : DC  
 
 
 name="DC"    
@@ -87,18 +88,21 @@ stopifnot(d$status_code == 200)
 
 # Clean up jQuery wrapper to get valid json
 s = content(d, as="text")
-#     s=as.matrix(as.data.frame(s))
-#     s=str_replace(s, "<", " ")
-# city=as.data.frame(str_match_all(s,"city>([A-Z]*)</"))
-# address = as.data.frame(str_match_all(s, "address1>([0-9 A-Z]*)</address1"))
-lat=as.data.frame(str_match_all(s,"latitude>([0-9.0-9]*)</latitude"))
-long=as.data.frame(str_match_all(s,"longitude>(-[0-9.0-9]*)</longitude"))
-# phone=as.data.frame(str_match_all(s,"phone>([0-9]*)</phone"))
-lat=lat[,2]
-lat=as.data.frame(lat)
-long=long[,2]
-long=as.data.frame(long)
-data.DC=cbind(lat=lat, long=long)
+each=as.character(str_match_all(s,"<name>(.*?)</uid>"))
+uid=as.data.frame(str_match_all(each,"<uid>(.*?)</uid>"))
+uid=as.data.frame(uid[1:1000,2])
+state=as.data.frame(str_match_all(each,"<state>(.*?)</state>"))
+state=as.data.frame(state[1:1000,2])
+address=as.data.frame(str_match_all(each,"<address1>(.*?)</address1>"))
+address=as.data.frame(address[1:1000,2])
+phone=as.data.frame(str_match_all(each,"<phone>(.*?)</phone>"))
+phone=as.data.frame(phone[1:1000,2])
+lat=as.data.frame(str_match_all(each, "<latitude>([0-9.0-9]*)</latitude>"))
+lat=as.data.frame(lat[1:1000,2])
+long=as.data.frame(str_match_all(each,"<longitude>(-[0-9.0-9]*)</longitude>"))
+long=as.data.frame(long[1:1000,2])
+
+data.DC=cbind("uid"=uid, "state"=state, "address"=address, "phone"=phone, "lat"=lat, "long"=long)
 
 # Save the file locally
 file = paste0("json/",name,".json")
@@ -107,14 +111,131 @@ write(s, file=file)
 
 
 
+
+########## Round 3 : AL  
+
+
+name="AL"    
+
+url = paste0("http://hosted.where2getit.com/dennys/ajax?&xml_request=%3Crequest%3E%3Cappkey%3E",
+             key,
+             "%3C%2Fappkey%3E%3Cformdata+id%3D%22locatorsearch%22%3E%3Cdataview%3Estore_default%3C%2Fdataview%3E%3Climit%3E3000%3C%2Flimit%3E%3Cgeolocs%3E%3Cgeoloc%3E%3Caddressline%3E,%20",
+             name,
+             "%3C%2Faddressline%3E%3Clongitude%3E%3C%2Flongitude%3E%3Clatitude%3E%3C%2Flatitude%3E%3C%2Fgeoloc%3E%3C%2Fgeolocs%3E%3Csearchradius%3E3000|10000%3C%2Fsearchradius%3E%3C%2Fformdata%3E%3C%2Frequest%3E")   
+
+d=GET(url)
+stopifnot(d$status_code == 200)
+
+# Clean up jQuery wrapper to get valid json
+s = content(d, as="text")
+each=as.character(str_match_all(s,"<name>(.*?)</uid>"))
+uid=as.data.frame(str_match_all(each,"<uid>(.*?)</uid>"))
+uid=as.data.frame(uid[1:1000,2])
+state=as.data.frame(str_match_all(each,"<state>(.*?)</state>"))
+state=as.data.frame(state[1:1000,2])
+address=as.data.frame(str_match_all(each,"<address1>(.*?)</address1>"))
+address=as.data.frame(address[1:1000,2])
+phone=as.data.frame(str_match_all(each,"<phone>(.*?)</phone>"))
+phone=as.data.frame(phone[1:1000,2])
+lat=as.data.frame(str_match_all(each, "<latitude>([0-9.0-9]*)</latitude>"))
+lat=as.data.frame(lat[1:1000,2])
+long=as.data.frame(str_match_all(each,"<longitude>(-[0-9.0-9]*)</longitude>"))
+long=as.data.frame(long[1:1000,2])
+
+data.AL=cbind("uid"=uid, "state"=state, "address"=address, "phone"=phone, "lat"=lat, "long"=long)
+
+
+# Save the file locally
+file = paste0("json/",name,".json")
+write(s, file=file)
+
+
+
+########## Round 4 : HI  
+
+
+name="HI"    
+
+url = paste0("http://hosted.where2getit.com/dennys/ajax?&xml_request=%3Crequest%3E%3Cappkey%3E",
+             key,
+             "%3C%2Fappkey%3E%3Cformdata+id%3D%22locatorsearch%22%3E%3Cdataview%3Estore_default%3C%2Fdataview%3E%3Climit%3E3000%3C%2Flimit%3E%3Cgeolocs%3E%3Cgeoloc%3E%3Caddressline%3E,%20",
+             name,
+             "%3C%2Faddressline%3E%3Clongitude%3E%3C%2Flongitude%3E%3Clatitude%3E%3C%2Flatitude%3E%3C%2Fgeoloc%3E%3C%2Fgeolocs%3E%3Csearchradius%3E3000|10000%3C%2Fsearchradius%3E%3C%2Fformdata%3E%3C%2Frequest%3E")   
+
+d=GET(url)
+stopifnot(d$status_code == 200)
+
+# Clean up jQuery wrapper to get valid json
+s = content(d, as="text")
+each=as.character(str_match_all(s,"<name>(.*?)</uid>"))
+uid=as.data.frame(str_match_all(each,"<uid>(.*?)</uid>"))
+uid=as.data.frame(uid[1:1000,2])
+state=as.data.frame(str_match_all(each,"<state>(.*?)</state>"))
+state=as.data.frame(state[1:1000,2])
+address=as.data.frame(str_match_all(each,"<address1>(.*?)</address1>"))
+address=as.data.frame(address[1:1000,2])
+phone=as.data.frame(str_match_all(each,"<phone>(.*?)</phone>"))
+phone=as.data.frame(phone[1:1000,2])
+lat=as.data.frame(str_match_all(each, "<latitude>([0-9.0-9]*)</latitude>"))
+lat=as.data.frame(lat[1:1000,2])
+long=as.data.frame(str_match_all(each,"<longitude>(-[0-9.0-9]*)</longitude>"))
+long=as.data.frame(long[1:1000,2])
+
+data.HI=cbind("uid"=uid, "state"=state, "address"=address, "phone"=phone, "lat"=lat, "long"=long)
+
+# Save the file locally
+file = paste0("json/",name,".json")
+write(s, file=file)
+
+
+
+
+########## Round 5 : KS  
+
+
+name="KS"    
+
+url = paste0("http://hosted.where2getit.com/dennys/ajax?&xml_request=%3Crequest%3E%3Cappkey%3E",
+             key,
+             "%3C%2Fappkey%3E%3Cformdata+id%3D%22locatorsearch%22%3E%3Cdataview%3Estore_default%3C%2Fdataview%3E%3Climit%3E3000%3C%2Flimit%3E%3Cgeolocs%3E%3Cgeoloc%3E%3Caddressline%3E,%20",
+             name,
+             "%3C%2Faddressline%3E%3Clongitude%3E%3C%2Flongitude%3E%3Clatitude%3E%3C%2Flatitude%3E%3C%2Fgeoloc%3E%3C%2Fgeolocs%3E%3Csearchradius%3E3000|10000%3C%2Fsearchradius%3E%3C%2Fformdata%3E%3C%2Frequest%3E")   
+
+d=GET(url)
+stopifnot(d$status_code == 200)
+
+# Clean up jQuery wrapper to get valid json
+s = content(d, as="text")
+each=as.character(str_match_all(s,"<name>(.*?)</uid>"))
+uid=as.data.frame(str_match_all(each,"<uid>(.*?)</uid>"))
+uid=as.data.frame(uid[1:1000,2])
+state=as.data.frame(str_match_all(each,"<state>(.*?)</state>"))
+state=as.data.frame(state[1:1000,2])
+address=as.data.frame(str_match_all(each,"<address1>(.*?)</address1>"))
+address=as.data.frame(address[1:1000,2])
+phone=as.data.frame(str_match_all(each,"<phone>(.*?)</phone>"))
+phone=as.data.frame(phone[1:1000,2])
+lat=as.data.frame(str_match_all(each, "<latitude>([0-9.0-9]*)</latitude>"))
+lat=as.data.frame(lat[1:1000,2])
+long=as.data.frame(str_match_all(each,"<longitude>(-[0-9.0-9]*)</longitude>"))
+long=as.data.frame(long[1:1000,2])
+
+data.KS=cbind("uid"=uid, "state"=state, "address"=address, "phone"=phone, "lat"=lat, "long"=long)
+
+
+# Save the file locally
+file = paste0("json/",name,".json")
+write(s, file=file)
+
+
+
+
+
+
 ################### add them together and make the final data
 
-data=rbind(data.UT, data.DC)
+data=rbind(data.UT, data.DC, data.AL, data.HI, data.KS)
 data=unique(data)
-
-### This matches the number of Denny's restaurants in the US.
-
-
 
 
 
