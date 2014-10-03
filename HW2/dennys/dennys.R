@@ -49,14 +49,23 @@ for(i in names) {
   # Clean up jQuery wrapper to get valid json
   s = content(d, as="text")
   each=as.character(str_match_all(s,"<name>(.*?)</uid>"))
+  name=
   uid=as.data.frame(str_match_all(each,"<uid>(.*?)</uid>"))
   uid=as.data.frame(uid[1:1000,2])
+ 
+  
   state=as.data.frame(str_match_all(each,"<state>(.*?)</state>"))
   state=as.data.frame(state[1:1000,2])
-  address=as.data.frame(str_match_all(each,"<address1>(.*?)</address1>"))
+  address1=as.data.frame(str_match_all(each,"<address1>(.*?)</address1>"))
   address=as.data.frame(address[1:1000,2])
+  address2=
+  city
+  state
+  country
+  zip
   phone=as.data.frame(str_match_all(each,"<phone>(.*?)</phone>"))
   phone=as.data.frame(phone[1:1000,2])
+  fax
   lat=as.data.frame(str_match_all(each, "<latitude>([0-9.0-9]*)</latitude>"))
   lat=as.data.frame(lat[1:1000,2])
   long=as.data.frame(str_match_all(each,"<longitude>(-[0-9.0-9]*)</longitude>"))
@@ -77,14 +86,12 @@ for(i in names) {
 
 ################### add them together and make the final data
 
-data=rbind(data.UT, data.DC, data.AL, data.HI, data.KS)
-data=unique(data)
+data.dennys=rbind(data.UT, data.DC, data.AL, data.HI, data.KS)
+data.dennys=data.dennys[!duplicated(data.dennys$uid),]
 
 
 
-table(data[,2]))
-
-
+#table(data.dennys[,2])
 
 
 
