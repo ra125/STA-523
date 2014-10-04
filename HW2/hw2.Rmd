@@ -11,6 +11,9 @@ output: html_document
 #dataframe contains lq information
 #dataframe contains denneys information
 library(fields)
+
+#add some command so that it can generate or use "data" and "dataframe"
+
 #lq (lat,long) and denney's (lat,long), both stored in rows.
 lqlatlong<-matrix(c(as.double(dataframe$lat),as.double(dataframe$long)),ncol=2)
 denlatlong<-matrix(c(as.double(attr(data$lat,"levels")),as.double(attr(data$long,"levels"))),ncol=2)
