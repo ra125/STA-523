@@ -26,6 +26,10 @@ load(file="dennys_download.R")
 
 load(file="dennys_parse.R")
 
+
+load(file="dennys/dennys_data.Rdata")
+
+
 ```
 
 
