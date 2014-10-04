@@ -4,7 +4,7 @@ for(i in names){
 
 # name=names 
 
-fileName <- paste0("dennys/",i,".xml")
+fileName <- paste0("dennys/",i,".html")
 s <- readChar(fileName, file.info(fileName)$size)
 
 # Extracting relevant data
@@ -35,7 +35,7 @@ latitude=as.data.frame(latitude[1:1000,2])
 longitude=as.data.frame(str_match_all(each,"<longitude>(-[0-9.0-9]*)</longitude>"))
 longitude=as.data.frame(longitude[1:1000,2])
 
-data=cbind("name"=name, "uid"=uid, "address1"=address1, "address2"=address2, "city"=city, "state"=state, "country"=country, "zip"=zip, "phone"=phone, "fax"=fax, "latitude"=lat, "longitude"=long)
+data=cbind(name, uid, address1, address2, city, state, country, zip, phone, fax, latitude, longitude)
 assign(i, data)
 
 }

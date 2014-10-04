@@ -2,7 +2,7 @@
 
 check_packages(c("httr","XML","jsonlite","stringr"))
 
-dir.create("dennys", showWarnings = FALSE)
+dir.create("dennys/", showWarnings = FALSE)
 key="8D6F0428-F3A9-11DD-8BF2-659237ABAA09"
 
 ###### states to go through!
@@ -23,8 +23,7 @@ for(i in names) {
   stopifnot(d$status_code == 200)
   s = content(d, as="text")
   # Save the file locally
-  file = paste0("dennys/",name,".xml")
-  write(s, file=file)
+  write(s, file=paste0("dennys/",name,".html"))
   
 }
 
