@@ -1,5 +1,8 @@
 ## load required packages
 
+# setwd("~/HW2")
+# source("check_packages.R")
+
 check_packages(c("httr","XML","jsonlite","stringr"))
 
 dir.create("dennys/", showWarnings = FALSE)
