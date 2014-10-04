@@ -45,17 +45,16 @@ for(i in names){
 
 ################### add them together and make the final data
 
-data.dennys=rbind(UT, DC, AL, HI, KS)
-data.dennys=data.dennys[!duplicated(data.dennys$uid),]
+dennys_data=rbind(UT, DC, AL, HI, KS)
+dennys_data=dennys_data[!duplicated(dennys_data$uid),]
 
 #removing Dennys outside US
-data.dennys=data.dennys[data.dennys$country=="US",]
-data.dennys=as.data.frame(data.dennys)
-dim(data.dennys)
+dennys_data=dennys_data[dennys_data$country=="US",]
+dim(dennys_data)
 
 
 # Save results as Rdata file
-save(data.dennys, file="dennys/dennys_data.Rdata")
+save(dennys_data, file="dennys/dennys_data.Rdata")
 
 
 
