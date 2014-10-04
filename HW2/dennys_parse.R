@@ -1,18 +1,13 @@
-
-
-
-
 names=c("UT","DC","KS","AL","HI")
-
 
 for(i in names){
 
 # name=names 
 
-fileName <- paste0("dennys/",i,".json")
+fileName <- paste0("dennys/",i,".xml")
 s <- readChar(fileName, file.info(fileName)$size)
 
-# Clean up jQuery wrapper to get valid json
+# Extracting relevant data
 
 each=as.character(str_match_all(s,"<name>(.*?)</uid>"))
 name=as.data.frame(str_match_all(each,"name>(.*?)</name>"))
@@ -40,22 +35,22 @@ latitude=as.data.frame(latitude[1:1000,2])
 longitude=as.data.frame(str_match_all(each,"<longitude>(-[0-9.0-9]*)</longitude>"))
 longitude=as.data.frame(longitude[1:1000,2])
 
-data=cbind("uid"=uid, "state"=state, "address1"=address1, "address2"=address2,"phone"=phone, "latitude"=lat, "longitude"=long)
+data=cbind("name"=name, "uid"=uid, "address1"=address1, "address2"=address2, "city"=city, "state"=state, "country"=country, "zip"=zip, "phone"=phone, "fax"=fax, "latitude"=lat, "longitude"=long)
 assign(i, data)
-
 
 }
 
-
-
-
 ################### add them together and make the final data
 
-data.dennys=rbind(data.UT, data.DC, data.AL, data.HI, data.KS)
+data.dennys=rbind(UT, DC, AL, HI, KS)
 data.dennys=data.dennys[!duplicated(data.dennys$uid),]
 
+#removing Dennys outside US
+data.dennys=data.dennys[data.dennys$country=="US",]
+#data.dennys[1693,]
 
+# Save results as Rdata file
+save(data.dennys, file="dennys/dennys_data.Rdata")
 
-#table(data.dennys[,2])
 
 

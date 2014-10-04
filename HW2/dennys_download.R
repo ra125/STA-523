@@ -1,28 +1,12 @@
-
 ## load required packages
 
-check_packages = function(names)
-{
-  for(name in names)
-  {
-    if (!(name %in% installed.packages()))
-      install.packages(name, repos="http://cran.us.r-project.org")
-    
-    library(name, character.only=TRUE)
-  }
-}
-
-check_packages(c("httr","XML","sp","stringr","jsonlite","rgeos","maptools", "rgdal","ggplot2","spatsta","stringr"))
-
-
+check_packages(c("httr","XML","jsonlite","stringr"))
 
 dir.create("dennys", showWarnings = FALSE)
 key="8D6F0428-F3A9-11DD-8BF2-659237ABAA09"
 
 ###### states to go through!
 names=c("UT","DC","KS","AL","HI")
-
-
 
 ################ Looping
 
