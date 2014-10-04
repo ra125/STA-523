@@ -8,6 +8,8 @@ output: html_document
 
 ```{r}
 
+check_packages(c("httr","XML","jsonlite","stringr","fields"))
+
 #dataframe contains lq information
 #dataframe contains denneys information
 check_packages(c("fields"))
