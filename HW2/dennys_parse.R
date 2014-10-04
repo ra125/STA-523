@@ -52,7 +52,7 @@ data.dennys=data.dennys[data.dennys$country=="US",]
 #data.dennys[1693,]
 
 # Save results as Rdata file
-save(data.dennys, file="dennys/dennys_data.Rdata")
+save(data.dennys, file="dennys/data.dennys.Rdata")
 
 
 
