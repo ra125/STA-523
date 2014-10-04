@@ -19,11 +19,12 @@ load(file="lq/lq_data.Rdata")
 Here, we are collecting the location data for Denny's. Since the location service provider for Denny's has a fairly high limit for radius, which is 1000 miles, we base the focal points for location collection in the following five states: Utah, DC, Kansas, Hawaii, and Alaska. 
 
 
-
 ```{r}
 
 ###### Dennys Data
-load(file="dennys/dennys.r")
+load(file="dennys_download.R")
+
+load(file="dennys_parse.R")
 
 ```
 
