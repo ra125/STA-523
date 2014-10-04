@@ -29,27 +29,6 @@ distance<-rdist.earth(lqlatlong,denlatlong,miles=F,R=6371)
 min=as.integer(min(distance))
 max=as.integer(max(distance))
 
-#histogram of all distance
-hist(distance,breaks = seq(min,max+1,1),freq = T
-     ,xlim=c(0,100),
-     ,xlab="Distance of (lq,denney's) pair (only show (0,100))(km)"
-     ,ylab="Frequency"
-     ,main="The distance of (lq,denney's) pair")
-
-#This histogram has lots of information. However, it would not be so convincing if we
-#argue that "because the density are more accumulated at small value of distance, so that
-#lq is a spanish next to denney's".
-
-#There are two reasons that the logics of this argument could fail:
-#First, notice that the x-axis has very large range, because we not only include those 
-#stores in the mainland of US, but also Hawii, and Alaska, and so on. So, even through the distance
-#(bin size is 1km) with highest frequency seems to close to origin, it may not correspond to the 
-#"closeness" we usually refer to according to our daily experience. Actually, by calculating the 
-#mode of the distribution, the distance of most highest frequency is about: (225 km)
-#Second, it could be possible that Denney's tends to concentrate around lq, so that the distance
-#would be counted at whatever times the same number Denney's locates near that lq, but our objective
-#is not to test "how dense the Denney's locate near lq." 
-
 #count the number of pairs of (lq, denney's) whose distance falls in an interval of mile
 
 count<-matrix(rep(0,max+1),nrow=max+1)
