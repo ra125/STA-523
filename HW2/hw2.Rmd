@@ -1,0 +1,122 @@
+---
+title: "hw2"
+author: "Radhika Anand, Sophie Lee, Minjung Park, Kungang Zhang"
+date: "10/4/2014"
+output: html_document
+---
+
+
+```{r}
+
+#dataframe contains lq information
+#dataframe contains denneys information
+library(fields)
+
+#add some command so that it can generate or use "data" and "dataframe"
+
+#lq (lat,long) and denney's (lat,long), both stored in rows.
+lqlatlong<-matrix(c(as.double(dataframe$lat),as.double(dataframe$long)),ncol=2)
+denlatlong<-matrix(c(as.double(attr(data$lat,"levels")),as.double(attr(data$long,"levels"))),ncol=2)
+
+nlq=nrow(lqlatlong)
+nden=nrow(denlatlong)
+#a matrix of distance of any pair of lq and denney's(ncol=lenght of the second input data)
+distance<-rdist.earth(lqlatlong,denlatlong,miles=F,R=6371)
+#rdist.earth comes from package "fields". no matter whether the control argument
+#"miles" is T or F, the output is in unit of km
+#this can be tested using the following command
+#rdist.earth(matrix(c(0,0),nrow=1),matrix(c(0,180),nrow=1),miles=F,R=6371)
+#this should give half of primeter of a circle with radius as 6371 km.
+#I think the reason is that the function regard R=6371 as in km unit, also.
+
+min=as.integer(min(distance))
+max=as.integer(max(distance))
+
+#histogram of all distance
+hist(distance,breaks = seq(min,max+1,1)
+     ,xlab="Distance of (lq,denney's) pair(km)"
+     ,ylab="Frequency"
+     ,main="The distance of (lq,denney's) pair")
+
+#This histogram has lots of information. However, it would not be so convincing if we
+#argue that "because the density are more accumulated at small value of distance, so that
+#lq is a spanish next to denney's".
+
+#There are two reasons that the logics of this argument could fail:
+#First, notice that the x-axis has very large range, because we not only include those 
+#stores in the mainland of US, but also Hawii, and Alaska, and so on. So, even through the distance
+#(bin size is 1km) with highest frequency seems to close to origin, it may not correspond to the 
+#"closeness" we usually refer to according to our daily experience. Actually, by calculating the 
+#mode of the distribution, the distance of most highest frequency is about: (225 km)
+#Second, it could be possible that Denney's tends to concentrate around lq, so that the distance
+#would be counted at whatever times the same number Denney's locates near that lq, but our objective
+#is not to test "how dense the Denney's locate near lq." 
+
+#count the number of pairs of (lq, denney's) whose distance falls in an interval of mile
+
+count<-matrix(rep(0,max+1),nrow=max+1)
+
+for(i in 1:ncol(distance))
+  {
+    for(j in 1:nrow(distance))
+      {
+        k=as.integer(distance[j,i])
+        count[k+1]=count[k+1]+1
+      }
+  }
+
+#give the mean of distance
+avedis<-mean(distance)
+mode<-max(count)
+#give the mode of distance distribution
+modedis<-NULL
+for (i in 1:(max+1))
+  {
+    if(count[i]==mode) modedis<-c(modedis,i)
+  }
+
+print(paste("The distance of (lq, denney's) pair which has largest number (precise to integer of kilograms):"
+            ,modedis))
+print(paste("The mean distance of (lq, denney's):",avedis))
+
+
+#Calculate the minimum distance between lq and denney's for every lq 
+#(in other words, apply max function across rows of "distance")
+#That's because we want to check the validity of the blogger's statement
+#of "lq is a spanish next to denney's". So if he was true, for every
+#occurance of lq, there should be an denney's next to it.
+
+#By calculating the minimum of distance between pair of (lq, denneys), 
+#We define a variable measuring how close these two can be. It's distribution
+#would give us a database to check the blogger's statement, say, for a given
+#upper bound of distance indicating "lq is next to denney's", 
+#how many percentages of lq can statisfy this condition, thus support blogger's
+#statement. 
+
+mindislq<-apply(distance,1,min)
+hist(mindislq,breaks = seq(0,as.integer(max(mindislq))+1,1),freq = T
+     ,xlim=c(1,100)
+     ,xlab="Min-distance of (lq,denney's) for every lq (only show (0,100))(km)"
+     ,ylab="frequency",main="The minimum distance of (lq,denney's) for every lq")
+#quantile function of the minimum distance of (lq,denney's) pair for every lq
+qmindislq<-quantile(mindislq,probs = seq(0,1,0.01))
+plot(seq(0,1,0.01),qmindislq,type="l",lwd = 2, col="red",
+     xlab="Probability",ylab="Minimum distance(km)",main="Quantile curve")
+#empirical cdf for the minimum distance
+pmindislq<-ecdf(mindislq)
+xp<-seq(0,max(mindislq)+1,length.out=1000)
+plot(xp,pmindislq(xp),type="l",lwd = 2, col="green",
+     ylab="Probability",xlab="Minimum distance(km)",main="CDF curve")
+
+
+#If we set 1 km as standard of "closeness", the blogger's claim is true at below percentage and frequency:
+print(paste("Per:",pmindislq(1)*100,"%",",","Freq:",pmindislq(1)*nlq))
+
+#If increase the threshold to 3 km, the corresponding percentage and frequency:
+print(paste("Per:",pmindislq(3)*100,"%",",","Freq:",pmindislq(3)*nlq))
+
+#At these percentage, it is hard to say the blogger's statment is true.
+
+
+```
+
