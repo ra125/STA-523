@@ -10,10 +10,10 @@ output: html_document
 
 #dataframe contains lq information
 #dataframe contains denneys information
-library(fields)
+check_packages(c("fields"))
 #lq (lat,long) and denney's (lat,long), both stored in rows.
-lqlatlong<-matrix(c(as.double(dataframe$lat),as.double(dataframe$long)),ncol=2)
-denlatlong<-matrix(c(as.double(attr(data$lat,"levels")),as.double(attr(data$long,"levels"))),ncol=2)
+lqlatlong<-matrix(c(as.double(data.lq$latitude),as.double(data.lq$longitude)),ncol=2)
+denlatlong<-matrix(c(as.double(attr(data.dennys$lat,"levels")),as.double(attr(data.dennys$long,"levels"))),ncol=2)
 
 nlq=nrow(lqlatlong)
 nden=nrow(denlatlong)
@@ -90,7 +90,7 @@ print(paste("The mean distance of (lq, denney's):",avedis))
 #how many percentages of lq can statisfy this condition, thus support blogger's
 #statement. 
 
-mindislq<-apply(distance,1,min)
+
 hist(mindislq,breaks = seq(0,as.integer(max(mindislq))+1,1),freq = T
      ,xlim=c(1,100)
      ,xlab="Min-distance of (lq,denney's) for every lq (only show (0,100))(km)"
