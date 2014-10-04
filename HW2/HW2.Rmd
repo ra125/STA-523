@@ -4,7 +4,16 @@ author: "Sophie Lee"
 date: "October 3, 2014"
 output: html_document
 ---
+Data scraping for La Quinta is a 2 stage process and the code for the same is divided into 4 scripts. In the first stage we download some basic information about each La Quinta from a single page and in the second stage we access each La Quinta's webpage separately to get some specific information about each.
+ 
+Stage 1 scripts: "lq_list_download.R" & "lq_list_parse.R"
+Stage 2 scripts: "lq_hotel_download.R" & "lq_hotel_parse.R"
+ 
+In the first script, "lq_list_download.R", we download and save the page, "www.lq.com/en/findandbook.by_interactive_map.html", locally, because this one single page has basic information about each La Quinta. In "lq_list_parse.R" we access this page from its local copy and parse the basic information for each La Quinta from the source code using regular expressions for string matching. In particular, we get "title", "innNumber", "latitude", "longitude", "imagePath", "isInnAndSuites", "street", "street2", "city", "stateProv", "postalCode" and "countryDisplay" and save them in a dataframe called "dataframe". We then drop "imagePath" and "isInnAndSuites".  We then drop "imagePath" and "isInnAndSuites" as we think they are not required. 
+ 
+Further, in the script "lq_hotel_download.R", we access each La Quinta separately by its "InnNumber" using the following url, "http://www.lq.com/en/findandbook/hotel-details.[innNumber].address.html" where [innNumber] is replaced by the corresponding "innNumber" each time and save all the pages we get. 
 
+Then in "lq_hotel_parse.R", we access each page locally and expand the existing "dataframe" to parse (using regular expressions for string matching) and include specific attributes such as "phone", "fax", number of "floors", "rooms" "suites", "check_in_time", "check_out_time" and access to specific amenities such as "spa", "internet", swimming "pool", "fitness" center. (Quotes are used to indicate the actual attribute names as used in the dataframe). We now have data for 880 La Quintas. We then remove the duplicates based on unique "innNumber" and are left with 875 unique ones. We further remove the data for Canada and Mexico as we need to test the claim only in US. We are then left with La Quintas. We name this final dataframe as lq.data.
 
 ```{r}
 
@@ -16,7 +25,7 @@ load(file="lq/lq_data.Rdata")
 
 
 
-Here, we are collecting the location data for Denny's. Since the location service provider for Denny's has a fairly high limit for radius, which is 1000 miles, we base the focal points for location collection in the following five states: Utah, DC, Kansas, Hawaii, and Alaska. 
+Here, we are collecting the location data for Denny's. Since the location service provider for Denny's has a fairly high limit for radius, which is 3000 miles, we base the focal points for location collection in the following five states: Utah, DC, Kansas, Hawaii, and Alaska. 
 
 
 ```{r}
