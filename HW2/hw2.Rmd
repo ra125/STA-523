@@ -19,6 +19,12 @@ nlq=nrow(lqlatlong)
 nden=nrow(denlatlong)
 #a matrix of distance of any pair of lq and denney's(ncol=lenght of the second input data)
 distance<-rdist.earth(lqlatlong,denlatlong,miles=F,R=6371)
+#rdist.earth comes from package "fields". no matter whether the control argument
+#"miles" is T or F, the output is in unit of km
+#this can be tested using the following command
+#rdist.earth(matrix(c(0,0),nrow=1),matrix(c(0,180),nrow=1),miles=F,R=6371)
+#this should give half of primeter of a circle with radius as 6371 km.
+#I think the reason is that the function regard R=6371 as in km unit, also.
 
 min=as.integer(min(distance))
 max=as.integer(max(distance))
