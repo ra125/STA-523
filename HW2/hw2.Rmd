@@ -33,8 +33,9 @@ min=as.integer(min(distance))
 max=as.integer(max(distance))
 
 #histogram of all distance
-hist(distance,breaks = seq(min,max+1,1)
-     ,xlab="Distance of (lq,denney's) pair(km)"
+hist(distance,breaks = seq(min,max+1,1),freq = T
+     ,xlim=c(0,100),
+     ,xlab="Distance of (lq,denney's) pair (only show (0,100))(km)"
      ,ylab="Frequency"
      ,main="The distance of (lq,denney's) pair")
 
@@ -98,6 +99,7 @@ hist(mindislq,breaks = seq(0,as.integer(max(mindislq))+1,1),freq = T
      ,xlim=c(1,100)
      ,xlab="Min-distance of (lq,denney's) for every lq (only show (0,100))(km)"
      ,ylab="frequency",main="The minimum distance of (lq,denney's) for every lq")
+
 #quantile function of the minimum distance of (lq,denney's) pair for every lq
 qmindislq<-quantile(mindislq,probs = seq(0,1,0.01))
 plot(seq(0,1,0.01),qmindislq,type="l",lwd = 2, col="red",
