@@ -19,9 +19,5 @@ for(i in 1:len_fields) {
  attr(dataframe, "names")[i] = all_fields.sorted[i]
 }
 
-# Dedup
-dataframe = dataframe[!duplicated(dataframe$innNumber), ]
-#dataframe = dataframe[!duplicated(dataframe$title), ]
-
 # Save results as Rdata file
 save(dataframe, file="lq/list.Rdata")

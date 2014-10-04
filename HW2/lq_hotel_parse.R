@@ -14,7 +14,7 @@ dataframe[,"pool"] = NA
 dataframe[,"fitness"] = NA
 
 # Loop over hotels
-num_hotels = length(dataframe[,1])
+num_hotels = length(dataframe[,2])
 for(i in 1:num_hotels) {
   input_file = paste0("lq/hotels/",dataframe[i, "innNumber"],".html")
   data = readChar(input_file, file.info(input_file)$size)
@@ -31,5 +31,11 @@ for(i in 1:num_hotels) {
   dataframe[i,"fitness"] = str_match(data, "(?i)Fitness center")[,1]
 }
 
+#Removing duplicates
+dataframe = dataframe[!duplicated(dataframe$innNumber), ]
+
+#Removing data for Canada and Mexico
+data.lq = dataframe[dataframe$countryDisplay=="United States",]
+
 # Save results as Rdata file
-save(dataframe, file="lq/lq_data.Rdata")
+save(data.lq, file="lq/lq_data.Rdata")
