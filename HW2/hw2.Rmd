@@ -75,8 +75,9 @@ print(paste("The mean distance of (lq, denney's):",avedis))
 mindislq<-apply(distance,1,min)
 
 #pdf("Min-distance",width=5.7,height=4.5)
-hist(mindislq,breaks = seq(0,as.integer(max(mindislq))+1,1),freq = T
-     ,xlab="Min-distance of (lq,denney's) for every lq (only show (0,100))(km)"
+hist(mindislq,breaks = seq(0,as.integer(max(mindislq))+1,0.1),freq = T
+     ,xlim=c(0,10)
+     ,xlab="Min-distance of (lq,denney's) for every lq (only show (0,10))(km)"
      ,ylab="frequency",main="The minimum distance of (lq,denney's) for every lq")
 #dev.off()
 
