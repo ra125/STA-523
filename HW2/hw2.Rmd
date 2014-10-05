@@ -87,7 +87,7 @@ xp<-seq(0,max(mindislq)+1,length.out=1000)
 plot(xp,pmindislq(xp),type="l",lwd = 2, col="green",
      ylab="Probability",xlab="Minimum distance(km)",main="CDF curve")
 #dev.off()
-
+print(paste("Per:",pmindislq(0.15)*100,"%",",","Freq:",pmindislq(0.15)*nlq))
 #If we set the threshold to 0.5 km, the corresponding percentage and frequency:
 print(paste("Per:",pmindislq(0.5)*100,"%",",","Freq:",pmindislq(0.5)*nlq))
 
