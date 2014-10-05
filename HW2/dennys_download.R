@@ -1,7 +1,5 @@
 ## load required packages
-
-# setwd("~/HW2")
-# source("check_packages.R")
+#source("check_packages.R")
 
 check_packages(c("httr","XML","jsonlite","stringr"))
 
@@ -25,6 +23,7 @@ for(i in names) {
   d=GET(url)
   stopifnot(d$status_code == 200)
   s = content(d, as="text")
+  
   # Save the file locally
   write(s, file=paste0("dennys/",name,".html"))
   
