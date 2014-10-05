@@ -1,6 +1,8 @@
 
 names=c("UT","DC","KS","AL","HI")   
 
+names="UT"
+
 for(i in names){
   
   # name=names 
@@ -48,7 +50,7 @@ dennys_data=dennys_data[!duplicated(dennys_data$uid),]
 
 #removing Dennys outside US
 dennys_data=dennys_data[dennys_data$country=="US",]
-dennys_data
+# dennys_data
 dim(dennys_data)
 
 
