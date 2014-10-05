@@ -1,6 +1,5 @@
 
-names=c("UT","DC","KS","AL","HI")
-name="UT"
+names=c("UT","DC","KS","AL","HI")   
 
 for(i in names){
   
@@ -34,7 +33,7 @@ for(i in names){
   # fax=as.data.frame(fax[1:1000,2])   #----- nobody has fax..?
   latitude=as.data.frame(str_match_all(each, "<latitude>([0-9.0-9]*)</latitude>"))
   latitude=unlist(latitude[1:1000,2])
-  longitude=as.data.frame(str_match_all(each,"<longitude>-([0-9.0-9]*)</longitude>"))
+  longitude=as.data.frame(str_match_all(each,"<longitude>(-[0-9.0-9]*)</longitude>"))
   longitude=unlist(longitude[1:1000,2])
   
   data=cbind(name, uid, address1, city, state, country, zip, phone, "latitude"=latitude, "longitude"=longitude)
