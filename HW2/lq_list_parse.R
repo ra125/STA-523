@@ -1,3 +1,7 @@
+## load required packages
+source("check_packages.R")
+check_packages(c("httr","XML","jsonlite","stringr"))
+
 # Read from input file
 input_file = "lq/interactive_map.html"
 data = readChar(input_file, file.info(input_file)$size)

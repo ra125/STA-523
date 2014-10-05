@@ -1,5 +1,5 @@
 # Load Required packages
-#source("check_packages.R")
+source("check_packages.R")
 check_packages(c("httr","XML","stringr","jsonlite"))
 
 # Download content

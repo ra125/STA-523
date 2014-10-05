@@ -1,5 +1,5 @@
 # Load Required packages
-#source("check_packages.R")
+source("check_packages.R")
 check_packages(c("httr"))
 
 # Load hotel info data frame
@@ -16,5 +16,5 @@ for(i in 1:num_hotels)
   data = content(page, as="text")
   print(url)
   write(data, file=paste0("lq/hotels/",dataframe[i,"innNumber"],".html"))
-  #Sys.sleep(1) # wait before grabbing the next page
+  Sys.sleep(1) # wait before grabbing the next page
 }

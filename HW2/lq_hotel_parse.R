@@ -1,3 +1,7 @@
+## load required packages
+source("check_packages.R")
+check_packages(c("stringr"))
+
 load("lq/list.Rdata")
 
 # Expand the dataframe with more fields

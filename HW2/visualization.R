@@ -1,9 +1,7 @@
-
-
 #source("check_packages.R")
 check_packages(c("rgdal","sp"))
 
-dir("~/Sta523/data/us-atlas/shp/us/","*.shp")
+#dir("~/Sta523/data/us-atlas/shp/us/","*.shp")
 suppressMessages(library(rgdal))
 ogrInfo("/home/vis/cr173/Sta523/data/us-atlas/shp/us/","states-unfiltered")
 states = readOGR("/home/vis/cr173/Sta523/data/us-atlas/shp/us/","states-unfiltered", stringsAsFactors=FALSE)

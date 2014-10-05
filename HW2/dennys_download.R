@@ -1,6 +1,5 @@
 ## load required packages
-#source("check_packages.R")
-
+source("check_packages.R")
 check_packages(c("httr","XML","jsonlite","stringr"))
 
 dir.create("dennys/", showWarnings = FALSE)
