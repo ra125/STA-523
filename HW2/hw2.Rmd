@@ -12,7 +12,7 @@ source("check_packages.R")
 check_packages(c("httr","XML","jsonlite","stringr","fields"))
 ```
 
-Task 1:
+### Task 1:
 
 Data scraping for La Quinta is a 2 stage process and the code for the same is divided into 4 scripts. In the first stage we download some basic information about each La Quinta from a single page and in the second stage we access each La Quinta's webpage separately to get some specific information about each.
  
@@ -25,13 +25,17 @@ Further, in the script "lq_hotel_download.R", we access each La Quinta separatel
 
 Then in "lq_hotel_parse.R", we access each page locally and expand the existing "dataframe" to parse (using regular expressions for string matching) and include specific attributes such as "phone", "fax", number of "floors", "rooms" "suites", "check_in_time", "check_out_time" and access to specific amenities such as "spa", "internet", swimming "pool", "fitness" center. (Quotes are used to indicate the actual attribute names as used in the dataframe). We now have data for 880 La Quintas. We then remove the duplicates based on unique "innNumber" and are left with 875 unique ones. We further remove the data for Canada and Mexico as we need to test the claim only in US. We are then left with La Quintas. We name this final dataframe as lq.data.
 
-Task 2: 
+### Task 2: 
 
-Sophie you can add your detailed write up here
 
-Here, we are collecting the location data for Denny's. Since the location service provider for Denny's has a fairly high limit for radius, which is 3000 miles, we base the focal points for location collection in the following five states: Utah, DC, Kansas, Hawaii, and Alaska. 
+Here, we are collecting the location data for Denny's. Since the location service provider for Denny's has a fairly high limit for radius, which is 3000 miles, we base the focal points for location collection in the following five states: Utah, DC, Kansas, Hawaii, and Alaska. We pick Utah to collect location points on the West Coast and DC for the East Coast. And then to make sure that no location information is lost especially regarding the branches in the middle east, we also collect the data from the 1000 miles radius area from Kansas. Finally, we collect the data from Alaska and Hawaii since they are far from the mainland.  
 
-Task 3: 
+First, using the for loop function, we download the html pages from the location provider and save them under dennys folder. So the five data files contain the information of the dennys branches within the 1000miles radius of the centroids of the five states mentioned above. 
+
+Second, we use the loop function again to parse the data from the html pages downloaded under dennys folder. After calling each of the raw dat sheet saved in the first step above, we obtain list objects that contain various information of each branch, and then extract pertimant information for this task from those individual lists: name (Dennys), unique ID, address1, city, state, country, zip code, and phone number. After saving them as individual data frame, we bind them all and delete duplicated observations. Finally, we exlude the branches that are outside of the US. The final dataset to be used for Task 3 and other additional visualization tasks is called "dennys_data" that is both defined in Environment and saved as an Rdata file under dennys folder. The dennys dataframe contains 1601 observations and 10 variables. 
+
+
+### Task 3: 
 
 Testing Hedberg's claim that La Quinta is Spanish for "next to Denny's". We first calculate the distance between every pair of La Quinta and Denny's and store it in a matrix as shown below:
 ```{r}
@@ -46,6 +50,8 @@ nden=nrow(denlatlong)
 distance<-NULL
 distance<-rdist.earth(lqlatlong,denlatlong,miles=F,R=6371)
 ```
+
+
 Function 'rdist.earth()' from package 'fields' is used to calculate distance on earth. Firstly, this function takes latitude and longitude values in degrees and not radians (we tested this out). Also, we return the distance in kms. Secondly, it assumes the earth’s radius to be 6378.388 km. According to Wikipedia this number seems to be the equatorial radius (the maximum radius). Because earth is not a perfect sphere, however, the radius declines as one moves to the poles reaching a polar minimum of about 6,357 km. The mean radius is 6371 km and thus we use R=6371 in our command. (inspiration for this claim: http://www.r-bloggers.com/great-circle-distance-calculations-in-r/)
 
 We then plot a histogram of distance of each pair of LQ and Dennys and calculate mean distance as follows:
@@ -60,6 +66,7 @@ hist(distance,breaks=100)
 avedis<-mean(distance)
 print(paste("The mean distance of (lq, denny's):",avedis))
 ```
+
 We see that the histogram and mean give us summaries about all LQ Denny's pairs (no matter how far they are). We understand that this is not what we need to test Hedberg's claim. 
 
 We then proceed to our next approach which accurately tests the claim. In this, we find the minimum distance of a Dennys from EVERY La Quinta (i.e. the distance between a La Quinta and its closest Denny's) and plot a histogram of these minimum distances. So if Hedberg's claim is true, there should be a denny's next to most LQs and the histogram should have high frequencies close to origin. We further define a variable for this measure (i.e. for the minimum distance of a Denny's from every La Quinta) and plot its Quantiles and CDF. From the plot of CDF, we can set any threshold distance for the term 'next to Dennys' and simply see the number/percentage of La Quintas that have a Dennys in that threshold.
@@ -97,7 +104,9 @@ print(paste("Per:",pmindislq(1)*100,"%",",","Freq:",pmindislq(1)*nlq))
 
 We see that 20.07% of La Quintas have a Dennys within a 0.5 km radius from them and 29.87% of La Quinta's have a Dennys within a 1 km radius from them. At these percentages, the Hedberg's claim seems reasonable enough. However the claim is not always true.
 
-We now plot the locations of La Quintas and Dennys for California and NC on their maps to pictorially understand the claim.
+##### Additional Task
+
+We now plot the locations of La Quintas and Dennys for California and NC on their maps to pictorially understand the claim. We pick California is one of the three states, along with Texas and Floria, where both Dennys and La Quinta are heavily concentrated. We also choose to plot locations of La Quinta and Dennys in North Carolina simply because we live here.
 
 ```{r,fig.align='center'}
 
@@ -154,4 +163,4 @@ points(lq_nc, col="blue", pch=16, cex=0.6)
 legend("bottomleft",c("La Quinta","Denny's"),col=c("blue","red"),pch=16)
 
 ```
-From the maps we see that a lot of LQs have a Dennys close to them!!
+From the maps we see that a lot of LQs have a Dennys close to them!
