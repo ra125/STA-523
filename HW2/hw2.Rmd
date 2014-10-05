@@ -29,6 +29,8 @@ Task 2:
 
 Sophie you can add your detailed write up here
 
+Here, we are collecting the location data for Denny's. Since the location service provider for Denny's has a fairly high limit for radius, which is 3000 miles, we base the focal points for location collection in the following five states: Utah, DC, Kansas, Hawaii, and Alaska. 
+
 Task 3: 
 
 Testing Hedberg's claim that La Quinta is Spanish for "next to Denny's". We first calculate the distance between every pair of La Quinta and Denny's and store it in a matrix as shown below:
