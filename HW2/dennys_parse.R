@@ -1,3 +1,7 @@
+## load required packages
+source("check_packages.R")
+check_packages(c("stringr"))
+
 names=c("UT","DC","KS","AL","HI")   
 
 for(i in names){
@@ -53,6 +57,4 @@ dim(dennys_data)
 
 # Save results as Rdata file
 save(dennys_data, file="dennys/dennys_data.Rdata")
-
-
 
