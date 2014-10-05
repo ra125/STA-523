@@ -10,10 +10,10 @@ for(i in names){
   
   # Extracting relevant data
   
-  each=as.character(str_match_all(s,"<name>(.*?)</uid>"))
+  each=as.character(str_match_all(s,"<poi>(.*?)</poi>"))
   name=as.data.frame(str_match_all(each,"<name>(.*?)</name>"))
   name=as.data.frame(name[1:1000,2])
-  uid=as.data.frame(str_match_all(each,"<uid>(.*?)</uid>"))
+  uid=as.data.frame(str_match_all(each,"<uid>([0-9]*)</uid>"))
   uid=unlist(uid[1:1000,2])
   address1=as.data.frame(str_match_all(each,"<address1>(.*?)</address1>"))
   address1=unlist(address1[1:1000,2])
