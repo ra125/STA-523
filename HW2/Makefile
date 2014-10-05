@@ -15,7 +15,7 @@ lq/hotels/%.html: lq_hotel_download.R lq/list.Rdata
 lq/list.Rdata: lq_list_parse.R lq/interactive_map.html
 	Rscript lq_list_parse.R
 
-lq/interactive_map.html: lq_list_download.R
+lq/interactive_map.html: lq_list_download.R 
 	Rscript lq_list_download.R
 
 
@@ -24,7 +24,7 @@ lq/interactive_map.html: lq_list_download.R
 dennys/dennys_data.Rdata: dennys_parse.R dennys/%.html
 	Rscript dennys_parse.R
 
-dennys/%.html: dennys_download.R
+dennys/%.html: dennys_download.R 
 	Rscript dennys_download.R
 
 
