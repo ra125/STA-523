@@ -14,7 +14,7 @@ check_packages(c("httr","XML","jsonlite","stringr","fields"))
 
 #lq (lat,long) and denney's (lat,long), both stored in rows.
 lqlatlong<-matrix(c(as.double(data.lq$latitude),as.double(data.lq$longitude)),ncol=2)
-denlatlong<-matrix(c(as.double(attr(data.dennys$lat,"levels")),as.double(attr(data.dennys$long,"levels"))),ncol=2)
+denlatlong<-matrix(c(as.double(as.matrix(data.dennys$lat)),as.double(as.matrix(data.dennys$long))),ncol=2)
 
 nlq=nrow(lqlatlong)
 nden=nrow(denlatlong)
@@ -71,22 +71,28 @@ print(paste("The mean distance of (lq, denney's):",avedis))
 #how many percentages of lq can statisfy this condition, thus support blogger's
 #statement. 
 
-
+#pdf("Min-distance",width=5.7,height=4.5)
 hist(mindislq,breaks = seq(0,as.integer(max(mindislq))+1,1),freq = T
      ,xlim=c(1,100)
      ,xlab="Min-distance of (lq,denney's) for every lq (only show (0,100))(km)"
      ,ylab="frequency",main="The minimum distance of (lq,denney's) for every lq")
+#dev.off()
 
 #quantile function of the minimum distance of (lq,denney's) pair for every lq
 qmindislq<-quantile(mindislq,probs = seq(0,1,0.01))
+
+#pdf("quantile",width=5.7,height=4.5)
 plot(seq(0,1,0.01),qmindislq,type="l",lwd = 2, col="red",
      xlab="Probability",ylab="Minimum distance(km)",main="Quantile curve")
+#dev.off()
 #empirical cdf for the minimum distance
 pmindislq<-ecdf(mindislq)
 xp<-seq(0,max(mindislq)+1,length.out=1000)
+
+#pdf("cdf",width=5.7,height=4.5)
 plot(xp,pmindislq(xp),type="l",lwd = 2, col="green",
      ylab="Probability",xlab="Minimum distance(km)",main="CDF curve")
-
+#dev.off()
 
 #If we set 1 km as standard of "closeness", the blogger's claim is true at below percentage and frequency:
 print(paste("Per:",pmindislq(1)*100,"%",",","Freq:",pmindislq(1)*nlq))
