@@ -36,8 +36,8 @@ Task 3:
 Testing Hedberg's claim that La Quinta is Spanish for "next to Denny's". We first calculate the distance between every pair of La Quinta and Denny's and store it in a matrix as shown below:
 ```{r}
 #lq (lat,long) and denny's (lat,long), both stored in rows.
-lqlatlong<-matrix(c(as.double(data.lq$latitude),as.double(data.lq$longitude)),ncol=2)
-denlatlong<-matrix(c(as.double(as.matrix(dennys_data$latitude)),as.double(as.matrix(dennys_data$longitude))),ncol=2)
+lqlatlong<-matrix(c(as.double(data.lq$longitude),as.double(data.lq$latitude)),ncol=2)
+denlatlong<-matrix(c(as.double(as.matrix(dennys_data$longitude)),as.double(as.matrix(dennys_data$latitude))),ncol=2)
 
 nlq=nrow(lqlatlong)
 nden=nrow(denlatlong)
