@@ -47,7 +47,7 @@ dennys_data=dennys_data[!duplicated(dennys_data$uid),]
 
 #removing Dennys outside US
 dennys_data=dennys_data[dennys_data$country=="US",]
-dennys_data
+# dennys_data
 dim(dennys_data)
 
 
