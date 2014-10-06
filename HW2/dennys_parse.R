@@ -15,13 +15,13 @@ for(i in names){
   
   each=as.character(str_match_all(s,"<poi>(.*?)</poi>"))
   name=as.data.frame(str_match_all(each,"<name>(.*?)</name>"))
-  name=as.data.frame(name[1:1000,2])
+  name=unlist(name[1:1000,2])
   uid=as.data.frame(str_match_all(each,"<uid>([0-9-]*)</uid>"))
   uid=unlist(uid[1:1000,2])
   address1=as.data.frame(str_match_all(each,"<address1>(.*?)</address1>"))
   address1=unlist(address1[1:1000,2])
   # address2=as.data.frame(str_match_all(each,"<address2>(.*?)</address2>"))
-  # address2=as.data.frame(address2[1:1000,2]) #---- nobody has address2
+  # address2=as.data.frame(address2[1:1000,2]) #---- nobody has address2 in US
   city=as.data.frame(str_match_all(each,"<city>(.*?)</city>"))
   city=unlist(city[1:1000,2]) 
   state=as.data.frame(str_match_all(each,"<state>(.*?)</state>"))
@@ -33,7 +33,7 @@ for(i in names){
   phone=as.data.frame(str_match_all(each,"<phone>(.*?)</phone>"))
   phone=unlist(phone[1:1000,2])
   # fax=as.data.frame(str_match_all(each,"<fax>(.*?)</fax>"))
-  # fax=as.data.frame(fax[1:1000,2])   #----- nobody has fax..?
+  # fax=as.data.frame(fax[1:1000,2])   #----- nobody has fax..
   latitude=as.data.frame(str_match_all(each, "<latitude>([0-9.0-9]*)</latitude>"))
   latitude=unlist(latitude[1:1000,2])
   longitude=as.data.frame(str_match_all(each,"<longitude>(-[0-9.0-9]*)</longitude>"))
