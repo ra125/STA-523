@@ -15,7 +15,7 @@ for(i in names){
   
   each=as.character(str_match_all(s,"<poi>(.*?)</poi>"))
   name=as.data.frame(str_match_all(each,"<name>(.*?)</name>"))
-  name=unlist(name[1:1000,2])
+  name=as.data.frame(name[1:1000,2])
   uid=as.data.frame(str_match_all(each,"<uid>([0-9-]*)</uid>"))
   uid=unlist(uid[1:1000,2])
   address1=as.data.frame(str_match_all(each,"<address1>(.*?)</address1>"))
@@ -47,8 +47,9 @@ for(i in names){
 ################### add them together and make the final data
 
 dennys_data=rbind(UT, DC, AL, HI, KS)
-dennys_data=dennys_data[!duplicated(dennys_data$uid),]
 
+dennys_data=dennys_data[!duplicated(dennys_data$uid),]
+dim(dennys_data)
 #removing Dennys outside US
 dennys_data=dennys_data[dennys_data$country=="US",]
 # dennys_data

@@ -16,24 +16,29 @@ check_packages(c("httr","XML","jsonlite","stringr","fields"))
 
 Data scraping for La Quinta is a 2 stage process and the code for the same is divided into 4 scripts. In the first stage we download some basic information about each La Quinta from a single page and in the second stage we access each La Quinta's webpage separately to get some specific information about each.
  
-Stage 1 scripts: "lq_list_download.R" & "lq_list_parse.R"
-Stage 2 scripts: "lq_hotel_download.R" & "lq_hotel_parse.R"
- 
-In the first script, "lq_list_download.R", we download and save the page, "www.lq.com/en/findandbook.by_interactive_map.html", locally, because this one single page has basic information about each La Quinta. In "lq_list_parse.R" we access this page from its local copy and parse the basic information for each La Quinta from the source code using regular expressions for string matching. In particular, we get "title", "innNumber", "latitude", "longitude", "imagePath", "isInnAndSuites", "street", "street2", "city", "stateProv", "postalCode" and "countryDisplay" and save them in a dataframe called "dataframe". We then drop "imagePath" and "isInnAndSuites".  We then drop "imagePath" and "isInnAndSuites" as we think they are not required. 
- 
-Further, in the script "lq_hotel_download.R", we access each La Quinta separately by its "InnNumber" using the following url, "http://www.lq.com/en/findandbook/hotel-details.[innNumber].address.html" where [innNumber] is replaced by the corresponding "innNumber" each time and save all the pages we get. 
+Stage 1 scripts: **lq_list_download.R** and **lq_list_parse.R**
 
-Then in "lq_hotel_parse.R", we access each page locally and expand the existing "dataframe" to parse (using regular expressions for string matching) and include specific attributes such as "phone", "fax", number of "floors", "rooms" "suites", "check_in_time", "check_out_time" and access to specific amenities such as "spa", "internet", swimming "pool", "fitness" center. (Quotes are used to indicate the actual attribute names as used in the dataframe). We now have data for 880 La Quintas. We then remove the duplicates based on unique "innNumber" and are left with 875 unique ones. We further remove the data for Canada and Mexico as we need to test the claim only in US. We are then left with La Quintas. We name this final dataframe as lq.data.
+Stage 2 scripts: **lq_hotel_download.R** and **lq_hotel_parse.R**
+
+#### Stage 1 
+In the first script, **lq_list_download.R**, we download and save the page, **www.lq.com/en/findandbook.by_interactive_map.html**, locally, because this one single page has much of the basic information we need about each La Quinta. This page renders as an interactive map where in the locations of all La Quintas along with information like name, contact, address, etc are available to the user. On further analysis, it was found that all this data is actually stored in a very structured way inside a javascript code. Therefore, in **lq_list_parse.R** we access this page from its local copy and parse this basic information for each La Quinta from the source code by first using XML parsing to extract the relevant javascript code and then using regular expressions to extract particular values by string matching. In particular, we get "title", "innNumber", "latitude", "longitude", "imagePath", "isInnAndSuites", "street", "street2", "city", "stateProv", "postalCode" and "countryDisplay" and save them in a dataframe called "dataframe". 
+ 
+Further, in the script **lq_hotel_download.R**, we access each La Quinta separately by its "InnNumber" using the following url, **http://www.lq.com/en/findandbook/hotel-details.[innNumber].address.html** where [innNumber] is replaced by the corresponding "innNumber" each time and save all the pages we get. 
+
+#### Stage 2
+In **lq_hotel_parse.R**, we access each saved La Quinta page locally and expand the existing "dataframe" to parse (using regular expressions for string matching) and include specific attributes such as "phone", "fax", number of "floors", "rooms" "suites", "check_in_time", "check_out_time" and access to specific amenities such as "spa", "internet", swimming "pool", "fitness" center. (Quotes are used to indicate the actual attribute names as used in the dataframe). We now have data for 880 La Quintas. We then remove the duplicates based on unique "innNumber" and are left with 875 unique ones. We further remove the data for Canada and Mexico as we need to test the claim only in US. We are then left with 867 La Quintas in US. 
+
+Finally, we then drop "imagePath", "street2" and "isInnAndSuites" as we think they are not required and name the final dataframe as **lq.data**
 
 ### Task 2: 
 
+Here, we are collecting the location data for Denny's. Since the location service provider for Denny's has a fairly high limit for radius, which is 3000 miles (and number of results returned are 1000), we base the focal points for location collection in the following five states: Utah, DC, Kansas, Hawaii, and Alaska. We pick Utah to collect location points on the West Coast and DC for the East Coast. And then to make sure that no location information is lost especially regarding the branches in the middle east, we also collect the data for Kansas. Finally, we collect the data from Alaska and Hawaii since they are far from the mainland.  
 
-Here, we are collecting the location data for Denny's. Since the location service provider for Denny's - Where2GetIt- has a fairly high limit for radius, which is 3000 miles, we base the focal points for location collection in the following five states: Utah, DC, Kansas, Hawaii, and Alaska. We pick Utah to collect location points on the West Coast and DC for the East Coast. And then to make sure that no location information is lost especially regarding the branches in the middle east, we also collect the data from the 1000 miles radius area from Kansas. Finally, we collect the data from Alaska and Hawaii since they are far from the mainland.  
+First, in the file **dennys_download.R**, using the for loop function, we download the html pages from the location provider and save them under dennys folder. So the five data files contain the information of the dennys branches within the 3000 miles radius of the centroids of the five states mentioned above. 
 
-First, using the for loop function, we download the html pages from the location provider and save them under dennys folder. So the five data files contain the information of the dennys branches within the 3000 miles radius of the centroids of the five states mentioned above. Since the limit of each query set by Wehre2GetIt is 1000, each datasheet contains the location information of 1000 branches within the set radius from the focal points we set.  
+Second, in the file **dennys_parse.R**, we use the loop function again to parse the data from the html pages downloaded under dennys folder. After calling each of the raw data sheet saved in the first step above, we obtain list objects that contain various information of each branch, and then extract pertinant information for this task from those individual lists: name (Denny's), unique ID, address1, city, state, country, zip code, phone number, latitude and longitude. After saving them as individual data frame, we bind them all and delete duplicated observations. We get 1692 results. Finally, we exlude the branches that are outside of the US and are left with 1602 results. This final dataset to be used for Task 3 and other additional visualization tasks is called "dennys_data". 
 
-Second, we use the loop function again to parse the data from the html pages downloaded under dennys folder. After calling each of the raw dat sheet saved in the first step above, we obtain list objects that contain various information of each branch, and then extract pertimant information for this task from those individual lists: name (Dennys), unique ID, address1, city, state, country, zip code, and phone number. After saving them as individual data frame, we bind them all, which then is 5000 observations, and delete duplicated ones. Finally, we exlude the branches that are outside of the US. The final dataset to be used for Task 3 and other additional visualization tasks is called "dennys_data" that is both defined in Environment and saved as an Rdata file under dennys folder. The dennys dataframe contains 1601 observations and 10 variables. 
-
+NOTE: We realise that these files are XML and we could have used XML parsing, **as we have done in the case of La Quinta**, but we began by direct string matching and since it works correctly we didn't change.
 
 ### Task 3: 
 
@@ -52,7 +57,7 @@ distance<-rdist.earth(lqlatlong,denlatlong,miles=F,R=6371)
 ```
 
 
-Function 'rdist.earth()' from package 'fields' is used to calculate distance on earth. Firstly, this function takes latitude and longitude values in degrees and not radians (we tested this out). Also, we return the distance in kms. Secondly, it assumes the earth’s radius to be 6378.388 km. According to Wikipedia this number seems to be the equatorial radius (the maximum radius). Because earth is not a perfect sphere, however, the radius declines as one moves to the poles reaching a polar minimum of about 6,357 km. The mean radius is 6371 km and thus we use R=6371 in our command. (inspiration for this claim: http://www.r-bloggers.com/great-circle-distance-calculations-in-r/)
+Function 'rdist.earth()' from package 'fields' is used to calculate distance on earth. Firstly, this function takes latitude and longitude values in degrees and not radians (we tested this out) and the matrix it takes is such that its first column is longitude and second is latitude. Also, we return the distance in kms. Secondly, it assumes the earth’s radius to be 6378.388 km. According to Wikipedia this number seems to be the equatorial radius (the maximum radius). Because earth is not a perfect sphere, however, the radius declines as one moves to the poles reaching a polar minimum of about 6,357 km. The mean radius is 6371 km and thus we use R=6371 in our command. (inspiration for this claim: http://www.r-bloggers.com/great-circle-distance-calculations-in-r/)
 
 We then plot a histogram of distance of each pair of LQ and Dennys and calculate mean distance as follows:
 
@@ -67,9 +72,11 @@ avedis<-mean(distance)
 print(paste("The mean distance of (lq, denny's):",avedis))
 ```
 
-We see that the histogram and mean give us summaries about all LQ Denny's pairs (no matter how far they are). We understand that this is not what we need to test Hedberg's claim. 
+We see that the histogram and mean give us summaries about all LQ Denny's pairs (no matter how far they are). **We understand that this is not what we need to test Hedberg's claim.**
 
-We then proceed to our next approach which accurately tests the claim. In this, we find the minimum distance of a Dennys from EVERY La Quinta (i.e. the distance between a La Quinta and its closest Denny's) and plot a histogram of these minimum distances. So if Hedberg's claim is true, there should be a denny's next to most LQs and the histogram should have high frequencies close to origin. We further define a variable for this measure (i.e. for the minimum distance of a Denny's from every La Quinta) and plot its Quantiles and CDF. From the plot of CDF, we can set any threshold distance for the term 'next to Dennys' and simply see the number/percentage of La Quintas that have a Dennys in that threshold.
+####Better Approach to test Hedberg's Claim
+
+We then proceed to our next approach which accurately tests the claim. In this, we find the minimum distance of a Dennys from EVERY La Quinta (i.e. the distance between a La Quinta and its closest Denny's) and plot a histogram of these minimum distances. So if Hedberg's claim is true, there should be a denny's next to most LQs and the histogram should have high frequencies close to origin. We further define a variable for this measure (i.e. for the minimum distance of a Denny's from every La Quinta) and plot its CDF. From the plot of CDF, we can set any threshold distance for the term 'next to Dennys' and simply see the number/percentage of La Quintas that have a Dennys in that threshold.
 
 ```{r,fig.align='center'}
 mindislq<-apply(distance,1,min)
@@ -166,9 +173,11 @@ legend("bottomleft",c("La Quinta","Denny's"),col=c("blue","red"),pch=16)
 From the maps we see that a lot of LQs have a Dennys close to them!
 La Quinta data
 ```{r}
+dim(data.lq)
 data.lq
 ```
 Denny's data
 ```{r}
+dim(dennys_data)
 dennys_data
 ```
