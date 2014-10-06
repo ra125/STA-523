@@ -173,12 +173,14 @@ legend("bottomleft",c("La Quinta","Denny's"),col=c("blue","red"),pch=16)
 From the maps we see that a lot of LQs have a Dennys close to them! But we can't make any strong comments from these maps. 
 
 ### La Quinta data
+The data has dimensions (867,20) as shown below. The row number stamps might be higher as they correspond to the stamping before the duplicates were removed. The data actually has only 867 rows.
 ```{r}
 dim(data.lq)
 data.lq
 ```
 
 ### Denny's data
+The data has dimensions (1602,10) as shown below. The row number stamps might be higher as they correspond to the stamping before the duplicates were removed. The data actually has only 1602 rows.
 ```{r}
 dim(dennys_data)
 dennys_data
