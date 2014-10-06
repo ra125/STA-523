@@ -164,3 +164,11 @@ legend("bottomleft",c("La Quinta","Denny's"),col=c("blue","red"),pch=16)
 
 ```
 From the maps we see that a lot of LQs have a Dennys close to them!
+La Quinta data
+```{r}
+data.lq
+```
+Denny's data
+```{r}
+dennys_data
+```

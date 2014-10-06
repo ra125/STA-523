@@ -41,5 +41,8 @@ dataframe = dataframe[!duplicated(dataframe$innNumber), ]
 #Removing data for Canada and Mexico
 data.lq = dataframe[dataframe$countryDisplay=="United States",]
 
+#Removing imagepath and street2 and isInnAndSuites columns as we think they are not required
+data.lq = data.lq[,c(-5,-6,-8)]
+
 # Save results as Rdata file
 save(data.lq, file="lq/lq_data.Rdata")
