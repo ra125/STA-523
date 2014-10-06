@@ -9,7 +9,7 @@ output: html_document
 load(file="lq/lq_data.Rdata")
 load(file="dennys/dennys_data.Rdata")
 source("check_packages.R")
-check_packages(c("httr","XML","jsonlite","stringr","fields"))
+check_packages(c("fields","rgdal"))
 ```
 
 ### Task 1:
@@ -28,7 +28,9 @@ Further, in the script **lq_hotel_download.R**, we access each La Quinta separat
 #### Stage 2
 In **lq_hotel_parse.R**, we access each saved La Quinta page locally and expand the existing "dataframe" to parse (using regular expressions for string matching) and include specific attributes such as "phone", "fax", number of "floors", "rooms" "suites", "check_in_time", "check_out_time" and access to specific amenities such as "spa", "internet", swimming "pool", "fitness" center. (Quotes are used to indicate the actual attribute names as used in the dataframe). We now have data for 880 La Quintas. We then remove the duplicates based on unique "innNumber" and are left with 875 unique ones. We further remove the data for Canada and Mexico as we need to test the claim only in US. We are then left with 867 La Quintas in US. 
 
-Finally, we then drop "imagePath", "street2" and "isInnAndSuites" as we think they are not required and name the final dataframe as **lq.data**
+Finally, we then drop "imagePath", "street2" and "isInnAndSuites" as we think they are not required and name the final dataframe as **lq.data**.
+
+NOTE: There are several La Quinta's that dont have their own website and they are all re-routed to Chicago Downtown but we have correct latitude longitude info. for them so we include them in the analysis.
 
 ### Task 2: 
 
@@ -74,7 +76,7 @@ print(paste("The mean distance of (lq, denny's):",avedis))
 
 We see that the histogram and mean give us summaries about all LQ Denny's pairs (no matter how far they are). **We understand that this is not what we need to test Hedberg's claim.**
 
-####Better Approach to test Hedberg's Claim
+### Better Approach to test Hedberg's Claim
 
 We then proceed to our next approach which accurately tests the claim. In this, we find the minimum distance of a Dennys from EVERY La Quinta (i.e. the distance between a La Quinta and its closest Denny's) and plot a histogram of these minimum distances. So if Hedberg's claim is true, there should be a denny's next to most LQs and the histogram should have high frequencies close to origin. We further define a variable for this measure (i.e. for the minimum distance of a Denny's from every La Quinta) and plot its CDF. From the plot of CDF, we can set any threshold distance for the term 'next to Dennys' and simply see the number/percentage of La Quintas that have a Dennys in that threshold.
 
@@ -86,13 +88,6 @@ hist(mindislq,breaks = seq(0,as.integer(max(mindislq))+1,0.1),freq = T
      ,xlab="Min-distance of (lq,denny's) for every lq (only show (0,20))(km)"
      ,ylab="frequency",main="Histogram of minimum distance of (lq,denny's) for every LQ")
 
-#quantile function of the minimum distance of (lq,denny's) pair for every lq
-qmindislq<-quantile(mindislq,probs = seq(0,1,0.01))
-
-#pdf("quantile",width=5.7,height=4.5)
-plot(seq(0,1,0.01),qmindislq,type="l",lwd = 2, col="red",
-     xlab="Probability",ylab="Minimum distance(km)",main="Quantile curve")
-
 #empirical cdf for the minimum distance
 pmindislq<-ecdf(mindislq)
 xp<-seq(0,max(mindislq)+1,length.out=1000)
@@ -101,6 +96,7 @@ xp<-seq(0,max(mindislq)+1,length.out=1000)
 plot(xp,pmindislq(xp),type="l",lwd = 2, col="green",
      ylab="Probability",xlab="Minimum distance(km)",main="CDF curve")
 #dev.off()
+#If we set the threshold to 0.15 km (as the blogger has done), the corresponding percentage and frequency:
 print(paste("Per:",pmindislq(0.15)*100,"%",",","Freq:",pmindislq(0.15)*nlq))
 #If we set the threshold to 0.5 km, the corresponding percentage and frequency:
 print(paste("Per:",pmindislq(0.5)*100,"%",",","Freq:",pmindislq(0.5)*nlq))
@@ -108,16 +104,18 @@ print(paste("Per:",pmindislq(0.5)*100,"%",",","Freq:",pmindislq(0.5)*nlq))
 #If increase the threshold to 1 km, the corresponding percentage and frequency:
 print(paste("Per:",pmindislq(1)*100,"%",",","Freq:",pmindislq(1)*nlq))
 ```
+#### Analysis
 
-We see that 20.07% of La Quintas have a Dennys within a 0.5 km radius from them and 29.87% of La Quinta's have a Dennys within a 1 km radius from them. At these percentages, the Hedberg's claim seems reasonable enough. However the claim is not always true.
+From the histogram and the calculations shown above, we see that 5.77% (50 in total) of La Quintas have a Dennys within a 0.15 km radius from them (the blogger obtained 49 in a 0.15 km radius as the number of LQs were less when he tested the claim). Next, 15% of La Quinta's have a Dennys within a 0.5 km radius from them and 22.8% of La Quinta's have a Dennys within a 1 km radius from them. At these percentages, the Hedberg's claim seems reasonable. However the claim is not always true that a La Quinta is always next (very close) to a Dennys as the percentage within 0.15 km is not very high.
 
-##### Additional Task
+From the PDF curve, we can see the probability corresponding to any threshold distance.
 
-We now plot the locations of La Quintas and Dennys for California and NC on their maps to pictorially understand the claim. We pick California is one of the three states, along with Texas and Floria, where both Dennys and La Quinta are heavily concentrated. We also choose to plot locations of La Quinta and Dennys in North Carolina simply because we live here.
+#### Additional Visualization Task
+
+We now plot the locations of La Quintas and Dennys for California and NC on their maps to pictorially understand the claim. California, Texas and Florida are 3 states where both Dennys and La Quinta are heavily concentrated. We choose to see California out of them. We also choose to plot locations of La Quinta and Dennys in North Carolina simply because we live here.
 
 ```{r,fig.align='center'}
 
-suppressMessages(library(rgdal))
 ogrInfo("/home/vis/cr173/Sta523/data/us-atlas/shp/us/","states-unfiltered")
 states = readOGR("/home/vis/cr173/Sta523/data/us-atlas/shp/us/","states-unfiltered", stringsAsFactors=FALSE)
 
@@ -170,13 +168,17 @@ points(lq_nc, col="blue", pch=16, cex=0.6)
 legend("bottomleft",c("La Quinta","Denny's"),col=c("blue","red"),pch=16)
 
 ```
-From the maps we see that a lot of LQs have a Dennys close to them!
-La Quinta data
+
+#### Inference:
+From the maps we see that a lot of LQs have a Dennys close to them! But we can't make any strong comments from these maps. 
+
+### La Quinta data
 ```{r}
 dim(data.lq)
 data.lq
 ```
-Denny's data
+
+### Denny's data
 ```{r}
 dim(dennys_data)
 dennys_data
