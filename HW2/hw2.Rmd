@@ -40,7 +40,6 @@ Second, in the file **dennys_parse.R**, we use the loop function again to parse 
 
 NOTE: We realise that these files are XML and we could have used XML parsing, **as we have done in the case of La Quinta**, but we began by direct string matching and since it works correctly we didn't change.
 
-
 ### Task 3: 
 
 Testing Hedberg's claim that La Quinta is Spanish for "next to Denny's". We first calculate the distance between every pair of La Quinta and Denny's and store it in a matrix as shown below:
