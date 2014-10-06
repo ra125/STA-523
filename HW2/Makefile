@@ -6,7 +6,7 @@ hw2.html: hw2.Rmd lq/lq_data.Rdata dennys/dennys_data.Rdata
 
 # La Quinta files
 
-lq/lq_data.Rdata: lq_hotel_parse.R lq/hotels/%.html
+lq/lq_data.Rdata: lq_hotel_parse.R lq/hotels/0111.html
 	Rscript lq_hotel_parse.R
 
 lq/hotels/%.html: lq_hotel_download.R lq/list.Rdata
@@ -21,7 +21,7 @@ lq/interactive_map.html: lq_list_download.R
 
 # Denny's files
 
-dennys/dennys_data.Rdata: dennys_parse.R dennys/%.html
+dennys/dennys_data.Rdata: dennys_parse.R dennys/HI.html
 	Rscript dennys_parse.R
 
 dennys/%.html: dennys_download.R 

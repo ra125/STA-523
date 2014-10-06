@@ -1,6 +1,6 @@
 # Load Required packages
 source("check_packages.R")
-check_packages(c("httr","XML","stringr","jsonlite"))
+check_packages(c("httr"))
 
 # Download content
 hotel_map_url = "www.lq.com/en/findandbook.by_interactive_map.html"
