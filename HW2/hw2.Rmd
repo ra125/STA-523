@@ -71,7 +71,7 @@ max=as.integer(max(distance))
 #hist and mean of distance matrix
 hist(distance,breaks=100,xlab="Distance of (lq,dennys) pair",ylab="Frequency",freq = T)
 avedis<-mean(distance)
-print(paste("The mean distance of (lq, denny's):",avedis (km)))
+print(paste("The mean distance of (lq, denny's):",avedis,"(kms)"))
 ```
 
 We see that the histogram and mean give us summaries about all LQ Denny's pairs (no matter how far they are). **We understand that this is not what we need to test Hedberg's claim.**
