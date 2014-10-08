@@ -2,30 +2,34 @@
 
 
 source("check_packages.R")
-check_packages(c("data.table","ggmap","rgdal"))
+check_packages(c("data.table","ggmap","rgdal","maptools"))
 park = fread("/home/vis/cr173/Sta523/data/parking/NYParkingViolations.csv",sep=",")
 
 head(park)
 precinct<-park$"Violation Location"
 house_street<-cbind(park$"House Number", park$"Street Name")
-house_street[1:10,]
 address<-apply(house_street,1,paste,collapse=" ")
-address[1:10]
 rm(house_street)
 rm(park)
 
 ### we only work with address and precinct from now. rm all other data frame that takes up RAM space!
+###geocode has 2500 requests limit a day
 
-latlon<-geocode(address, 
+
+howmany <-1:100
+# howmany<-sample(1:length(address),2500,replace=FALSE)
+# howmany<-c(1:length(address))
+
+latlon<-geocode(address[howmany], 
         output="latlon", 
         override_limit=FALSE) #geocode requires 'ggmap'
 
 d<-cbind(latlon,precinct)
 d[1:10,]
-rm(latlon)
+
 rm(address)
 rm(precinct)
-
+rm(howmany)
 
 
 ######## Task 2 (Subsetting -- We will use 95% of the datapoints)
@@ -47,16 +51,25 @@ rm(pres)
 #### the following code won't run for now because Colin's nybb folder has a permission setting.
 #### I've asked him to change that.
 
-library(maptools)
+
 basepath<-getwd()
 setwd("/home/vis/cr173/Sta523/data/parking/nybb")
-nyc<-readShapeSpatial("nypp")
+nyc<-readShapeSpatial("nybb")
 setwd(basepath)
 rm(basepath)
+manhattan<-nyc[nyc$BoroName=="Manhattan",]
+par(mar=c(2,2,1,1))
+plot(nyc, axes=TRUE)
+plot(manhattan, axes=TRUE)
 
-ogrInfo("/home/vis/cr173/Sta523/data/parking/nybb/","nypp")
-nyc = readOGR("/home/vis/cr173/Sta523/data/parking/nybb/","nypp", stringsAsFactors=FALSE)
+
+###### Save the objects as multipoints
+coord = SpatialPoints(data.frame(latlon)) 
 
 
 
 ######## Task 4: Recreate the boundary!
+
+
+
+
