@@ -6,5 +6,5 @@ c/o is corner of
 ##Strategy 
 1) Geocode (i.e. get the coordinates) based on the address info (The coding should be simple, but it could take a lot of time.)
 2) Subset 95% from the centroid of each precinct
-3) Plot the boundaries
-
+3) Plot the coordinates
+4) Create the boundaries
