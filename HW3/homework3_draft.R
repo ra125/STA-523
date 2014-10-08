@@ -34,7 +34,7 @@ q_lat<-matrix(quantile(d$lat, probs=c(0.025, 0.975), na.rm=TRUE))
 pres<-(which( q_lon[1,1]< d$lon & d$lon<q_lon[2,1] & q_lat[1,1]< d$lat & d$lat<q_lat[2,1]))
 data<-d[pres,]
 
-######## The subsetted data is called "data."  Remove all else
+######## Now, the subsetted data is called "d"  Remove all else
 rm(d)
 rm(q_lon)
 rm(q_lat)
