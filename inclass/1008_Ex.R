@@ -1,7 +1,7 @@
 ### This relies on C, which consumes a lot of RAM. Save your work as you go.
 
 library(data.table)
-install.packages("dplry")
+install.packages("dplyr")
 library(dplyr)
 park = fread("/home/vis/cr173/Sta523/data/parking/NYParkingViolations.csv",sep=",")
 head(park)
