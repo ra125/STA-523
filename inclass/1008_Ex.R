@@ -1,26 +1,55 @@
 ### This relies on C, which consumes a lot of RAM. Save your work as you go.
 
-library(data.table)
-install.packages("dplyr")
-library(dplyr)
-park = fread("/home/vis/cr173/Sta523/data/parking/NYParkingViolations.csv",sep=",")
-head(park)
+# Part1
+source("check_packages.R")
+check_packages(c("dplyr", "data.table", "lubridate"))
 
-str(transmute(park, dt=paste(Issue.Date,Violation.Time)) %>% mutate(dt=ymd_hm(dt)) 
-    %>% mutate(hour=hour(dt), wday=as.character(wday(dt,late=TRUE ))) )
+park <- read.csv("/home/vis/cr173/Sta523/data/parking/NYParkingViolations_small.csv",
+                 stringsAsFactors=FALSE) %>%
+  as.data.frame() %>%
+  tbl_df()
+location <- transmute(park, Violation.Precinct, Address=paste(House.Number, Street.Name), Intersecting.Street)
 
-date=(transmute(park, dt=paste(Issue.Date,Violation.Time)) %>% mutate(dt=ymd_hm(dt)) 
-      %>% mutate(hour=hour(dt), wday=as.character(wday(dt,late=TRUE )))
+#Part2
+
+StateDateTime = transmute(park, Registration.State, DateTime=mdy_hm(paste0(Issue.Date, Violation.Time)))
+Christmas <- filter(StateDateTime, DateTime <  "2014-01-05", DateTime > "2013-12-22")
+State <- group_by(Christmas, Registration.State, day = day(DateTime))%>%
+  summarize(totalViolations= n())
+
+plot(State$day[State$Registration.State=="NY"], State$totalViolations[State$Registration.State=="NY"], type ="p", xlab="Date and time", ylab="Number of Violations")
+
+#Group by day of week 
+day = group_by(StateDateTime, day=wday(DateTime, label=TRUE))%>% summarize(totalViolations= n())
+day[which.max(day$totalViolations),]
+
+
+#Group by hour
+hour = group_by(StateDateTime, hour=hour(DateTime))%>% summarize(totalViolations= n())
+hour[which.max(hour$totalViolations),]
+
+#hour and day of most citations
+hourDay = group_by(StateDateTime, hour=hour(DateTime), day=wday(DateTime, label=TRUE))%>% summarize(totalViolations= n())
+hourDay[which.max(hourDay$totalViolations),]
+
+
+
+
+#str(transmute(park, dt=paste(Issue.Date,Violation.Time)) %>% mutate(dt=ymd_hm(dt)) 
+#    %>% mutate(hour=hour(dt), wday=as.character(wday(dt,label=TRUE ))) )
+
+#date=(transmute(park, dt=paste(Issue.Date,Violation.Time)) %>% mutate(dt=ymd_hm(dt)) 
+#      %>% mutate(hour=hour(dt), wday=as.character(wday(dt,label=TRUE ))) )
       
-group_by(date, wday) %>% summarize(n())
+#group_by(date, wday) %>% summarize(n())
 
-group_by(date, hour) %>% summarize(n())
+#group_by(date, hour) %>% summarize(n())
 
-group_by(date, hour, wday) %>% summarize(n())
+#group_by(date, hour, wday) %>% summarize(n())
 
-which.max(hourwday$`n()`)
+#which.max(hourwday$`n()`)
 
-    precinct<-park$"Violation Location"
-house_street<-cbind(park$"House Number", park$"Street Name")
-address<-apply(house_street,1,paste,collapse=" ")
+#precinct<-park$"Violation Location"
+#house_street<-cbind(park$"House Number", park$"Street Name")
+#address<-apply(house_street,1,paste,collapse=" ")
 
