@@ -1,0 +1,174 @@
+---
+title: "hw3_draft"
+author: "Sophie Lee"
+date: "10/12/2014"
+output: html_document
+---
+
+
+
+```{r}
+
+---
+title: "HW3"
+author: "Sophie Lee"
+date: "10/12/2014"
+output: html_document
+---
+
+
+```{r}
+###### Task 1  (Geocoding)
+
+#Load necessary packages
+source("check_packages.R")
+check_packages(c("data.table","ggmap","rgdal","maptools", "dplyr"))
+rm(check_packages)  #Remove anything that could take up memory
+
+#Load the Biggish NYC parking violations datafile
+park = fread("/home/vis/cr173/Sta523/data/parking/NYParkingViolations.csv",sep=",")
+
+
+# head(park)
+precinct<-as.numeric(park$"Violation Location")
+summary(precinct)
+precinct[1:10]
+# address<-transmute(park, address=paste(House.Number, Street.Name) )
+# address[1:10,]
+house_street<-cbind(park$"House Number", park$"Street Name")
+address<-apply(house_street,1,paste,collapse=" ")
+d=data.frame("precinct"=as.numeric(precinct), "address"=address)
+
+rm(house_street)
+rm(park)
+rm(precinct)
+rm(address)
+
+# Load 'intersection' data to geocode
+basepath<-getwd()
+setwd("/home/vis/cr173/Sta523/data/parking/intersections")
+intersections<-readShapeSpatial("intersections")
+
+# Load 'ny borough' data
+setwd("/home/vis/cr173/Sta523/data/parking/nybb")
+nyc<-readShapeSpatial("nybb")
+setwd(basepath)
+rm(basepath)
+manhattan<-nyc[nyc$BoroName=="Manhattan",]
+
+### We could plot the map of Manhattan
+# par(mar=c(2,2,1,1))
+# plot(nyc, axes=TRUE)
+# plot(manhattan, axes=TRUE)
+
+###### Since the intersection data has too many address, we subset the intersection data using the max and min of the longitude and lattitude of Manhattan
+
+minmax<-unlist(summary(manhattan)[2])
+no=which(coordinates(intersections)[,1]>minmax[1] & 
+         coordinates(intersections)[,1]<minmax[3] & 
+         coordinates(intersections)[,2]>minmax[2] & 
+         coordinates(intersections)[,2]<minmax[4] )
+
+
+man_int=intersections[no,]  #observations in intersections data associated with manhattan addresses only
+# plot(man_int, axes=TRUE)
+
+rm(nyc)
+rm(intersections)
+rm(lat_no)
+rm(lon_no)
+rm(minmax)
+rm(no)
+
+
+#### We exlude observations that are not associated with the correct Manhattan precincts
+
+
+d<-d[which(d[,1] < 35),]
+man_int<-data.frame(man_int[,2])
+
+dir.create("data/", showWarnings = FALSE)
+save(d, file="data/d.csv")
+save(man_int, file="data/man_int.csv")
+
+d[1:10,]
+length(unique(d[,2]))
+man_int[1:10,]
+length(unique(man_int$streets))
+
+
+
+# 
+# for(1 in 1:length(names)){
+# select(man_int, contains("names"))
+#   }
+# 
+# 
+# man_int[man_int$streets]==d1$address
+# man_int$streets
+
+
+
+### we only work with address and precinct from now. rm all other data frame that takes up RAM space!
+###geocode has 2500 requests limit a day
+
+
+# howmany <-1:100
+# howmany<-sample(1:length(address),2500,replace=FALSE)
+# howmany<-c(1:length(address))
+# 
+# latlon<-geocode(address[howmany], 
+#         output="latlon", 
+#         override_limit=FALSE) #geocode requires 'ggmap'
+# 
+# d<-cbind(latlon,precinct)
+# d[1:10,]
+# 
+# rm(address)
+# rm(precinct)
+# rm(howmany)
+
+
+######## Task 2 (Subsetting -- We will use 95% of the datapoints)
+q_lon<-matrix(quantile(d$lon, probs=c(0.025, 0.975), na.rm=TRUE))
+q_lat<-matrix(quantile(d$lat, probs=c(0.025, 0.975), na.rm=TRUE))
+pres<-(which( q_lon[1,1]< d$lon & d$lon<q_lon[2,1] & q_lat[1,1]< d$lat & d$lat<q_lat[2,1]))
+data<-d[pres,]
+
+######## Now, the subsetted data is called "d"  Remove all else
+rm(d)
+rm(q_lon)
+rm(q_lat)
+rm(pres)
+
+
+
+##### Task 3
+##### Plot the latitudes and longitudes in Manhattan
+#### the following code won't run for now because Colin's nybb folder has a permission setting.
+#### I've asked him to change that.
+
+
+
+
+
+###### Save the objects as multipoints
+coord = SpatialPoints(data.frame(latlon)) 
+
+
+
+######## Task 4: Recreate the boundary!
+
+
+
+
+
+
+
+```
+
+
+
+
+```
+
