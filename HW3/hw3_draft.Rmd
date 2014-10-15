@@ -12,11 +12,15 @@ output: html_document
 
 #Load necessary packages
 source("check_packages.R")
-check_packages(c("data.table","ggmap","rgdal","maptools", "dplyr","stringr"))
+check_packages(c("data.table","ggmap","rgdal","maptools", "dplyr","stringr","lubridate"))
 rm(check_packages)  #Remove anything that could take up memory
 
 #Load the Biggish NYC parking violations datafile
 park = fread("/home/vis/cr173/Sta523/data/parking/NYParkingViolations.csv",sep=",")
+park<-park[park$'Violation County'=="NY",] #Filtering only NY for Manhattan
+park$'Issue Date'=mdy(park$'Issue Date') 
+colnames(park$'Issue Date')="Issue.Date" 
+park<-filter(park, Issue.Date>"2013-07-31", Issue.Date<"2014-07-01") #Filtering the correct dates
 
 #Extract the necessary variables
 precinct<-as.numeric(park$"Violation Location")
@@ -33,6 +37,8 @@ d=data.frame("precinct"=as.numeric(precinct),
              "street"=street,
              "cross"=cross,
              "streets"=streets)
+
+d=d[d$]
 
 #Remove the original data frame and the temporary var names to save memory
 rm(house_street)
