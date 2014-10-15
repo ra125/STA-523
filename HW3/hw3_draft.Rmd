@@ -18,9 +18,7 @@ rm(check_packages)  #Remove anything that could take up memory
 #Load the Biggish NYC parking violations datafile
 park = fread("/home/vis/cr173/Sta523/data/parking/NYParkingViolations.csv",sep=",")
 park<-park[park$'Violation County'=="NY",] #Filtering only NY for Manhattan
-park$'Issue Date'=mdy(park$'Issue Date') 
-colnames(park$'Issue Date')="Issue.Date" 
-park<-filter(park, Issue.Date>"2013-07-31", Issue.Date<"2014-07-01") #Filtering the correct dates
+#We assume that date can be wrong but rest of the data is correct so no need to filter in date
 
 #Extract the necessary variables
 precinct<-as.numeric(park$"Violation Location")
