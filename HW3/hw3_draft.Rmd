@@ -22,6 +22,7 @@ setnames(park, "Violation Precinct", "Violation.Precinct")
 setnames(park, "House Number", "House.Number")
 setnames(park, "Street Name", "Street.Name")
 
+
 #Extract the necessary variables
 addr = filter(park, Violation.Precinct <= 34) %>%
        mutate(House.Number = str_trim(House.Number), Street.Name = str_trim(Street.Name)) %>%
@@ -30,33 +31,68 @@ addr = filter(park, Violation.Precinct <= 34) %>%
        transmute(Violation.Precinct = Violation.Precinct, addr = paste(House.Number, Street.Name)) %>%
        mutate(addr = tolower(addr))
 
+rm(park)
+
+
 #Load 'pluto' data to geocode
 basepath<-getwd()
 setwd("/home/vis/cr173/Sta523/data/parking/pluto/Manhattan/")
-pluto<-readShapeSpatial("MNMapPLUTO")
-pluto_shape<-pluto
+pluto_shape<-readShapeSpatial("MNMapPLUTO")
+pluto<-pluto_shape@data
 
-tax = cbind(data.frame(coordinates(pluto)), tolower(as.character(pluto$Address)))
-names(tax)[3] = "addr"
+setwd(basepath)
+rm(basepath)
+
+# Get rid of the observations that are not associated with Manhattan precincts
+pluto<-pluto[which(pluto$PolicePrct<35 & pluto$PolicePrct>0),]
+length(table(pluto$PolicePrct))
 
 # plot(pluto, axes=TRUE)  ### If you wanna see what the data looks like..
 #pluto1<-data.frame("address"=pluto$Address, 
 #                    "precinct"=pluto$PolicePrct, 
 #                    coordinates(pluto)) 
 
-setwd(basepath)
-rm(basepath)
 
+
+# Create a dataframe to join with the original parking dataframe
+tax = cbind(data.frame(coordinates(pluto)), tolower(as.character(pluto$Address)))
+names(tax)[3] = "addr"
+
+# Join the dataframe
 #z = inner_join(addr, tax) [ASK WHY it simply crashes????????]
 z = inner_join(tax,addr)
 
 plot(z$X1,z$X2,col=z$Violation.Precinct)
 
+
+######## Subsetting -- We will use 95% of the datapoints of each precinct
+# pre=table(z$Violation.Precinct)
+# length(pre)
+# 
+# q_lon<-matrix(quantile(z$X1, probs=c(0.05, 0.9), na.rm=TRUE))
+# q_lat<-matrix(quantile(z$X2, probs=c(0.05, 0.9), na.rm=TRUE))
+# pres<-(which( q_lon[1,1]< z$X1 & z$X1<q_lon[2,1] & q_lat[1,1]< z$X2 & z$X2<q_lat[2,1]))
+# z<-z[pres,]
+
+latlon=data.frame(cbind(z$X1, z$X2))
+names(latlon$X1)="lon"
+names(latlon$X2)="lat"
+coord=SpatialPoints(latlon)
+plot(coord, col=z$Violation.Precinct, pch=18, cex=0.5, axes=TRUE)
+dim(latlon)
+
+
+######## Now, the subsetted data is called "d"  Remove all else
+rm(d)
+rm(q_lon)
+rm(q_lat)
+rm(pres)
+
 #pl = readOGR(paste0("/home/vis/cr173/Sta523/data/parking/pluto/Manhattan/"),"MNMapPLUTO")
 #pt = gCentroid(pl,byid=TRUE)
 #tax = cbind(data.frame(pt@coords), as.character(pl@data$Address))
 
-#pluto<-pluto[which(pluto$precinct<35 & pluto$precinct>0),]
+
 
 #names=d$address[1:10000]
 #n=length(names)
@@ -242,18 +278,7 @@ plot(z$X1,z$X2,col=z$Violation.Precinct)
 # # rm(howmany)
 # 
 # 
-# ######## Subsetting -- We will use 95% of the datapoints
-# q_lon<-matrix(quantile(d$lon, probs=c(0.025, 0.975), na.rm=TRUE))
-# q_lat<-matrix(quantile(d$lat, probs=c(0.025, 0.975), na.rm=TRUE))
-# pres<-(which( q_lon[1,1]< d$lon & d$lon<q_lon[2,1] & q_lat[1,1]< d$lat & d$lat<q_lat[2,1]))
-# data<-d[pres,]
-# 
-# 
-# ######## Now, the subsetted data is called "d"  Remove all else
-# rm(d)
-# rm(q_lon)
-# rm(q_lat)
-# rm(pres)
+
 # 
 # 
 # 
