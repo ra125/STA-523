@@ -13,61 +13,163 @@ output: html_document
 #Load necessary packages
 source("check_packages.R")
 check_packages(c("data.table","ggmap","rgdal","maptools", "dplyr","stringr","lubridate"))
-rm(check_packages)  #Remove anything that could take up memory
 
 #Load the Biggish NYC parking violations datafile
 park = fread("/home/vis/cr173/Sta523/data/parking/NYParkingViolations.csv",sep=",")
-park<-park[park$'Violation County'=="NY",] #Filtering only NY for Manhattan
-park$'Issue Date'=mdy(park$'Issue Date') 
-colnames(park$'Issue Date')="Issue.Date" 
-park<-filter(park, Issue.Date>"2013-07-31", Issue.Date<"2014-07-01") #Filtering the correct dates
+
+#Rename required columns
+setnames(park, "Violation Precinct", "Violation.Precinct")
+setnames(park, "House Number", "House.Number")
+setnames(park, "Street Name", "Street.Name")
+
 
 #Extract the necessary variables
-precinct<-as.numeric(park$"Violation Location")
-address<-paste(park$"House Number", park$"Street Name")
-street<-park$"Street Name"
-cross<-park$"Intersecting Street"
-street<-str_trim(street, side = "right")
-cross<-str_trim(street, side = "left")
-streets<-paste(street,":",cross)
+addr = filter(park, Violation.Precinct <= 34) %>%
+       mutate(House.Number = str_trim(House.Number), Street.Name = str_trim(Street.Name)) %>%
+       filter(House.Number != "" & Street.Name != "") %>%
+       filter(str_detect(House.Number,"[0-9]+")) %>%
+       transmute(Violation.Precinct = Violation.Precinct, addr = paste(House.Number, Street.Name)) %>%
+       mutate(addr = tolower(addr))
 
-#Create a new dataframe with necessary variables
-d=data.frame("precinct"=as.numeric(precinct), 
-             "address"=address, 
-             "street"=street,
-             "cross"=cross,
-             "streets"=streets)
-
-d=d[d$]
-
-#Remove the original data frame and the temporary var names to save memory
-rm(house_street)
-rm(precinct)
-rm(address)
-rm(street)
-rm(cross)
 rm(park)
 
 
 #Load 'pluto' data to geocode
 basepath<-getwd()
 setwd("/home/vis/cr173/Sta523/data/parking/pluto/Manhattan/")
-pluto<-readShapeSpatial("MNMapPLUTO")
-pluto_shape<-pluto
+pluto_shape<-readShapeSpatial("MNMapPLUTO")
+pluto<-pluto_shape@data
 
-# plot(pluto, axes=TRUE)  ### If you wanna see what the data looks like..
-pluto<-data.frame("address"=pluto$Address, 
-                    "precinct"=pluto$PolicePrct, 
-                    coordinates(pluto)) 
 setwd(basepath)
 rm(basepath)
 
+# Get rid of the observations that are not associated with Manhattan precincts
+pluto<-pluto[which(pluto$PolicePrct<35 & pluto$PolicePrct>0),]
+length(table(pluto$PolicePrct))
 
-#### We exlude observations that are not associated with the correct Manhattan precincts (1:34)
-d<-d[which(d[,1] < 35),]
-pluto<-pluto[which(pluto$precinct<35 & pluto$precinct>0),]
+# plot(pluto, axes=TRUE)  ### If you wanna see what the data looks like..
+#pluto1<-data.frame("address"=pluto$Address, 
+#                    "precinct"=pluto$PolicePrct, 
+#                    coordinates(pluto)) 
 
 
+
+# Create a dataframe to join with the original parking dataframe
+tax = cbind(data.frame(coordinates(pluto)), tolower(as.character(pluto$Address)))
+names(tax)[3] = "addr"
+
+# Join the dataframe
+#z = inner_join(addr, tax) [ASK WHY it simply crashes????????]
+z = inner_join(tax,addr)
+
+plot(z$X1,z$X2,col=z$Violation.Precinct)
+
+
+######## Subsetting -- We will use 95% of the datapoints of each precinct
+# pre=table(z$Violation.Precinct)
+# length(pre)
+# 
+# q_lon<-matrix(quantile(z$X1, probs=c(0.05, 0.9), na.rm=TRUE))
+# q_lat<-matrix(quantile(z$X2, probs=c(0.05, 0.9), na.rm=TRUE))
+# pres<-(which( q_lon[1,1]< z$X1 & z$X1<q_lon[2,1] & q_lat[1,1]< z$X2 & z$X2<q_lat[2,1]))
+# z<-z[pres,]
+
+latlon=data.frame(cbind(z$X1, z$X2))
+names(latlon$X1)="lon"
+names(latlon$X2)="lat"
+coord=SpatialPoints(latlon)
+plot(coord, col=z$Violation.Precinct, pch=18, cex=0.5, axes=TRUE)
+dim(latlon)
+
+
+######## Now, the subsetted data is called "d"  Remove all else
+rm(d)
+rm(q_lon)
+rm(q_lat)
+rm(pres)
+
+#pl = readOGR(paste0("/home/vis/cr173/Sta523/data/parking/pluto/Manhattan/"),"MNMapPLUTO")
+#pt = gCentroid(pl,byid=TRUE)
+#tax = cbind(data.frame(pt@coords), as.character(pl@data$Address))
+
+
+
+#names=d$address[1:10000]
+#n=length(names)
+#object=rep(NA, n)
+#for(i in 1:n){
+#object[i]<-agrep(names[i], pluto$address[1001:2000], ignore.case = TRUE, value = FALSE,
+#      max.distance = 5)
+#}
+
+
+#summary(object)
+
+#pluto$address[10]
+#names[1]
+#pluto$address[373]
+#names[2]
+#pluto$address[75]
+#names[3]
+
+
+#precinct<-as.numeric(park$"Violation Location")
+#address<-paste(park$"House Number", park$"Street Name")
+#street<-park$"Street Name"
+#cross<-park$"Intersecting Street"
+#street<-str_trim(street, side = "right")
+#cross<-str_trim(street, side = "left")
+#streets<-paste(street,":",cross)
+
+
+
+#Create a new dataframe with necessary variables
+#d=data.frame("precinct"=as.numeric(precinct), 
+#             "address"=address, 
+#             "street"=street,
+#             "cross"=cross,
+#             "streets"=streets)
+
+
+
+#Remove the original data frame and the temporary var names to save memory
+#rm(house_street)
+#rm(precinct)
+#rm(address)
+#rm(street)
+#rm(cross)
+#rm(park)
+
+
+
+
+#library(dplyr)
+#library(stringr)
+#library(rgdal)
+#library(rgeos)
+
+# base = '/home/vis/cr173/Sta523/data/parking'
+# 
+# park = tbl_df(read.csv(paste0(base,"/NYParkingViolations_small.csv"), stringsAsFactors=FALSE))
+
+
+
+## make the addresses in d (the original dataset) consistent
+#E->EAST W->WEST
+#Rd->ROAD
+#AVE -> AVENUE
+#AV->AVENUE
+#ST-> STREET
+#DR -> DRIVE
+#PLWY
+#PKWY->PARKWAY
+#PLY
+#BLVD -> BOULAVARD
+#EXWY-> EXPRESSWAY
+#PL ->PLACE
+#TRD
+#Get rid of "-" between numbers
+#th, nd, st, rd
 
 
 ################ DO NOT RUN BELOW HERE ########################
@@ -176,18 +278,7 @@ pluto<-pluto[which(pluto$precinct<35 & pluto$precinct>0),]
 # # rm(howmany)
 # 
 # 
-# ######## Subsetting -- We will use 95% of the datapoints
-# q_lon<-matrix(quantile(d$lon, probs=c(0.025, 0.975), na.rm=TRUE))
-# q_lat<-matrix(quantile(d$lat, probs=c(0.025, 0.975), na.rm=TRUE))
-# pres<-(which( q_lon[1,1]< d$lon & d$lon<q_lon[2,1] & q_lat[1,1]< d$lat & d$lat<q_lat[2,1]))
-# data<-d[pres,]
-# 
-# 
-# ######## Now, the subsetted data is called "d"  Remove all else
-# rm(d)
-# rm(q_lon)
-# rm(q_lat)
-# rm(pres)
+
 # 
 # 
 # 
