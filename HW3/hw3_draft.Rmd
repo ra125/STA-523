@@ -31,21 +31,25 @@ addr = filter(park, Violation.Precinct <= 34) %>%
        transmute(Violation.Precinct = Violation.Precinct, addr = paste(House.Number, Street.Name)) %>%
        mutate(addr = tolower(addr))
 
-rm(park)
+#rm(park)
 
 
 #Load 'pluto' data to geocode
 basepath<-getwd()
 setwd("/home/vis/cr173/Sta523/data/parking/pluto/Manhattan/")
-pluto_shape<-readShapeSpatial("MNMapPLUTO")
-pluto<-pluto_shape@data
+pluto<-readShapeSpatial("MNMapPLUTO")
+#pluto<-pluto_shape@data [WHY????]
 
 setwd(basepath)
 rm(basepath)
 
-# Get rid of the observations that are not associated with Manhattan precincts
+# Get rid of the observations that are not associated with Manhattan precincts [think whether to do or not!!!!!]
 pluto<-pluto[which(pluto$PolicePrct<35 & pluto$PolicePrct>0),]
 length(table(pluto$PolicePrct))
+
+tax = cbind(data.frame(coordinates(pluto)), tolower(as.character(pluto$Address)))
+
+names(tax)[3] = "addr"
 
 # plot(pluto, axes=TRUE)  ### If you wanna see what the data looks like..
 #pluto1<-data.frame("address"=pluto$Address, 
@@ -53,25 +57,23 @@ length(table(pluto$PolicePrct))
 #                    coordinates(pluto)) 
 
 #make the data content consistent, the current two targets are addr$addr and pluto$Address
-pluto$Address<-tolower(pluto$Address) #pluto address lowercases
+#pluto$Address<-tolower(pluto$Address) #pluto address lowercases
 #addraddr<-addr$addr #address of violation
 
 #from full name to simplified version, becasue this make str_replace_all much easier
-namemap<-rbind(c("east","west","street","avenue","road","drive","terrace"), c("e","w","st","ave","rd","dr","ter"))
+namemap<-rbind(c("east","west","street","avenue","av","avee","road","drive","terrace","bway"), c("e","w","st","ave","ave","ave","rd","dr","ter","brdway"))
 lnm<-ncol(namemap)
 
 for (i in 1:lnm)
 {
-  pluto$Address<-str_replace_all(pluto$Address, namemap[1,i], namemap[2,i])
+  tax$addr<-str_replace_all(tax$addr, namemap[1,i], namemap[2,i])
   addr$addr<-str_replace_all(addr$addr, namemap[1,i], namemap[2,i])
 }
 
 # Create a dataframe to join with the original parking dataframe
 #tax = cbind(data.frame(coordinates(pluto)), tolower(as.character(pluto$Address)))
 #should use converted pluto address
-tax = cbind(data.frame(coordinates(pluto)), as.character(pluto$Address))
 
-names(tax)[3] = "addr"
 
 
 
