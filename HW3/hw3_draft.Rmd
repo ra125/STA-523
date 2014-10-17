@@ -124,11 +124,11 @@ rm(pres)
 
 
 #Create a new dataframe with necessary variables
-#d=data.frame("precinct"=as.numeric(precinct), 
-#             "address"=address, 
-#             "street"=street,
-#             "cross"=cross,
-#             "streets"=streets)
+d=data.frame("precinct"=as.numeric(precinct), 
+             "address"=address, 
+             "street"=street,
+             "cross"=cross,
+             "street"=street)
 
 
 
