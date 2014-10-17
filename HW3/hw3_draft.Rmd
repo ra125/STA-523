@@ -52,17 +52,35 @@ length(table(pluto$PolicePrct))
 #                    "precinct"=pluto$PolicePrct, 
 #                    coordinates(pluto)) 
 
+#make the data content consistent, the current two targets are addr$addr and pluto$Address
+pluto$Address<-tolower(pluto$Address) #pluto address lowercases
+#addraddr<-addr$addr #address of violation
 
+#from full name to simplified version, becasue this make str_replace_all much easier
+namemap<-rbind(c("east","west","street","avenue","road","drive","terrace"), c("e","w","st","ave","rd","dr","ter"))
+lnm<-ncol(namemap)
+
+for (i in 1:lnm)
+{
+  pluto$Address<-str_replace_all(pluto$Address, namemap[1,i], namemap[2,i])
+  addr$addr<-str_replace_all(addr$addr, namemap[1,i], namemap[2,i])
+}
 
 # Create a dataframe to join with the original parking dataframe
-tax = cbind(data.frame(coordinates(pluto)), tolower(as.character(pluto$Address)))
+#tax = cbind(data.frame(coordinates(pluto)), tolower(as.character(pluto$Address)))
+#should use converted pluto address
+tax = cbind(data.frame(coordinates(pluto)), as.character(pluto$Address))
+
 names(tax)[3] = "addr"
+
+
 
 # Join the dataframe
 #z = inner_join(addr, tax) [ASK WHY it simply crashes????????]
 z = inner_join(tax,addr)
 
 plot(z$X1,z$X2,col=z$Violation.Precinct)
+
 
 
 ######## Subsetting -- We will use 95% of the datapoints of each precinct
