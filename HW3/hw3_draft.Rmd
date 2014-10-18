@@ -9,6 +9,7 @@ output: html_document
 
 ```{r}
 ###### Task 1  (Geocoding)
+setwd("~/Team6/HW3")
 
 #Load necessary packages
 source("check_packages.R")
@@ -41,17 +42,27 @@ pluto<-readShapeSpatial("MNMapPLUTO")
 #pluto<-pluto_shape@data [WHY????]
 
 setwd(basepath)
+rm(basepath)
 
-# Get rid of the observations that are not associated with Manhattan precincts [Think whether to do or not!!!!! Professor says we shouldnt do this, we assume all pluto data is for Manhattan]
-#pluto<-pluto[which(pluto$PolicePrct<35 & pluto$PolicePrct>0),]
-#length(table(pluto$PolicePrct))
+# Get rid of the observations that are not associated with Manhattan precincts [think whether to do or not!!!!!]
+pluto<-pluto[which(pluto$PolicePrct<35 & pluto$PolicePrct>0),]
+length(table(pluto$PolicePrct))
 
 tax = cbind(data.frame(coordinates(pluto)), tolower(as.character(pluto$Address)))
 
 names(tax)[3] = "addr"
 
-#from full name to simplified version, because this makes str_replace_all much easier
-namemap<-rbind(c("east","west","street","avenue","av","avee","road","drive","terrace","bway"), c("e","w","st","ave","ave","ave","rd","dr","ter","brdway"))
+# plot(pluto, axes=TRUE)  ### If you wanna see what the data looks like..
+#pluto1<-data.frame("address"=pluto$Address, 
+#                    "precinct"=pluto$PolicePrct, 
+#                    coordinates(pluto)) 
+
+#make the data content consistent, the current two targets are addr$addr and pluto$Address
+#pluto$Address<-tolower(pluto$Address) #pluto address lowercases
+#addraddr<-addr$addr #address of violation
+
+#from full name to simplified version, becasue this make str_replace_all much easier
+namemap<-rbind(c("east","west","street","avenue","av","avee","road","drive","terrace"," terr","bway","1st","2nd","3rd","th "), c("e","w","st","ave","ave","ave","rd","dr","ter"," ter","brdway","1","2","3"," "))
 lnm<-ncol(namemap)
 
 for (i in 1:lnm)
@@ -59,6 +70,82 @@ for (i in 1:lnm)
   tax$addr<-str_replace_all(tax$addr, namemap[1,i], namemap[2,i])
   addr$addr<-str_replace_all(addr$addr, namemap[1,i], namemap[2,i])
 }
+
+#some house number has 0 at the beginning, the total number is about 1100
+
+hnvset<-str_detect(park$House.Number, "^0+([[:alnum:]]+)")
+hnpset<-str_detect(tax$addr, "^0+([[:alnum:]]+)")
+
+addrset<-str_detect(addr$addr, "^0+([[:alnum:]]+)")
+addrmat<-str_match(addr$addr[addrset], "^0+([[:alnum:]]+)")
+nset<-length(addrset)
+seqn<-c(1:nset)
+seqnmark<-seqn[addrset]#record the seq number of element detecting the pattern with first 0
+nseqnmark<-length(seqnmark)#nseqmark is 1109
+
+for(i in 1:nseqnmark)
+{
+  addr$addr[seqnmark[i]]<-str_replace(addr$addr[seqnmark[i]], addrmat[i,1], addrmat[i,2])
+}
+addrset1<-str_detect(addr$addr, "^0+([[:alnum:]]+)")
+
+#However this part only increase ~100 data points in the final z
+
+#after cleaning 1st, 2nd, 3rd, and ~th, the matching goes up to 1569809
+#after delete first 0 in house number, the matching goes up to 1569912
+
+#unique addr$addr
+univaddr<-unique(addr$addr)
+length(addr$addr)
+length(univaddr)
+#unique z$addr
+unizaddr<-unique(z$addr)
+length(unizaddr)
+
+#not.match<-anti_join(addr$addr,z$addr)
+#don't work: Error in UseMethod("anti_join") : 
+#no applicable method for 'anti_join' applied to an object of class "character"
+
+#not.mav<-anti_join(addr,tax)
+not.map<-anti_join(tax,addr) #The addr only appear in tax
+taxdt<-as.data.table(tax) #need to convert tax into data.table, otherwise would report error
+not.mav<-anti_join(addr,taxdt) #The addr only appear in addr
+
+uni.not.mav<-unique(not.mav)
+uni.not.map<-unique(not.map)
+
+#By inspecting data in not.map and not.mav, using format below, we can find how many data can be changed with each modification
+#If the number to increase the valid data is small, then it is not worthy to loop over all of data once
+test<-str_detect(addr$addr, " terr")
+test[is.na(test)]<-F
+sum(test) #249
+
+test<-str_detect(addr$addr, " square$")
+test[is.na(test)]<-F
+sum(test) #821
+
+test<-str_detect(tax$addr, " square")
+test[is.na(test)]<-F
+sum(test) #92
+
+test<-str_detect(addr$addr, " sq$")
+test[is.na(test)]<-F
+sum(test) #4940
+
+test<-str_detect(tax$addr, " sq")
+test[is.na(test)]<-F
+sum(test) #93
+
+#apply(addr$addr[addrset], func)
+#
+#addrtry<-lapply(addr$addr[addrset], function(x) {strs<-str_match(x,"0+([[:alnum:]]+)")
+#                                         str_replace_all(x,strs[1],strs[2])})
+
+# Create a dataframe to join with the original parking dataframe
+#tax = cbind(data.frame(coordinates(pluto)), tolower(as.character(pluto$Address)))
+#should use converted pluto address
+
+
 
 
 # Join the dataframe
@@ -68,7 +155,15 @@ z = inner_join(tax,addr)
 plot(z$X1,z$X2,col=z$Violation.Precinct)
 
 
-#Plot on map
+
+######## Subsetting -- We will use 95% of the datapoints of each precinct
+# pre=table(z$Violation.Precinct)
+# length(pre)
+# 
+# q_lon<-matrix(quantile(z$X1, probs=c(0.05, 0.9), na.rm=TRUE))
+# q_lat<-matrix(quantile(z$X2, probs=c(0.05, 0.9), na.rm=TRUE))
+# pres<-(which( q_lon[1,1]< z$X1 & z$X1<q_lon[2,1] & q_lat[1,1]< z$X2 & z$X2<q_lat[2,1]))
+# z<-z[pres,]
 
 latlon=data.frame(cbind(z$X1, z$X2))
 names(latlon$X1)="lon"
@@ -79,10 +174,10 @@ dim(latlon)
 
 
 ######## Now, the subsetted data is called "d"  Remove all else
-#rm(d)
-#rm(q_lon)
-#rm(q_lat)
-#rm(pres)
+rm(d)
+rm(q_lon)
+rm(q_lat)
+rm(pres)
 
 #pl = readOGR(paste0("/home/vis/cr173/Sta523/data/parking/pluto/Manhattan/"),"MNMapPLUTO")
 #pt = gCentroid(pl,byid=TRUE)
