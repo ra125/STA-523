@@ -1,6 +1,6 @@
 ---
 title: "hw3_draft"
-author: "Sophie Lee"
+author: "Radhika Anand, Sophie Lee, Minjung Park, Kungang Zhang"
 date: "10/12/2014"
 output: html_document
 ---
@@ -120,11 +120,11 @@ dim(latlon)
 
 
 #Create a new dataframe with necessary variables
-d=data.frame("precinct"=as.numeric(precinct), 
-             "address"=address, 
-             "street"=street,
-             "cross"=cross,
-             "street"=street)
+#d=data.frame("precinct"=as.numeric(precinct), 
+#             "address"=address, 
+#             "street"=street,
+#             "cross"=cross,
+#             "street"=street)
 
 
 
