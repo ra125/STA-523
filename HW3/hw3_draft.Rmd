@@ -13,7 +13,7 @@ setwd("~/Team6/HW3")
 
 #Load necessary packages
 source("check_packages.R")
-check_packages(c("data.table","ggmap","rgdal","maptools", "dplyr","stringr","lubridate"))
+check_packages(c("data.table","rgeos","ggmap","rgdal","maptools", "dplyr","stringr","lubridate"))
 
 #Load the Biggish NYC parking violations datafile
 park = fread("/home/vis/cr173/Sta523/data/parking/NYParkingViolations.csv",sep=",")
@@ -44,9 +44,9 @@ pluto<-readShapeSpatial("MNMapPLUTO")
 setwd(basepath)
 rm(basepath)
 
-# Get rid of the observations that are not associated with Manhattan precincts [think whether to do or not!!!!!]
-pluto<-pluto[which(pluto$PolicePrct<35 & pluto$PolicePrct>0),]
-length(table(pluto$PolicePrct))
+# Get rid of the observations that are not associated with Manhattan precincts [think whether to do or not!!!!!][Prof has deleted the column precinct from pluto altogether]
+#pluto<-pluto[which(pluto$PolicePrct<35 & pluto$PolicePrct>0),]
+#length(table(pluto$PolicePrct))
 
 tax = cbind(data.frame(coordinates(pluto)), tolower(as.character(pluto$Address)))
 
@@ -173,11 +173,25 @@ plot(coord, col=z$Violation.Precinct, pch=18, cex=0.5, axes=TRUE)
 dim(latlon)
 
 
+
+object=SpatialPointsDataFrame(coords=latlon,data=data.frame(z$Violation.Precinct))
+
+# obj is a list of all convex hulls. obj[[1]] has convex hull for precinct number 0, obj[[2]] for precinct 1 till obj[[35]] for precinct 34.
+
+obj = list()
+for(i in 0:(length(table(z$Violation.Precinct))-1))
+  {
+  obj[i+1]=SpatialPointsDataFrame(coords=coordinates(object[object$z.Violation.Precinct==i,]),data=data.frame(object[object$z.Violation.Precinct==i,]$z.Violation.Precinct))
+  ch = gConvexHull(obj[[i+1]])
+  }
+
+
+
 ######## Now, the subsetted data is called "d"  Remove all else
-rm(d)
-rm(q_lon)
-rm(q_lat)
-rm(pres)
+#rm(d)
+#rm(q_lon)
+#rm(q_lat)
+#rm(pres)
 
 #pl = readOGR(paste0("/home/vis/cr173/Sta523/data/parking/pluto/Manhattan/"),"MNMapPLUTO")
 #pt = gCentroid(pl,byid=TRUE)
