@@ -9,11 +9,11 @@ output: html_document
 
 ```{r}
 ###### Task 1  (Geocoding)
-setwd("~/Team6/HW3")
+
 
 #Load necessary packages
 source("check_packages.R")
-check_packages(c("data.table","rgeos","ggmap","rgdal","maptools", "dplyr","stringr","lubridate"))
+check_packages(c("data.table","rgeos","ggmap","rgdal","maptools", "dplyr","stringr","lubridate","leafletR"))
 
 #Load the Biggish NYC parking violations datafile
 park = fread("/home/vis/cr173/Sta523/data/parking/NYParkingViolations.csv",sep=",")
@@ -32,7 +32,7 @@ addr = filter(park, Violation.Precinct <= 34) %>%
        transmute(Violation.Precinct = Violation.Precinct, addr = paste(House.Number, Street.Name)) %>%
        mutate(addr = tolower(addr))
 
-#rm(park)
+
 
 
 #Load 'pluto' data to geocode
@@ -75,6 +75,8 @@ for (i in 1:lnm)
 
 hnvset<-str_detect(park$House.Number, "^0+([[:alnum:]]+)")
 hnpset<-str_detect(tax$addr, "^0+([[:alnum:]]+)")
+
+rm(park)
 
 addrset<-str_detect(addr$addr, "^0+([[:alnum:]]+)")
 addrmat<-str_match(addr$addr[addrset], "^0+([[:alnum:]]+)")
@@ -186,8 +188,33 @@ for(i in 0:(length(table(z$Violation.Precinct))-1))
   ch[i+1] = gConvexHull(obj[[i+1]])
   }
 
-plot(object,col="red")
-plot(ch[[2]],add=TRUE) #Boundary of precinct 1. It is bad due to outliers!! We will get rid of them next week.
+### Just to plot what the boundaries look like..but it'll take some time...so skip it 
+# plot(object,col="red")
+# plot(ch[[2]],add=TRUE, col="black") 
+#Boundary of precinct 1. It is bad due to outliers!! We will get rid of them next week.
+
+
+#### Into GeoJson
+
+#True precinct numbers off of the NYPD website. 
+true_p=c(1,5,6,7,9,10,13,14,17,18,19,20,22,23,24,25,26,28,30,32,33,34)
+true_p=true_p+1
+#require package 'leafletR'
+for(i in 1:length(true_p) )
+{
+d=true_p[i]
+chch=ch[[d]]
+filename <- paste0("boundary",d-1)
+coords<-as.data.frame(chch@polygons[[1]]@Polygons[[1]]@coords)
+toGeoJSON(coords, name=filename)
+}
+
+
+
+
+
+
+
 
 ######## Now, the subsetted data is called "d"  Remove all else
 #rm(d)
