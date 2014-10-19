@@ -8,3 +8,38 @@ c/o is corner of
 2) Subset 95% from the centroid of each precinct
 3) Plot the coordinates
 4) Create the boundaries
+
+Task 1 write up - Geocoding 
+
+
+0) load the biggish NYC parking violation datafile by using a (fread) function which is much faster and more convenient than a (read.table) function 
+
+
+1) extract the necessary variables
+
+first, we chose a part of [Violation.Precinct] data which is less than 34 by filtering
+second, by using a (mutate) function, we added two variable [House.number, Street.Name], erasing whitespace in the data of two variables. and then we took non-empty data in the data and chose [House.Number] data which has a "[0-9]+" pattern by using a (filter) function.
+third, we combined a [Violation.Precinct] variable with a pasted [House.Number,Street.Name] variable which is called "addr" by using transmute function and 
+then lastly changed the class of 'addr' character into lower class.
+
+2) load 'pluto data' to geocode by using (readShapeSpatial) which reads data from a spatial dataframe to a shapefile.
+
+we made a data called 'tax' which combine coordinates of 'pluto' data with address of it. and then we called the address of 'pluto' data 'addr' which is the same as what we made in the original data 'NYC parking violation' data. 
+
+3) clearing a messy data
+
+- in order to change the full name into simplified version in a 'addr' data set, str_replace_all make this much easier.
+
+first, we made a combined two vectors called 'namemap' which include the full name ("east","west","street","avenue","av","avee","road","drive","terrace","bway") and the short name ("e","w","st","ave","ave","ave","rd","dr","ter","brdway"). and then, in the for loop, we replaced the full name with the short name in both 'tax' data from pluto and 'addr' data from original.
+
+- some house number has 0 at the beginning in a 'addr' data set, the total number is 1156
+
+we need to change those house number started with 0 into the number without 0. So, we used a (str_detect) and (str_match) function to detect and match those house number out of the whole data. and then, used a (str_replace) function to replace the house number started with 0 with the house number without 0.
+
+#after cleaning 1st, 2nd, 3rd, and ~th, the matching goes up to 1569809
+#after delete first 0 in house number, the matching goes up to 1569912
+
+4) in order to join the two data sets which are 'tax' and 'addr', we made 'z' data by using a (inner join) function.
+
+5) to plot z on map, we converted 'z' coordinate data into actural spatial points we can use for plotting by using a (SpatialPoints) function.
+
