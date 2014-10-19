@@ -176,13 +176,14 @@ dim(latlon)
 
 object=SpatialPointsDataFrame(coords=latlon,data=data.frame(z$Violation.Precinct))
 
-# obj is a list of all convex hulls. obj[[1]] has convex hull for precinct number 0, obj[[2]] for precinct 1 till obj[[35]] for precinct 34.
+# obj is a list of all convex hulls. ch[[1]] has convex hull for precinct number 0, ch[[2]] for precinct 1 till ch[[35]] for precinct 34.
 
 obj = list()
+ch = list()
 for(i in 0:(length(table(z$Violation.Precinct))-1))
   {
   obj[i+1]=SpatialPointsDataFrame(coords=coordinates(object[object$z.Violation.Precinct==i,]),data=data.frame(object[object$z.Violation.Precinct==i,]$z.Violation.Precinct))
-  ch = gConvexHull(obj[[i+1]])
+  ch[i+1] = gConvexHull(obj[[i+1]])
   }
 
 
