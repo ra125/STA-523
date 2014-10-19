@@ -186,7 +186,8 @@ for(i in 0:(length(table(z$Violation.Precinct))-1))
   ch[i+1] = gConvexHull(obj[[i+1]])
   }
 
-
+plot(object,col="red")
+plot(ch[[2]],add=TRUE) #Boundary of precinct 1. It is bad due to outliers!! We will get rid of them next week.
 
 ######## Now, the subsetted data is called "d"  Remove all else
 #rm(d)
