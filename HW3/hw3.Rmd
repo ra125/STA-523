@@ -10,14 +10,11 @@ output: html_document
 
 2) Extract the necessary variables
 
-First, we chose a part of [Violation.Precinct] data which is less than 34 by filtering
-Second, by using a (mutate) function, we added two variable [House.number, Street.Name], erasing whitespace in the data of two variables. and then we took non-empty data in the data and chose [House.Number] data which has a "[0-9]+" pattern by using a (filter) function.
-third, we combined a [Violation.Precinct] variable with a pasted [House.Number,Street.Name] variable which is called "addr" by using transmute function and 
-then lastly changed the class of 'addr' character into lower class.
+Using 'setnames' we changed some variable names. Then using the library 'dplyr', first we chose a part of [Violation.Precinct] data which is less than 34 by filtering. Second, by using a (mutate) function, we added two variables [House.number, Street.Name], erasing whitespace in the data of two variables. Then we took the non-empty data and chose [House.Number] data which has a "[0-9]+" pattern by using a (filter) function. Third, we combined the [Violation.Precinct] variable with the [House.Number,Street.Name] variable which is called "addr" by using transmute function and then lastly converted the case to lower.
 
 3) Load 'pluto data' to geocode by using (readShapeSpatial) which reads data from a spatial dataframe to a shapefile.
 
-We made a data called 'tax' which combine coordinates of 'pluto' data with address of it. and then we called the address of 'pluto' data 'addr' which is the same as what we made in the original data 'NYC parking violation' data. 
+We made a dataset called 'tax' which combines coordinates of 'pluto' data with address of it. Then we called the address of 'pluto' data 'addr' which is the same variable as we used in the dataframe above so as to implement inner_join on them.
 
 3) Clearing messy data
 
