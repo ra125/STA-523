@@ -227,4 +227,4 @@ To get rid of outliers in a better way, we plan to do the following (in the comi
 
 2) Remove 80% of the observations randomly (assuming 80% removes most outliers) and just use the left out 20% to make boundary and do this a 1000 times and take the intersection of all the 1000 polygons.
 
-Next, we also plan to use the other data files 'intersection' and 'nybb' to make the boundaries more accurate!
+Next, we also plan to use the other data files like 'intersections', 'nybb' and maybe 'altnames.csv' to make the boundaries more accurate!
