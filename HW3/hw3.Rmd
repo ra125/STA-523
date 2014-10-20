@@ -1,14 +1,29 @@
 ---
 title: "hw3"
-author: "Team 6"
+author: "Radhika Anand, Sophie Lee, Minjung Park, Kungang Zhang"
 date: "10/19/2014"
 output: html_document
 ---
+## Task 1 : Geocoding
 
+1) Load the biggish NYC parking violation datafile by using a (fread) function which is much faster and more convenient than a (read.table) function 
 
+2) Extract the necessary variables
+
+First, we chose a part of [Violation.Precinct] data which is less than 34 by filtering
+Second, by using a (mutate) function, we added two variable [House.number, Street.Name], erasing whitespace in the data of two variables. and then we took non-empty data in the data and chose [House.Number] data which has a "[0-9]+" pattern by using a (filter) function.
+third, we combined a [Violation.Precinct] variable with a pasted [House.Number,Street.Name] variable which is called "addr" by using transmute function and 
+then lastly changed the class of 'addr' character into lower class.
+
+3) Load 'pluto data' to geocode by using (readShapeSpatial) which reads data from a spatial dataframe to a shapefile.
+
+We made a data called 'tax' which combine coordinates of 'pluto' data with address of it. and then we called the address of 'pluto' data 'addr' which is the same as what we made in the original data 'NYC parking violation' data. 
+
+3) Clearing messy data
+
+First, we made a combined vector called 'namemap' which includes the full name ("east","west","street","avenue","av","avee","road","drive","terrace","bway","terrace"," terr","bway","1st","2nd","3rd","th ") and the short name ("e","w","st","ave","ave","ave","rd","dr","ter","brdway","ter"," ter","brdway","1","2","3"," ") and then, in the for loop, we replaced the full name with the short name in both 'tax' data from pluto and 'addr' data from park. We used 'str_match_all' to do so. So after cleaning a few words and removing suffix from numbers, we could atch upto 1.5 mil rows. 
 
 ```{r}
-###### Task 1  (Geocoding)
 #setwd("~/Team6/HW3")
 
 #Load necessary packages
@@ -58,7 +73,11 @@ for (i in 1:lnm)
 }
 
 #Around 1.5 mil matches after this clean up
+```
 
+4) Next, we used a more comprehensive approach to clean the data where we saw, each time, the number of unmatched rows in pluto and then tried to clean the words in those rows. We did this but it was taking a lot of time and space and was increasing the matching by a very small and insignificant amount. Hence, we have commented this code for now. It is given below:
+
+```{r}
 #Better approach to clean up, but doesnt increase data points by a significant number. 
 #We can do it but its takes a lot of time and space, so we have commented it for now.
 
@@ -126,7 +145,11 @@ for (i in 1:lnm)
 #test<-str_detect(tax$addr, " sq")
 #test[is.na(test)]<-F
 #sum(test) #93
+```
 
+5) Joining addr and tax using 'inner_join' and removing park and pluto
+
+```{r}
 # Join the dataframe
 z = inner_join(tax,addr)
 
@@ -134,16 +157,28 @@ z = inner_join(tax,addr)
 
 rm(park)
 rm(pluto)
+```
 
+6) Plotting the precincts on map in different colors to get an idea of the boundaries. We see that the concentrated points are very good but we have a lot of outliers to get rid off.
 
+```{r,fig.align='center'}
 latlon=data.frame(cbind(z$X1, z$X2))
 names(latlon$X1)="lon"
 names(latlon$X2)="lat"
 coord=SpatialPoints(latlon)
 plot(coord, col=z$Violation.Precinct, pch=18, cex=0.5, axes=TRUE)
 dim(latlon)
+```
 
+## Task 2 : Recreating NYC’s Police Precincts
 
+1) We use the actual precinct numbers from NYPD website to subset the actual Manhattan precincts between o to 34. We got the list as 1,5,6,7,9,10,13,14,17,18,19,20,22,23,24,25,26,28,30,32,33,34.
+
+2) We got rid of outliers by taking the 90% quantile of lat/long pairs. Since points are numeric we can use the quantile function which sorts and removes 10% outliers for each precinct.
+
+3) We then made separate convex hulls for each precinct (restoring the precinct number for later use) using the function 'gConvexHull' from 'rgeos' library. We then merged all the convex hulls and made a single geojson file called 'precinct.json' (using the function 'writeOGR') as below:
+
+```{r}
 object=SpatialPointsDataFrame(coords=latlon,data=data.frame(z$Violation.Precinct))
 
 # obj is a list of all convex hulls. ch[[1]] has convex hull for precinct number 0, ch[[2]] for precinct 1 till ch[[35]] for precinct 34.
@@ -156,8 +191,8 @@ j = 1
 
 for(precinct in true_p)
 {
-  
   obj[j]=SpatialPointsDataFrame(coords=coordinates(object[object$z.Violation.Precinct==precinct,]),data=data.frame(object[object$z.Violation.Precinct==precinct,]$z.Violation.Precinct))
+  
   p<-as.data.frame(object[which(object$z.Violation.Precinct==precinct),])
   z=data.frame(coordinates(obj[j]), p)
   q_lon<-matrix(quantile(z$X1, probs=c(0.05, 0.95), na.rm=TRUE))
@@ -165,11 +200,10 @@ for(precinct in true_p)
   pres<-which( q_lon[1,1]< z$X1 & z$X1<q_lon[2,1] & q_lat[1,1]< z$X2 & z$X2<q_lat[2,1])
   z<-z[pres,] 
   obj[j]=SpatialPointsDataFrame(coords=cbind(z$X1,z$X2), data=data.frame(z$z.Violation.Precinct)) 
-  
+
   ch[j] = gConvexHull(obj[[j]])
   chl[j] = SpatialPolygonsDataFrame(ch[[j]],data=data.frame(precinct)) 
   j = j+1
-  
 }
 
 # merge
@@ -188,7 +222,10 @@ writeOGR(merged, "./out", "", driver="GeoJSON") # Creates out file, current vers
 # so we have to rename the file afterwards
 file.rename("./out", "./precinct.json")
 
-
-
-
 ```
+
+To get rid of outliers in a better way, we plan to do the following (in the coming week): 
+
+1) Check say 5 nearest neighbors of each point and if they all lie very far away then remove them but that is very complex
+
+2) Remove 80% of the observations randomly (assuming 80% removes most outliers) and just use the left out 20% to make boundary and do this a 1000 times and take the intersection of all the 1000 polygons.
