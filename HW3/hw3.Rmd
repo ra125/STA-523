@@ -226,3 +226,5 @@ To get rid of outliers in a better way, we plan to do the following (in the comi
 1) Check say 5 nearest neighbors of each point and if they all lie very far away then remove them but that is very complex
 
 2) Remove 80% of the observations randomly (assuming 80% removes most outliers) and just use the left out 20% to make boundary and do this a 1000 times and take the intersection of all the 1000 polygons.
+
+Next, we also plan to use the other data files 'intersection' and 'nybb' to make the boundaries more accurate!
