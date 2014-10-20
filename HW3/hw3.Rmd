@@ -172,7 +172,7 @@ dim(latlon)
 
 ## Task 2 : Recreating NYC’s Police Precincts
 
-1) We use the actual precinct numbers from NYPD website to subset the actual Manhattan precincts between o to 34. We got the list as 1,5,6,7,9,10,13,14,17,18,19,20,22,23,24,25,26,28,30,32,33,34.
+1) We use the actual precinct numbers from NYPD website to subset the actual Manhattan precincts between o to 34. We got the list as 1,5,6,7,9,10,13,14,17,18,19,20,22,23,24,25,26,28,30,32,33,34 where Midtown South is 14, Manhattan North is 18, Central park is 22.
 
 2) We got rid of outliers by taking the 90% quantile of lat/long pairs. Since points are numeric we can use the quantile function which sorts and removes 10% outliers for each precinct.
 
