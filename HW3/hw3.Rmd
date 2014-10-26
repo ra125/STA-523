@@ -21,11 +21,9 @@ We made a dataset called 'tax' which combines coordinates of 'pluto' data with a
 First, we made a combined vector called 'namemap' which includes the full name ("east","west","street","avenue","av","avee","road","drive","terrace","bway","terrace"," terr","bway","1st","2nd","3rd","th ") and the short name ("e","w","st","ave","ave","ave","rd","dr","ter","brdway","ter"," ter","brdway","1","2","3"," ") and then, in the for loop, we replaced the full name with the short name in both 'tax' data from pluto and 'addr' data from park. We used 'str_match_all' to do so. So after cleaning a few words and removing suffix from numbers, we could atch upto 1.5 mil rows. 
 
 ```{r}
-#setwd("~/Team6/HW3")
-
 #Load necessary packages
 source("check_packages.R")
-check_packages(c("data.table","rgeos","ggmap","rgdal","maptools", "dplyr","stringr","lubridate"))
+check_packages(c("data.table","rgeos","ggmap","rgdal","maptools", "dplyr","stringr","lubridate","e1071"))
 
 #Load the Biggish NYC parking violations datafile
 park = fread("/home/vis/cr173/Sta523/data/parking/NYParkingViolations.csv",sep=",")
@@ -35,7 +33,6 @@ setnames(park, "Violation Precinct", "Violation.Precinct")
 setnames(park, "House Number", "House.Number")
 setnames(park, "Street Name", "Street.Name")
 
-
 #Extract the necessary variables
 addr = filter(park, Violation.Precinct <= 34) %>%
   mutate(House.Number = str_trim(House.Number), Street.Name = str_trim(Street.Name)) %>%
@@ -43,9 +40,6 @@ addr = filter(park, Violation.Precinct <= 34) %>%
   filter(str_detect(House.Number,"[0-9]+")) %>%
   transmute(Violation.Precinct = Violation.Precinct, addr = paste(House.Number, Street.Name)) %>%
   mutate(addr = tolower(addr))
-
-#rm(park)
-
 
 #Load 'pluto' data to geocode
 basepath<-getwd()
@@ -58,8 +52,7 @@ tax = cbind(data.frame(coordinates(pluto)), tolower(as.character(pluto$Address))
 
 names(tax)[3] = "addr"
 
-
-#from full name to simplified version, becasue this make str_replace_all much easier
+#from full name to simplified version, because this makes str_replace_all much easier
 namemap<-rbind(c("east","west","street","avenue","av","avee","road","drive","terrace"," terr","bway","1st","2nd","3rd","th "), c("e","w","st","ave","ave","ave","rd","dr","ter"," ter","brdway","1","2","3"," "))
 lnm<-ncol(namemap)
 
@@ -72,85 +65,13 @@ for (i in 1:lnm)
 #Around 1.5 mil matches after this clean up
 ```
 
-4) Next, we used a more comprehensive approach to clean the data where we saw, each time, the number of unmatched rows in pluto and then tried to clean the words in those rows. We did this but it was taking a lot of time and space and was increasing the matching by a very small and insignificant amount. Hence, we have commented this code for now. It is given below:
-
-```{r}
-#Better approach to clean up, but doesnt increase data points by a significant number. 
-#We can do it but its takes a lot of time and space, so we have commented it for now.
-
-#some house number has 0 at the beginning, the total number is about 1100
-
-#hnvset<-str_detect(park$House.Number, "^0+([[:alnum:]]+)")
-#hnpset<-str_detect(tax$addr, "^0+([[:alnum:]]+)")
-
-#addrset<-str_detect(addr$addr, "^0+([[:alnum:]]+)")
-#addrmat<-str_match(addr$addr[addrset], "^0+([[:alnum:]]+)")
-#nset<-length(addrset)
-#seqn<-c(1:nset)
-#seqnmark<-seqn[addrset]#record the seq number of element detecting the pattern with first 0
-#nseqnmark<-length(seqnmark)#nseqmark is 1109
-
-#for(i in 1:nseqnmark)
-#{
-#  addr$addr[seqnmark[i]]<-str_replace(addr$addr[seqnmark[i]], addrmat[i,1], addrmat[i,2])
-#}
-#addrset1<-str_detect(addr$addr, "^0+([[:alnum:]]+)")
-
-#However this part only increase ~100 data points in the final z
-
-#after cleaning 1st, 2nd, 3rd, and ~th, the matching goes up to 1569809
-#after delete first 0 in house number, the matching goes up to 1569912
-
-#unique addr$addr
-#univaddr<-unique(addr$addr)
-#length(addr$addr)
-#length(univaddr)
-#unique z$addr
-#unizaddr<-unique(z$addr)
-#length(unizaddr)
-
-#not.match<-anti_join(addr$addr,z$addr)
-#don't work: Error in UseMethod("anti_join") : 
-#no applicable method for 'anti_join' applied to an object of class "character"
-
-#not.mav<-anti_join(addr,tax)
-#not.map<-anti_join(tax,addr) #The addr only appear in tax
-#taxdt<-as.data.table(tax) #need to convert tax into data.table, otherwise would report error
-#not.mav<-anti_join(addr,taxdt) #The addr only appear in addr
-
-#uni.not.mav<-unique(not.mav)
-#uni.not.map<-unique(not.map)
-
-#By inspecting data in not.map and not.mav, using format below, we can find how many data can be changed with each modification
-#If the number to increase the valid data is small, then it is not worthy to loop over all of data once
-#test<-str_detect(addr$addr, " terr")
-#test[is.na(test)]<-F
-#sum(test) #249
-
-#test<-str_detect(addr$addr, " square$")
-#test[is.na(test)]<-F
-#sum(test) #821
-
-#test<-str_detect(tax$addr, " square")
-#test[is.na(test)]<-F
-#sum(test) #92
-
-#test<-str_detect(addr$addr, " sq$")
-#test[is.na(test)]<-F
-#sum(test) #4940
-
-#test<-str_detect(tax$addr, " sq")
-#test[is.na(test)]<-F
-#sum(test) #93
-```
+4) Next, we used a more comprehensive approach to clean the data where we saw, each time, the number of unmatched rows in pluto and then tried to clean the words in those rows. We did this but it was taking a lot of time and space and was increasing the matching by a very small and insignificant amount. Hence, we decided to not go ahead wth it.
 
 5) Joining addr and tax using 'inner_join' and removing park and pluto
 
 ```{r}
 # Join the dataframe
 z = inner_join(tax,addr)
-
-#plot(z$X1,z$X2,col=z$Violation.Precinct)
 
 rm(park)
 rm(pluto)
@@ -169,62 +90,66 @@ dim(latlon)
 
 ## Task 2 : Recreating NYC’s Police Precincts
 
-1) We use the actual precinct numbers from NYPD website to subset the actual Manhattan precincts between o to 34. We got the list as 1,5,6,7,9,10,13,14,17,18,19,20,22,23,24,25,26,28,30,32,33,34 where Midtown South is 14, Manhattan North is 18, Central park is 22.
+1) We use the actual precinct numbers from NYPD website to subset the actual Manhattan precincts between 0 to 34. We got the list as 1,5,6,7,9,10,13,14,17,18,19,20,22,23,24,25,26,28,30,32,33,34 where Midtown South is 14, Manhattan North is 18, Central park is 22.
 
-2) We got rid of outliers by taking the 90% quantile of lat/long pairs. Since points are numeric we can use the quantile function which sorts and removes 10% outliers for each precinct.
+2) We got rid of outliers by taking the 90% quantile of lat/long pairs. Since points are numeric we can use the quantile function which sorts and removes 10% extreme outliers for each precinct.
 
-3) We then made separate convex hulls for each precinct (restoring the precinct number for later use) using the function 'gConvexHull' from 'rgeos' library. We then merged all the convex hulls and made a single geojson file called 'precinct.json' (using the function 'writeOGR') as below:
+3) We then made separate convex hulls for each precinct (restoring the precinct number for later use) using the function 'gConvexHull' from 'rgeos' library. We then merged all the convex hulls and made a single geojson file called 'precinct.json'. We got good results in this draft and a score of 378281.
+
+4) Then we tried other approaches to create the boundaries like Alpha Hull and SVM. For alpha hull we used the package 'alphahull' and the functions 'ahull' and 'delvor'. We saw that with the full data it was taking a very long time to run and hence we subsetted a random 10 percent sample of the data. We created precinct boundaries and plotted them on the map and saw that they were not significantly better because we were not using the boundary of full Manhattan anywhere and hence a lot of points close to the boundary were not getting included in the hulls.
+
+5) Then we moved on to the final approach of using Support Vector Machines. We first removed 2 percent extreme outliers by using the quantile function. Next we took a 2 percent random sample of the data for implementing SVM in a timely fashion. We used the nybb file here to subset the points that were outside the Manhattan boundary. We used the function 'svm' from package 'e1071' to create the support vectors and then dissolved all points of the same precinct in one polygon to get the final precincts. The code for SVM is as below. (Code for Convex Hull and Alpha Hull is not shown)
 
 ```{r}
-object=SpatialPointsDataFrame(coords=latlon,data=data.frame(z$Violation.Precinct))
+nybb = readOGR(path.expand("/home/vis/cr173/Sta523/data/parking/nybb/"),"nybb",stringsAsFactors=FALSE)
+manh = nybb[2,]
 
-# obj is a list of all convex hulls. ch[[1]] has convex hull for precinct number 0, ch[[2]] for precinct 1 till ch[[35]] for precinct 34.
-
-obj = list()
-ch = list()
-chl = list()
 true_p=c(1,5,6,7,9,10,13,14,17,18,19,20,22,23,24,25,26,28,30,32,33,34)
-j = 1
 
-for(precinct in true_p)
+names(z)[2]='x'
+names(z)[3]='y'
+
+z=subset(z,(z$Violation.Precinct %in% true_p))
+z22=z[z$Violation.Precinct==22,]
+z=z[z$Violation.Precinct!=22,]
+q_lon<-matrix(quantile(z$x, probs=c(0.01, 0.99), na.rm=TRUE))
+q_lat<-matrix(quantile(z$y, probs=c(0.01, 0.99), na.rm=TRUE))
+pres<-which(q_lon[1,1]< z$x & z$x<q_lon[2,1] & q_lat[1,1]< z$y & z$y<q_lat[2,1])
+z<-z[pres,]
+n=nrow(z)
+sampled<-sample(1:n,as.integer(n*0.02), replace=FALSE)
+z_true=z[sampled,]
+z_true<-rbind(z_true,z22)
+z_true=z_true[,2:4]
+
+k=svm(as.factor(Violation.Precinct)~.,data=z_true,cross=1)
+#plot(k,data=s)
+
+library(raster)
+r = rasterize(manh, raster(ncols=500,nrows=1000,ext=extent(bbox(manh))))
+
+cells = which(!is.na(r[]))
+crds = xyFromCell(r,cells)
+
+w = predict(k,crds)
+
+r[cells] = as.numeric(as.character(w))
+
+preci = sort(unique(z_true$Violation.Precinct))
+
+l=list()
+for(i in seq_along(preci))
 {
-  obj[j]=SpatialPointsDataFrame(coords=coordinates(object[object$z.Violation.Precinct==precinct,]),data=data.frame(object[object$z.Violation.Precinct==precinct,]$z.Violation.Precinct))
-  
-  p<-as.data.frame(object[which(object$z.Violation.Precinct==precinct),])
-  z=data.frame(coordinates(obj[j]), p)
-  q_lon<-matrix(quantile(z$X1, probs=c(0.05, 0.95), na.rm=TRUE))
-  q_lat<-matrix(quantile(z$X2, probs=c(0.05, 0.95), na.rm=TRUE))
-  pres<-which( q_lon[1,1]< z$X1 & z$X1<q_lon[2,1] & q_lat[1,1]< z$X2 & z$X2<q_lat[2,1])
-  z<-z[pres,] 
-  obj[j]=SpatialPointsDataFrame(coords=cbind(z$X1,z$X2), data=data.frame(z$z.Violation.Precinct)) 
-
-  ch[j] = gConvexHull(obj[[j]])
-  chl[j] = SpatialPolygonsDataFrame(ch[[j]],data=data.frame(precinct)) 
-  j = j+1
+  l[[i]] = rasterToPolygons(r, function(x) x==preci[i], dissolve=TRUE)
+  l[[i]]@polygons[[1]]@ID = as.character(preci[i])
+  rownames(l[[i]]@data) = preci[i]
+  colnames(l[[i]]@data) = "Precinct"
 }
 
-# merge
-merged = chl[[1]]
+pd = do.call(rbind, l)
 
-for(precinct in 2:length(true_p)) {
-  #print(i)
-  slot(slot(chl[[precinct]],"polygons")[[1]],"ID") = as.character(precinct)
-  merged = rbind(merged,chl[[precinct]])
-}
-
-
-
-writeOGR(merged, "./out", "", driver="GeoJSON") # Creates out file, current version of 
-# GDAL does not allow . in file names 
-# so we have to rename the file afterwards
-file.rename("./out", "./precinct.json")
+source("write_json.R")
+writeGeoJSON(pd, "./precinct.json")
 
 ```
 
-To get rid of outliers in a better way, we plan to do the following (in the coming week): 
-
-1) Check say 5 nearest neighbors of each point and if they all lie very far away then remove them but that is very complex
-
-2) Remove 80% of the observations randomly (assuming 80% removes most outliers) and just use the left out 20% to make boundary and do this a 1000 times and take the intersection of all the 1000 polygons.
-
-Next, we also plan to use the other data files like 'intersections', 'nybb' and maybe 'altnames.csv' to make the boundaries more accurate!
