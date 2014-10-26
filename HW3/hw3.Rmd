@@ -23,7 +23,7 @@ First, we made a combined vector called 'namemap' which includes the full name (
 ```{r}
 #Load necessary packages
 source("check_packages.R")
-check_packages(c("data.table","rgeos","ggmap","rgdal","maptools", "dplyr","stringr","lubridate","e1071"))
+check_packages(c("data.table","rgeos","ggmap","rgdal","maptools", "dplyr","stringr","lubridate","e1071", "RColorBrewer"))
 
 #Load the Biggish NYC parking violations datafile
 options(warn=-1)
