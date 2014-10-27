@@ -169,6 +169,7 @@ for(i in seq_along(preci))
 }
 
 pd = do.call(rbind, l)
+plot(pd, col = z_true$Violation.Precinct, pch=18, cex=0.5, axes=TRUE)
 
 source("write_json.R")
 writeGeoJSON(pd, "./precinct.json")
