@@ -12,7 +12,7 @@ output: html_document
 
 Using 'setnames' we changed some variable names. Then using the library 'dplyr', first we chose a part of [Violation.Precinct] data which is less than 34 by filtering. Second, by using a (mutate) function, we added two variables [House.number, Street.Name], erasing whitespace in the data of two variables. Then we took the non-empty data and chose [House.Number] data which has a "[0-9]+" pattern by using a (filter) function. Third, we combined the [Violation.Precinct] variable with the [House.Number,Street.Name] variable which is called "addr" by using transmute function and then lastly converted the case to lower.
 
-3) Load 'pluto data' to geocode by using (readShapeSpatial) which reads data from a spatial dataframe to a shapefile.
+3) Load 'pluto data' to geocode by using 'readShapeSpatial' which reads data from a spatial dataframe to a shapefile.
 
 We made a dataset called 'tax' which combines coordinates of 'pluto' data with address of it. Then we called the address of 'pluto' data 'addr' which is the same variable as we used in the dataframe above so as to implement inner_join on them.
 
@@ -66,7 +66,7 @@ for (i in 1:lnm)
 #Around 1.5 mil matches after this clean up
 ```
 
-4) Next, we used a more comprehensive approach to clean the data where we saw, each time, the number of unmatched rows in pluto and then tried to clean the words in those rows. We did this but it was taking a lot of time and space and was increasing the matching by a very small and insignificant amount. Hence, we decided to not go ahead wth it.
+4) Next, we used a more comprehensive approach to clean the data where we saw, each time, the number of unmatched rows in pluto and then tried to clean the words in those rows. We did this but it was taking a lot of time and space and was increasing the matching by a very small and insignificant amount. Hence, we decided to not go ahead wth it and so we have not included its code.
 
 5) Joining addr and tax using 'inner_join' and removing park and pluto
 
@@ -97,9 +97,9 @@ dim(latlon)
 
 3) We then made separate convex hulls for each precinct (restoring the precinct number for later use) using the function 'gConvexHull' from 'rgeos' library. We then merged all the convex hulls and made a single geojson file called 'precinct.json'. We got good results in this draft and a score of 378281.
 
-4) Then we tried other approaches to create the boundaries like Alpha Hull and SVM. For alpha hull we used the package 'alphahull' and the functions 'ahull' and 'delvor'. We saw that with the full data it was taking a very long time to run and hence we subsetted a random 10 percent sample of the data and set 'alpha' value=0.01. We created precinct boundaries and plotted them on the map and saw that they were not significantly better because we were not using the boundary of full Manhattan anywhere and hence a lot of points close to the boundary were not getting included in the hulls.
+4) Then we tried other approaches to create the boundaries like Alpha Hull and SVM. For alpha hull we used the package 'alphahull' and the functions 'ahull' and 'delvor'. We saw that with the full data it was taking a very long time to run and hence we subsetted a random 10 percent sample of the data and set 'alpha' value=0.01. We created precinct boundaries and plotted them on the map and saw that they were not significantly better because we were not using the boundary of full Manhattan anywhere and hence a lot of points close to the boundary were not getting included in the hulls. We thus havent included the code in this file but have the code saved with us.
 
-5) Then we moved on to the final approach of using Support Vector Machines. We first removed 2 percent extreme outliers by using the quantile function. Next we took a 2 percent random sample of the data for implementing SVM in a timely fashion. We used the nybb file here to subset the points that were outside the Manhattan boundary. We used the function 'svm' from package 'e1071' to create the support vectors and then dissolved all points of the same precinct in one polygon to get the final precincts. The code for SVM is as below. (Code for Convex Hull and Alpha Hull is not shown)
+5) Then we moved on to the final approach of using Support Vector Machines. We first removed 1 percent extreme outliers from each precinct by using the quantile function. Next we took a 3 percent random sample of the data for implementing SVM in a timely fashion for all precincts instead of 22. We did not sample from precinct 22 as we anyway had very less points for it. Instead we joined the points for precinct 22, 5 times in the dataframe so as to increase the points for this precinct (Central Park). We used the nybb file here to subset the points that were outside the Manhattan boundary. We used the function 'svm' from package 'e1071' to create the support vectors and then dissolved all points of the same precinct in one polygon to get the final precincts. The code for SVM is as below. We used cross=5 for cross validation. We tried tweaking other parameters of function 'svm' but couldnt get any better. We also tried the 'tune.svm' function but it was taking a very long time to run. 
 
 ```{r}
 nybb = readOGR(path.expand("/home/vis/cr173/Sta523/data/parking/nybb/"),"nybb",stringsAsFactors=FALSE)
