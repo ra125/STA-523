@@ -139,8 +139,19 @@ z22<-z22[pres,]
 z=z1
 
 n=nrow(z)
-sampled<-sample(1:n,as.integer(n*0.03), replace=FALSE)
-z_true=z[sampled,]
+n=nrow(z)
+sampled<-sample(1:n,as.integer(n*0.25), replace=FALSE)
+z_true1=z[sampled,]
+sampled<-sample(1:n,as.integer(n*0.25), replace=FALSE)
+z_true2=z[sampled,]
+sampled<-sample(1:n,as.integer(n*0.25), replace=FALSE)
+z_true3=z[sampled,]
+sampled<-sample(1:n,as.integer(n*0.25), replace=FALSE)
+z_true4=z[sampled,]
+z_true=rbind(z_true1, z_true2, z_true3, z_true4)
+zt=which(duplicated(z_true)==TRUE)
+z_true=z_true[zt,]
+z_true=unique(z_true)
 z_true<-rbind(z_true,z22,z22,z22,z22,z22)
 z_true=z_true[,2:4]
 

@@ -1,12 +1,12 @@
 ---
-title: "hw3"
+  title: "hw3"
 author: "Radhika Anand, Sophie Lee, Minjung Park, Kungang Zhang"
 date: "10/19/2014"
 output: html_document
 ---
-## Task 1 : Geocoding
-
-1) Load the biggish NYC parking violation datafile by using a (fread) function which is much faster and more convenient than a (read.table) function 
+  ## Task 1 : Geocoding
+  
+  1) Load the biggish NYC parking violation datafile by using a (fread) function which is much faster and more convenient than a (read.table) function 
 
 2) Extract the necessary variables
 
@@ -85,7 +85,7 @@ latlon=data.frame(cbind(z$X1, z$X2))
 names(latlon$X1)="lon"
 names(latlon$X2)="lat"
 coord=SpatialPoints(latlon)
-plot(coord, col=z$Violation.Precinct, pch=18, cex=0.5, axes=TRUE)
+# plot(coord, col=z$Violation.Precinct, pch=18, cex=0.5, axes=TRUE)
 dim(latlon)
 ```
 
@@ -102,52 +102,74 @@ dim(latlon)
 5) Then we moved on to the final approach of using Support Vector Machines. We first removed 2 percent extreme outliers by using the quantile function. Next we took a 2 percent random sample of the data for implementing SVM in a timely fashion. We used the nybb file here to subset the points that were outside the Manhattan boundary. We used the function 'svm' from package 'e1071' to create the support vectors and then dissolved all points of the same precinct in one polygon to get the final precincts. The code for SVM is as below. (Code for Convex Hull and Alpha Hull is not shown)
 
 ```{r}
-nybb = readOGR(path.expand("/home/vis/cr173/Sta523/data/parking/nybb/"),"nybb",stringsAsFactors=FALSE)
+original=z
+
+nybb = readOGR(path.expand("/home/vis/cr173/Sta523/data/parking/nybb/"),"nybb",stringsAsFactors=FALSE, verbose=FALSE)
 manh = nybb[2,]
 
 true_p=c(1,5,6,7,9,10,13,14,17,18,19,20,22,23,24,25,26,28,30,32,33,34)
 
+z=original
 names(z)[2]='x'
 names(z)[3]='y'
 
 z=subset(z,(z$Violation.Precinct %in% true_p))
-
-z1<-as.data.frame(z[which(z$Violation.Precinct==1),])
-q_lon<-matrix(quantile(z1$x, probs=c(0.005, 0.995), na.rm=TRUE))
-q_lat<-matrix(quantile(z1$y, probs=c(0.005, 0.995), na.rm=TRUE))
-pres<-which(q_lon[1,1]< z1$x & z1$x<q_lon[2,1] & q_lat[1,1]< z1$y & z1$y<q_lat[2,1])
-z1<-z1[pres,]
-
-true_pp=c(5,6,7,9,10,13,14,17,18,19,20,23,24,25,26,28,30,32,33,34)
-
-for(precinct in true_pp)
-{
-z2<-as.data.frame(z[which(z$Violation.Precinct==precinct),])
-q_lon<-matrix(quantile(z2$x, probs=c(0.005, 0.995), na.rm=TRUE))
-q_lat<-matrix(quantile(z2$y, probs=c(0.005, 0.995), na.rm=TRUE))
-pres<-which(q_lon[1,1]< z2$x & z2$x<q_lon[2,1] & q_lat[1,1]< z2$y & z2$y<q_lat[2,1])
-z2<-z2[pres,]
-z1=rbind(z1,z2)
-}
-
+table(z$Violation.Precinct)
 z22=z[z$Violation.Precinct==22,]
-q_lon<-matrix(quantile(z22$x, probs=c(0.005, 0.995), na.rm=TRUE))
-q_lat<-matrix(quantile(z22$y, probs=c(0.005, 0.995), na.rm=TRUE))
-pres<-which(q_lon[1,1]< z22$x & z22$x<q_lon[2,1] & q_lat[1,1]< z22$y & z22$y<q_lat[2,1])
-z22<-z22[pres,]
+z=z[z$Violation.Precinct!=22,]
+q_lon<-matrix(quantile(z$x, probs=c(0.01, 0.99), na.rm=TRUE))
+q_lat<-matrix(quantile(z$y, probs=c(0.01, 0.99), na.rm=TRUE))
+pres<-which(q_lon[1,1]< z$x & z$x<q_lon[2,1] & q_lat[1,1]< z$y & z$y<q_lat[2,1])
+z<-z[pres,]
 
-z=z1
-
+table(z$Violation.Precinct)
 n=nrow(z)
-sampled<-sample(1:n,as.integer(n*0.03), replace=FALSE)
-z_true=z[sampled,]
-z_true<-rbind(z_true,z22,z22,z22,z22,z22)
+sampled<-sample(1:n,as.integer(n*0.1), replace=FALSE)
+z_true1=z[sampled,]
+sampled<-sample(1:n,as.integer(n*0.1), replace=FALSE)
+z_true2=z[sampled,]
+sampled<-sample(1:n,as.integer(n*0.1), replace=FALSE)
+z_true3=z[sampled,]
+sampled<-sample(1:n,as.integer(n*0.1), replace=FALSE)
+z_true4=z[sampled,]
+z_true=rbind(z_true1, z_true2, z_true3, z_true4)
+zt=which(duplicated(z_true)==TRUE)
+z_true=z_true[zt,]
+z_true=unique(z_true)
+z_true=rbind(z_true, z22)
+dim(z_true)
+table(z_true$Violation.Precinct)
 z_true=z_true[,2:4]
+rm(z_true1)
+rm(z_true2)
+rm(z_true3)
+rm(z_true4)
+rm(z22)
+rm(namemap)
+rm(n)
 
-k=svm(as.factor(Violation.Precinct)~.,data=z_true,cross=5)
+# zt=list()
+# for(i in 1:10){
+# sampled<-sample(1:n,as.integer(n*0.05), replace=FALSE)
+# zt[i]=z[sampled,]
+# }
+# z_true=rbind(zt[1],zt[2],zt[3],zt[4])
+
+# q_lon<-matrix(quantile(z22$x, probs=c(0.1, 0.9), na.rm=TRUE))
+# q_lat<-matrix(quantile(z22$y, probs=c(0.1, 0.9), na.rm=TRUE))
+# pres<-which(q_lon[1,1]< z22$x & z22$x<q_lon[2,1] & q_lat[1,1]< z22$y & z22$y<q_lat[2,1])
+# z22<-z22[pres,]
+
+
+table(z_true$Violation.Precinct)
+rm(addr)
+rm(crds)
+
+k=svm(as.factor(Violation.Precinct)~.,data=z_true, cross=10)
+# plot(k,data=z_true)
 
 library(raster, quietly=TRUE, warn.conflicts=FALSE)
-r = rasterize(manh, raster(ncols=500,nrows=1000,ext=extent(bbox(manh))))
+r = rasterize(manh, raster(ncols=400,nrows=1000,ext=extent(bbox(manh))))
 
 cells = which(!is.na(r[]))
 crds = xyFromCell(r,cells)
@@ -170,7 +192,22 @@ for(i in seq_along(preci))
 pd = do.call(rbind, l)
 
 source("write_json.R")
-writeGeoJSON(pd, "./precinct.json")
+writeGeoJSON(pd, "./precinct_trial2.json")
+
+
+
+# To read GeoJSON must use OGRGeoJSON as layer
+p = readOGR("precinct","OGRGeoJSON") 
+
+
+par(mfrow=c(1,2))
+#library
+pal=brewer.pal(8,"Dark2")
+pal=c(pal,pal,pal)
+plot(p,main = "precinct_in.json", axes=TRUE, col=pal, main="SVM")
+plot(coord, col=pal, pch=18, cex=0.5, axes=TRUE, main="Raw Data")
+
+
 
 ```
 
