@@ -101,7 +101,7 @@ dim(latlon)
 
 5) Then we moved on to the final approach of using Support Vector Machines. We first removed 1 percent extreme outliers from each precinct by using the quantile function. Next we took a 3 percent random sample of the data for implementing SVM in a timely fashion for all precincts instead of 22. We did not sample from precinct 22 as we anyway had very less points for it. Instead we joined the points for precinct 22, 5 times in the dataframe so as to increase the points for this precinct (Central Park). We used the nybb file here to subset the points that were outside the Manhattan boundary. We used the function 'svm' from package 'e1071' to create the support vectors and then dissolved all points of the same precinct in one polygon to get the final precincts. The code for SVM is as below. We used cross=5 for cross validation. We tried tweaking other parameters of function 'svm' but couldnt get any better. We also tried the 'tune.svm' function but it was taking a very long time to run and hence we did not use it in the final code. The final precinct boundaries are stored in the spatial file 'precinct.json' that is created as a result of this code. The boundaries can also be seen on the map of Manhattan in the visualization below. 
 
-```{r}
+```{r,fig.align='center'}
 nybb = readOGR(path.expand("/home/vis/cr173/Sta523/data/parking/nybb/"),"nybb",stringsAsFactors=FALSE)
 manh = nybb[2,]
 
