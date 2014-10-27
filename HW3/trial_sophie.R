@@ -122,7 +122,6 @@ q_lat<-matrix(quantile(z$y, probs=c(0.01, 0.99), na.rm=TRUE))
 pres<-which(q_lon[1,1]< z$x & z$x<q_lon[2,1] & q_lat[1,1]< z$y & z$y<q_lat[2,1])
 z<-z[pres,]
 
-# z=data.frame(rbind(z, z22))
 table(z$Violation.Precinct)
 n=nrow(z)
 sampled<-sample(1:n,as.integer(n*0.1), replace=FALSE)
@@ -146,9 +145,6 @@ rm(z_true2)
 rm(z_true3)
 rm(z_true4)
 rm(z22)
-rm(zt)
-rm(q_lat)
-rm(q_lon)
 rm(namemap)
 rm(n)
 
@@ -170,7 +166,7 @@ rm(addr)
 rm(crds)
 
 k=svm(as.factor(Violation.Precinct)~.,data=z_true, cross=10)
-#plot(k,data=s)
+# plot(k,data=z_true)
 
 library(raster, quietly=TRUE, warn.conflicts=FALSE)
 r = rasterize(manh, raster(ncols=400,nrows=1000,ext=extent(bbox(manh))))
@@ -201,10 +197,11 @@ writeGeoJSON(pd, "./precinct_trial2.json")
 
 
 # To read GeoJSON must use OGRGeoJSON as layer
-p = readOGR("precinct_trial2","OGRGeoJSON") 
+p = readOGR("precinct","OGRGeoJSON") 
 
 
 par(mfrow=c(1,2))
+#library
 pal=brewer.pal(8,"Dark2")
 pal=c(pal,pal,pal)
 plot(p,main = "precinct_in.json", axes=TRUE, col=pal, main="SVM")
