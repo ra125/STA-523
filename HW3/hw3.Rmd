@@ -139,6 +139,7 @@ z22<-z22[pres,]
 z=z1
 
 n=nrow(z)
+set.seed(1000)
 sampled<-sample(1:n,as.integer(n*0.03), replace=FALSE)
 z_true=z[sampled,]
 z_true<-rbind(z_true,z22,z22,z22,z22,z22)
