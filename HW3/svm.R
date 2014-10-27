@@ -40,12 +40,12 @@ for(i in seq_along(preci))
 pd = do.call(rbind, l)
 
 writeOGR(pd, "./out", "", driver="GeoJSON")
-file.rename("./out", "./district_svm.json")
+file.rename("./out", "./precinct_svm.json")
 
 cols = c("#7fc97f","#beaed4","#fdc086","#ffff99","#386cb0","#f0027f","#bf5b17","#bf5b25")
 
 # SVM Prediction
-default_plot("SVM")
+# default_plot("SVM")
 plot(pd, col = 1, add=TRUE)
 
 #cols[pd@data$Precinct]
