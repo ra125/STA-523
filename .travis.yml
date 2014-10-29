@@ -1,0 +1,25 @@
+# Sample .travis.yml for R projects from https://github.com/craigcitro/r-travis
+
+language: c
+
+before_install:
+  - cd hw4
+  - curl -OL http://raw.github.com/craigcitro/r-travis/master/scripts/travis-tool.sh
+  - chmod 755 ./travis-tool.sh
+  - ./travis-tool.sh bootstrap
+
+install:
+  - ./travis-tool.sh install_r testthat
+
+script: 
+<<<<<<< HEAD
+  - Rscript -e "library(testthat);source_dir('./',env=globalenv());z=test_dir('tests');stopifnot(sum(z$failed)==0)"
+
+after_failure:
+  - ./travis-tool.sh dump_logs
+=======
+  - Rscript -e "library(testthat);invisible(source_dir('./',env=globalenv()));z=test_dir('tests');stopifnot(sum(z$failed)==0)"
+>>>>>>> 950837ea936de54dbe94b43672f21b5470a7f5cb
+
+notifications:
+  email: false
