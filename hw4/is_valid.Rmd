@@ -1,0 +1,68 @@
+---
+title: "is_valid"
+author: "Team 6"
+date: "10/31/2014"
+output: html_document
+---
+#fuction 2: is_valid (Sophie)
+## Validate the graph object to ensure that it meets all requirements - 
+#Check that object is a list of lists. Check if there are names for the primary list that they are all unique. 
+#Check that each secondary list contains only edges and weights vectors that are of the appropriate type. 
+#Check that there are not any edges to non-existent vertices. 
+#Check that all weights are not less than or equal to 0. 
+#Check that every edge has a weight.
+
+```{r}
+
+library(testthat)
+library(methods)
+
+is_valid=function(input, data){
+if(typeof(input[[1]])==TRUE){
+  t1<-TRUE
+}
+  else {
+  t1<-FALSE
+  }
+names=names(input)
+d_names=unique(names)
+if(length(names)==length(d_names)){
+  t2<-TRUE
+}
+else{
+  t2<-FALSE
+}
+t3_obj1<-grep("weights",names)
+t3_obj2<-grep("edges",names)
+if(sum(t3_obj1)>0 & sum(t3_obj2)>0){
+  t3<-TRUE
+}
+else{
+  t3<-FALSE
+}
+each<-cbind(t1,t2,t3)
+if(sum(which(each==FALSE))>0) {
+  print(FALSE)
+}
+else{
+  print(TRUE)
+}
+
+}
+
+```
+
+### Testing
+
+```{r}
+basepath<-getwd()
+newpath<-paste0(basepath,"/tests")
+setwd(newpath)
+test_file("test_is_valid")
+testthat(is_valid)
+
+
+
+
+
+```
