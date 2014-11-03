@@ -53,19 +53,19 @@ else{
   t3<-FALSE
 }
 
- # Testing if the contents in the lists have the mode of numeric
+ # Testing if the types of edges are integer and weights are double
 
-if(as.character(is.numeric(input[[1]]$edges)==TRUE & is.numeric(input[[1]]$weights)==TRUE)=="TRUE"){
+if(as.character(  typeof(input[[1]]$edges)=="integer" & typeof(input[[1]]$weights)=="double")=="TRUE"){
    t4<-TRUE
  }
 else{
   t4<-FALSE
 }
 
-# Testing that there are not any edges to non-existent vertices. 
-if( is.numeric( length(input[[1]]$edges))==TRUE){
+#5: Testing if there are not any edges to non-existent vertices. 
+if( is.numeric(length(input[[1]]$edges))==TRUE){
   
-n=length(input[[1]]$edges)
+n=length(input)
   if(n>0){
     temp=NULL
     t_obj5_1=list()
@@ -74,14 +74,15 @@ n=length(input[[1]]$edges)
               t_obj5_1[[i]]<-input[[i]]$edges
               temp=c(temp, t_obj5_1[[i]])
               } # end of for loop
-    t_obj5= as.character( order(unique(temp))==order(unique(t_obj5_2)) )
+    t_obj5= as.character( length(order(unique(temp))) == length(t_obj5_2)  )
         } #end of if condition
-  else {
+  
+else {
    t_obj5=as.character(TRUE) 
         }
 
 
-  if(t_obj5=="TRUE") {
+  if( length(unique(t_obj5))==1 & unique(t_obj5)=="TRUE" ) {
     t5<-TRUE
   }
   else{
@@ -96,7 +97,7 @@ else{
 
 
 # 6: Testing if the weights are greater than 0.
-if( is.numeric( length(input[[1]]$edges))==TRUE){
+if( typeof( length(input[[1]]$weights))=="integer"){
 
 
     if( length(input[[1]]$weights)==0 ){
@@ -104,8 +105,11 @@ if( is.numeric( length(input[[1]]$edges))==TRUE){
                                      }
     
     else{
+        
             t_obj6<-as.character(input[[1]]$weights>0)
-            if(table(t_obj6)[[1]]==table(rep("TRUE",length(input[[1]]$weights)))[[1]]){
+            t_obj6_1 <-data.frame(table(t_obj6))
+            t_obj6_2<-t_obj6_1[which(t_obj6_1[,1]==TRUE),2]
+            if(t_obj6_2==length(input[[1]]$weights) ) {
                             t6<-TRUE
                             }
                         else{
@@ -127,7 +131,7 @@ if(sum(which(each==FALSE))>0) {
 else{
   print(TRUE)
 }
-   print(each)  ## This should be removed before submission. For now, it shows the result of each test.
+  print(each)  ## This should be removed before submission. For now, it shows the result of each test.
 }
 
 
@@ -142,20 +146,116 @@ else{
 basepath<-getwd()
 newpath<-paste0(basepath,"/tests")
 setwd(newpath)
-test_file("test_is_valid")
-testthat(is_valid)
+test_file("test_is_valid.R")
+test_that(is_valid)
+setwd(basepath)
 
 ```
 
 In case you are trying each object, use the codes below. Create g1:g6 and bad_g1:g3 first.
 ```{r}
+#good ones
+ g1 = list(list(edges   = c(1L, 2L),
+                 weights = c(1, 1)),
+            list(edges   = c(1L, 2L),
+                 weights = c(1, 1)))
+
+  g2 = list(A = list(edges   = c(1L, 2L),
+                     weights = c(1, 1)),
+            B = list(edges   = c(1L, 2L),
+                     weights = c(1, 1)))
+
+  g3 = list(list(edges   = c(2L),
+                 weights = c(1)),
+            list(edges   = c(1L),
+                 weights = c(1)))
+
+  g4 = list(list(edges   = integer(),
+                 weights = numeric()))
+
+  g5 = list(list(edges   = c(1L),
+                 weights = c(1)))
+  
+  g6 = list(list(weights = c(1),
+                 edges   = c(1L)))
+            
+
+
+#bad structure
+ bad_g1 = list(list())
+  bad_g2 = list(list(edges = 1L))
+  bad_g3 = list(list(weights = 1))
+
+#invalid vertex reference
+  bad_g4 = list(list(edges   = c(1L, 2L),
+                     weights = c(1, 1)))
+
+  bad_g5 = list(list(edges   = c(1L, 2L),
+                     weights = c(1, 1)),
+                list(edges   = c(1L, 3L),
+                     weights = c(1, 1)))
+ bad_g6 = list(A = list(edges   = c(1L, 2L),
+                        weights = c(1, 1)),
+               A = list(edges   = c(1L, 2L),
+                        weights = c(1, 1)))
+
+#Edge type
+bad_g7 = list(list(edges   = c(1),
+                     weights = c(1)))  
+  bad_g8 = list(list(edges   = c("A"),
+                     weights = c(1)))  
+  bad_g9 = list(list(edges   = c(NA+1L),
+                     weights = c(1)))  
+  #weight type and value
+ bad_g10 = list(list(edges   = c(1L),
+                     weights = c(-1)))
+  bad_g11 = list(list(edges   = c(1L),
+                     weights = c(0)))
+  bad_g12 = list(list(edges   = c(1L),
+                     weights = c(NA+1)))
+#duplicate edge
+ bad_g13= list(list(edges   = c(1L, 1L),
+                  weights = c(1, 1)))
+
+#edge and length mismatch
+ bad_g14 = list(list(edges   = c(1L),
+                     weights = c(1, 1)))
+  bad_g15 = list(list(edges   = c(1L, 2L),
+                     weights = c(1)))
+  bad_g16 = list(list(edges   = c(1L, 2L),
+                     weights = c(1, 1)),
+                list(edges   = c(1L, 2L),
+                     weights = c(1, 1, 1)))
+  bad_g17 = list(list(edges   = c(1L, 2L),
+                     weights = c(1, 1)),
+                list(edges   = c(1L, 2L, 3L),
+                     weights = c(1, 1)))
+
+
 is_valid(g1)
 is_valid(g2)
-is_valid(g3)
-is_valid(g4)
+is_valid(g3) 
+is_valid(g4) # t5 false: 
 is_valid(g5)
 is_valid(g6)
+
+
 is_valid(bad_g1)
 is_valid(bad_g2)
-is_valid(bad_g3)
+is_valid(bad_g3) # bug: Error in t_obj5_1[[i]] : subscript out of bounds
+is_valid(bad_g4) 
+is_valid(bad_g5) 
+is_valid(bad_g6) #true
+is_valid(bad_g7)
+is_valid(bad_g8)
+is_valid(bad_g9) #true
+is_valid(bad_g10) #true
+
+is_valid(bad_g11) #true
+is_valid(bad_g12) # bug here: Error in table(t_obj6)[[1]] : subscript out of bounds
+is_valid(bad_g13) # true
+is_valid(bad_g14) #true
+is_valid(bad_g15) 
+is_valid(bad_g16) # true
+is_valid(bad_g17) 
 ```
