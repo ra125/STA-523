@@ -18,13 +18,17 @@ library(testthat)
 library(methods)
 
 
+```
 
+### Function
+
+```{r}
 
 is_valid=function(input){
 
 # Testing if the input has a list object
-t_obj1=as.character(typeof(input[[1]])=="list")
-if(t_obj1=="TRUE"){
+
+if(as.character(typeof(input[[1]])=="list")=="TRUE"){
   t1<-TRUE
 }
   else {
@@ -32,8 +36,8 @@ if(t_obj1=="TRUE"){
   }
 
 # Testing if the names of the lists in object are all unique
-t_obj2=as.character( length(names(input[[1]]))==length(unique(names(input[[1]]))) )
-if(t_obj2=="TRUE"){
+
+if(as.character( length(names(input[[1]]))==length(unique(names(input[[1]]))) )=="TRUE"){
   t2<-TRUE
 }
 else{
@@ -41,8 +45,8 @@ else{
 }
 
  # Testing if the object has both weights and edges as lists
-t_obj3=as.character( sum(grep("weights",names(input[[1]])))>0 & sum(grep("edges",names(input[[1]])))>0 )
-if(t_obj3=="TRUE"){
+
+if(as.character( sum(grep("weights",names(input[[1]])))>0 & sum(grep("edges",names(input[[1]])))>0 )=="TRUE"){
   t3<-TRUE
 }
 else{
@@ -50,8 +54,8 @@ else{
 }
 
  # Testing if the contents in the lists have the mode of numeric
-t_obj4=as.character(is.numeric(input[[1]]$edges)==TRUE & is.numeric(input[[1]]$weights)==TRUE)
-if(t_obj4=="TRUE"){
+
+if(as.character(is.numeric(input[[1]]$edges)==TRUE & is.numeric(input[[1]]$weights)==TRUE)=="TRUE"){
    t4<-TRUE
  }
 else{
@@ -59,37 +63,46 @@ else{
 }
 
 # Testing that there are not any edges to non-existent vertices. 
+if( is.numeric( length(input[[1]]$edges))==TRUE){
+  
 n=length(input[[1]]$edges)
+  if(n>0){
+    temp=NULL
+    t_obj5_1=list()
+    t_obj5_2=(1:n)
+              for(i in 1:n){
+              t_obj5_1[[i]]<-input[[i]]$edges
+              temp=c(temp, t_obj5_1[[i]])
+              } # end of for loop
+    t_obj5= as.character( order(unique(temp))==order(unique(t_obj5_2)) )
+        } #end of if condition
+  else {
+   t_obj5=as.character(TRUE) 
+        }
 
-if(n>0){
-temp=NULL
-t_obj5_1=list()
-t_obj5_2=(1:n)
-for(i in 1:n){
-t_obj5_1[[i]]<-input[[i]]$edges
-temp=c(temp, t_obj5_1[[i]])
-} # end of for loop
-t_obj5= as.character( order(unique(temp))==order(unique(t_obj5_2)) )
-} #end of if condition
-else {
- t_obj5=as.character(TRUE) 
-}
 
-if(t_obj5=="TRUE") {
-  t5<-TRUE
+  if(t_obj5=="TRUE") {
+    t5<-TRUE
+  }
+  else{
+    t5<-FALSE
+  }
+
+
 }
 else{
   t5<-FALSE
 }
 
-# Testing if the weights are greater than 0.
-if(as.character(exists("weights", where=input[[1]]))=="FALSE"){
-                            t6<-FALSE
-                            }
-else{
-if(length(input[[1]]$weights)==0){
+
+# 6: Testing if the weights are greater than 0.
+if( is.numeric( length(input[[1]]$edges))==TRUE){
+
+
+    if( length(input[[1]]$weights)==0 ){
                                      t6<-TRUE
                                      }
+    
     else{
             t_obj6<-as.character(input[[1]]$weights>0)
             if(table(t_obj6)[[1]]==table(rep("TRUE",length(input[[1]]$weights)))[[1]]){
@@ -98,8 +111,13 @@ if(length(input[[1]]$weights)==0){
                         else{
                             t6<-FALSE
                             }
-}
-}
+            
+      }
+  }
+
+else{
+  t6<-FALSE
+    }
 
 # Testing if the object passes all tests above
 each<-cbind(t1,t2,t3,t4,t5,t6)
