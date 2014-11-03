@@ -10,6 +10,10 @@ read_graph=function(file=filename)
   fromnode<-str_match(string = gdata,pattern = "([[:alnum:]]+) -> ")
   tonode<-str_match(string = gdata,pattern = " -> ([[:alnum:]]+)")
   allnode<-order(unique(c(fromnode,tonode)))
+  nnode<-length(allnode)
   gobj<-list()
-  names(gobj)=allnode  
+  for (i in 1:nnode)
+  {
+    gobj[i]#how to change name of an element of a list?
+  }
 }
