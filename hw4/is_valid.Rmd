@@ -10,7 +10,7 @@ output: html_document
 #Check that each secondary list contains only edges and weights vectors that are of the appropriate type. 
 #Check that there are not any edges to non-existent vertices. 
 #Check that all weights are not less than or equal to 0. 
-#Check that every edge has a weight.
+#Check that every edge has a weight.#If no weight, is it still valid?
 
 ```{r}
 
