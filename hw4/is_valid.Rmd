@@ -17,20 +17,23 @@ output: html_document
 library(testthat)
 library(methods)
 
+
+
+
 is_valid=function(input){
 
-  # Testing if the input has a list object
-if(typeof(input[[1]])=="list"){
+# Testing if the input has a list object
+t_obj1=as.character(typeof(input[[1]])=="list")
+if(t_obj1=="TRUE"){
   t1<-TRUE
 }
   else {
   t1<-FALSE
   }
 
- # Testing if the names of the lists in object are all unique
-names=names(input)
-d_names=unique(names)
-if(length(names)==length(d_names)){
+# Testing if the names of the lists in object are all unique
+t_obj2=as.character( length(names(input[[1]]))==length(unique(names(input[[1]]))) )
+if(t_obj2=="TRUE"){
   t2<-TRUE
 }
 else{
@@ -38,9 +41,8 @@ else{
 }
 
  # Testing if the object has both weights and edges as lists
-t3_obj1<-grep("weights",names)
-t3_obj2<-grep("edges",names)
-if(sum(t3_obj1)>0 & sum(t3_obj2)>0){
+t_obj3=as.character( sum(grep("weights",names(input[[1]])))>0 & sum(grep("edges",names(input[[1]])))>0 )
+if(t_obj3=="TRUE"){
   t3<-TRUE
 }
 else{
@@ -48,7 +50,8 @@ else{
 }
 
  # Testing if the contents in the lists have the mode of numeric
-if(is.numeric(input[[1]]$edges)==TRUE & is.numeric(input[[1]]$weights)==TRUE){
+t_obj4=as.character(is.numeric(input[[1]]$edges)==TRUE & is.numeric(input[[1]]$weights)==TRUE)
+if(t_obj4=="TRUE"){
    t4<-TRUE
  }
 else{
@@ -56,29 +59,47 @@ else{
 }
 
 # Testing that there are not any edges to non-existent vertices. 
-n=length(input)
-temp=NULL
-t_obj1=list()
-for(i in 1:n){
-t_obj1[[i]]<-input[[i]]$edges
-temp=c(temp,t_obj1[[i]])
-}
-t_obj2=(1:n)
+n=length(input[[1]]$edges)
 
-if(order(unique(temp))==order(unique(t_obj2))) {
+if(n>0){
+temp=NULL
+t_obj5_1=list()
+t_obj5_2=(1:n)
+for(i in 1:n){
+t_obj5_1[[i]]<-input[[i]]$edges
+temp=c(temp, t_obj5_1[[i]])
+} # end of for loop
+t_obj5= as.character( order(unique(temp))==order(unique(t_obj5_2)) )
+} #end of if condition
+else {
+ t_obj5=as.character(TRUE) 
+}
+
+if(t_obj5=="TRUE") {
   t5<-TRUE
 }
 else{
   t5<-FALSE
 }
-# Testing if the weights are greater than 0.
-if(input[[1]]$weights>0){
-  t6<-TRUE
-}
-else{
-  t6<-FALSE
-}
 
+# Testing if the weights are greater than 0.
+if(as.character(exists("weights", where=input[[1]]))=="FALSE"){
+                            t6<-FALSE
+                            }
+else{
+if(length(input[[1]]$weights)==0){
+                                     t6<-TRUE
+                                     }
+    else{
+            t_obj6<-as.character(input[[1]]$weights>0)
+            if(table(t_obj6)[[1]]==table(rep("TRUE",length(input[[1]]$weights)))[[1]]){
+                            t6<-TRUE
+                            }
+                        else{
+                            t6<-FALSE
+                            }
+}
+}
 
 # Testing if the object passes all tests above
 each<-cbind(t1,t2,t3,t4,t5,t6)
@@ -88,10 +109,14 @@ if(sum(which(each==FALSE))>0) {
 else{
   print(TRUE)
 }
-
+   print(each)  ## This should be removed before submission. For now, it shows the result of each test.
 }
 
+
+
 ```
+
+
 
 ### Testing
 
@@ -102,8 +127,17 @@ setwd(newpath)
 test_file("test_is_valid")
 testthat(is_valid)
 
+```
 
-
-
-
+In case you are trying each object, use the codes below. Create g1:g6 and bad_g1:g3 first.
+```{r}
+is_valid(g1)
+is_valid(g2)
+is_valid(g3)
+is_valid(g4)
+is_valid(g5)
+is_valid(g6)
+is_valid(bad_g1)
+is_valid(bad_g2)
+is_valid(bad_g3)
 ```
