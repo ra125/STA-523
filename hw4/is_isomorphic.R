@@ -5,7 +5,7 @@ library(methods)
 #2. Order and unique the vertices based on names
 #3. If order and unique pass, check the edges and weights
 
-is_isomorphic=function(g1=graph1, g2=graph2)
+is_isomorphic=function(g1=graph1, g2=graph2)# this function is not right!!!
 {
   #source("is_valid.R")
 #     if (is_valid(g1)==F & is_valid(g2)==F)
@@ -34,6 +34,22 @@ is_isomorphic=function(g1=graph1, g2=graph2)
   {
     return(FALSE)
   }
+  #recurion of comparing two graphs
+  #The stop condition contains: (1) when hit the starting node;
+  #(2) no outgoing edge; (3) no matching node
+  #the condition of mathcing is whether weights matching
+  recur.search<-function(ii=current_index_g1)
+  {
+    for (i in 1:nnode)
+    {
+      if (length(g1[[index]]$weights)==length(g2[[i]]$weights) & 
+            sum(sort(g1[[index]]$weights) == sort(g2[[i]]$weights)))
+      {
+        
+      }
+    }
+  }
+  
   #names of nodes, if there is no name, it will return ''
   vname1<-names(g1)
   vname2<-names(g2)
