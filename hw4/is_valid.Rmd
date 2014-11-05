@@ -37,7 +37,7 @@ if(as.character(typeof(input[[1]])=="list")=="TRUE"){
 
 # Testing if the names of the lists in object are all unique
 
-if(as.character( length(names(input[[1]]))==length(unique(names(input[[1]]))) )=="TRUE"){
+if(as.character( length(names(input[1]))==length(input)) =="TRUE"){
   t2<-TRUE
 }
 else{
@@ -63,41 +63,53 @@ else{
 }
 
 #5: Testing if there are not any edges to non-existent vertices. 
-if( is.numeric(length(input[[1]]$edges))==TRUE){
-  
 n=length(input)
-  if(n>0){
+result=list()
+frame=NULL
+for(i in 1:n){
+result[i]<-exists("edges", where=input[[i]])
+frame=data.frame(table(c(frame, result[[i]])))
+no=c(frame[which(frame[,1]=="TRUE"),2])
+}
+
+if(length(no) > 0){  # begin First ifelse
+    
     temp=NULL
     t_obj5_1=list()
     t_obj5_2=(1:n)
               for(i in 1:n){
               t_obj5_1[[i]]<-input[[i]]$edges
               temp=c(temp, t_obj5_1[[i]])
-              } # end of for loop
-    t_obj5= as.character( length(order(unique(temp))) == length(t_obj5_2)  )
-        } #end of if condition
+              } 
+   
+   if(max(temp)>0){  ## begin Second ifelse
+  # integer==(input[[unique(temp)]])==dim(input[[t_obj5_2]])
+   t_obj5= as.character( length(order(unique(temp))) ==length(rep(1,length(t_obj5_2)) )  )  
+                  }
+             else{
+             t_obj5=as.character(TRUE)
+                  }  ## end Second ifelse 
+   
+  
+        } 
   
 else {
-   t_obj5=as.character(TRUE) 
-        }
+   t_obj5=as.character(FALSE) 
+        }    # end First ifelse
 
 
-  if( length(unique(t_obj5))==1 & unique(t_obj5)=="TRUE" ) {
-    t5<-TRUE
-  }
-  else{
-    t5<-FALSE
-  }
+  if( length(unique(t_obj5))==1 & unique(t_obj5)=="TRUE" ) {   ### begin Third ifelse
+                                                          t5<-TRUE
+                                                           }
+                                                      else{
+                                                        t5<-FALSE
+                                                          }   ### end Third ifelse
 
 
-}
-else{
-  t5<-FALSE
-}
 
 
 # 6: Testing if the weights are greater than 0.
-if( typeof( length(input[[1]]$weights))=="integer"){
+if(   typeof( length(input[[1]]$weights))=="integer"  ){
 
 
     if( length(input[[1]]$weights)==0 ){
@@ -108,12 +120,14 @@ if( typeof( length(input[[1]]$weights))=="integer"){
         
             t_obj6<-as.character(input[[1]]$weights>0)
             t_obj6_1 <-data.frame(table(t_obj6))
-            t_obj6_2<-t_obj6_1[which(t_obj6_1[,1]==TRUE),2]
-            if(t_obj6_2==length(input[[1]]$weights) ) {
+            t_obj6_2<-length(rep(1,t_obj6_1[which(t_obj6_1[,1]==TRUE),2] ))
+  
+            t_obj6_3<-length(input[[1]]$weights)
+            if(t_obj6_2==t_obj6_3) {
                             t6<-TRUE
                             }
                         else{
-                            t6<-FALSE
+                            t6<-FALSE                          
                             }
             
       }
@@ -123,8 +137,41 @@ else{
   t6<-FALSE
     }
 
+# 7: Testing if edges and weights have the same length
+n=length(input)
+t_obj7<-rep(NA,n)
+for(i in 1:n){
+t_obj7[i]<-length(input[[i]]$weights) == length(input[[i]]$edges)
+t_obj7_1<-data.frame(table(t_obj7))
+t_obj7_2<-t_obj7_1[which(t_obj7_1[,1]=="FALSE"),2]
+}  
+
+if (length(t_obj7_2) >0){
+  t7<-FALSE
+}
+else{
+  t7<-TRUE
+}
+
+#8: Testing if there are duplicate edges
+n=length(input)
+t_obj8<-rep(NA, n)
+for(i in 1:n){
+  t_obj8[i]<- length(unique(input[[i]]$edges)) == length(input[[i]]$edges)
+  t_obj8_1 <-data.frame(table(t_obj8))
+  t_obj8_2 <-t_obj8_1[which(t_obj8_1[,1]=="FALSE"),2]
+}
+
+if (length(t_obj8_2)>0)
+  {
+  t8<-FALSE
+  }
+else{
+  t8<-TRUE
+}
+  
 # Testing if the object passes all tests above
-each<-cbind(t1,t2,t3,t4,t5,t6)
+each<-cbind(t1,t2,t3,t4,t5,t6, t7, t8)
 if(sum(which(each==FALSE))>0) {
   print(FALSE)
 }
@@ -166,6 +213,7 @@ In case you are trying each object, use the codes below. Create g1:g6 and bad_g1
                      weights = c(1, 1)))
 
   g3 = list(list(edges   = c(2L),
+                 
                  weights = c(1)),
             list(edges   = c(1L),
                  weights = c(1)))
@@ -217,7 +265,7 @@ bad_g7 = list(list(edges   = c(1),
  bad_g13= list(list(edges   = c(1L, 1L),
                   weights = c(1, 1)))
 
-#edge and length mismatch
+#edge and weights length mismatch
  bad_g14 = list(list(edges   = c(1L),
                      weights = c(1, 1)))
   bad_g15 = list(list(edges   = c(1L, 2L),
@@ -235,27 +283,27 @@ bad_g7 = list(list(edges   = c(1),
 is_valid(g1)
 is_valid(g2)
 is_valid(g3) 
-is_valid(g4) # t5 false: 
+is_valid(g4)  
 is_valid(g5)
 is_valid(g6)
 
 
 is_valid(bad_g1)
 is_valid(bad_g2)
-is_valid(bad_g3) # bug: Error in t_obj5_1[[i]] : subscript out of bounds
+is_valid(bad_g3) 
 is_valid(bad_g4) 
 is_valid(bad_g5) 
-is_valid(bad_g6) #true
+is_valid(bad_g6) 
 is_valid(bad_g7)
 is_valid(bad_g8)
-is_valid(bad_g9) #true
-is_valid(bad_g10) #true
+is_valid(bad_g9) # t5 Error in if (max(temp) > 0) { : missing value where TRUE/FALSE needed
+is_valid(bad_g10) # t6 bug: Error in rep(1, t_obj6_1[which(t_obj6_1[, 1] == TRUE), 2]) :   invalid 'times' argument
 
-is_valid(bad_g11) #true
-is_valid(bad_g12) # bug here: Error in table(t_obj6)[[1]] : subscript out of bounds
-is_valid(bad_g13) # true
-is_valid(bad_g14) #true
+is_valid(bad_g11) # t6 same bug as g10
+is_valid(bad_g12) # t6 same bug as above
+is_valid(bad_g13) 
+is_valid(bad_g14) 
 is_valid(bad_g15) 
-is_valid(bad_g16) # true
+is_valid(bad_g16) 
 is_valid(bad_g17) 
 ```
