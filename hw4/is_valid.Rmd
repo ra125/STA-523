@@ -44,7 +44,7 @@ t_obj1_3 =c(t_obj1_3, t_obj1_2[[i]])
 t_obj1_4<-data.frame(table(t_obj1_3))
 t_obj1_5<-t_obj1_4[which(t_obj1_4[,1]==FALSE),2]
 
-if(t_obj1_5>0){
+if(length(t_obj1_5)>0){
   t1<-FALSE
 }
   else {
@@ -90,7 +90,7 @@ else{
  # 4: Testing if the types of edges are integer and weights are double
 
 if(length(input[[1]]$edges)==0) {
-  t4<-FALSE
+  t4<-TRUE
 }
 else{
   
@@ -118,14 +118,23 @@ else{
 }
 
 #5: Testing if there are not any edges to non-existent vertices. 
+
+if (length(input[[1]]) ==0 ){
+  t5<-FALSE
+}
+else {
+  
+
 n=length(input)
 result=list()
 frame=NULL
 for(i in 1:n){
-result[i]<-exists("edges", where=input[[i]])
-frame=data.frame(table(c(frame, result[[i]])))
-no=c(frame[which(frame[,1]=="TRUE"),2])
+result[i]<- exists("edges", where=input[[i]] )
+frame=c(frame, result[[i]])
 }
+frame=data.frame(table(frame))
+no=c(frame[which(frame[,1]=="TRUE"),2])
+
 
 if(length(no) > 0){  # begin First ifelse
     
@@ -161,7 +170,7 @@ else {
                                                           }   ### end Third ifelse
 
 
-
+}
 
 # 6: Testing if the weights are greater than 0.
 if(   typeof( length(input[[1]]$weights))=="integer"  ){
@@ -234,7 +243,7 @@ if(sum(which(each==FALSE))>0) {
 else{
   print(TRUE)
 }
-  print(each)  ## This should be removed before submission. For now, it shows the result of each test.
+  #print(each)  ## This should be removed before submission. For now, it shows the result of each test.
 }
 
 
@@ -339,12 +348,12 @@ bad_g7 = list(list(edges   = c(1),
 is_valid(g1)
 is_valid(g2) 
 is_valid(g3) 
-is_valid(g4) #false 
+is_valid(g4) 
 is_valid(g5)
 is_valid(g6)
 
 
-is_valid(bad_g1) # ERror
+is_valid(bad_g1) 
 is_valid(bad_g2)
 is_valid(bad_g3) 
 is_valid(bad_g4) 
