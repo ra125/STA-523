@@ -6,7 +6,8 @@ output: html_document
 ---
 #fuction 2: is_valid (Sophie)
 ## Validate the graph object to ensure that it meets all requirements - 
-#Check that object is a list of lists. Check if there are names for the primary list that they are all unique. 
+#Check that object is a list of lists. 
+#Check if there are names for the primary list that they are all unique. 
 #Check that each secondary list contains only edges and weights vectors that are of the appropriate type. 
 #Check that there are not any edges to non-existent vertices. 
 #Check that all weights are not less than or equal to 0. 
@@ -24,16 +25,35 @@ library(methods)
 
 ```{r}
 
+
+
+
+
 is_valid=function(input){
 
 # 1: Testing if the input has a list object
+t_obj1_1<-as.character(typeof(input)=="list") 
+n=length(input)
+t_obj1_2=list()
+t_obj1_3=as.vector(NULL)
+for(i in 1:n){
+t_obj1_2[[i]]<-as.character(typeof(input[[i]])=="list")  
+t_obj1_3 =c(t_obj1_3, t_obj1_2[[i]])
+}
 
-if(as.character(typeof(input[[1]])=="list")=="TRUE"){
-  t1<-TRUE
+t_obj1_4<-data.frame(table(t_obj1_3))
+t_obj1_5<-t_obj1_4[which(t_obj1_4[,1]==FALSE),2]
+
+if(t_obj1_5>0){
+  t1<-FALSE
 }
   else {
-  t1<-FALSE
+  t1<-TRUE
   }
+
+
+
+
 
 # 2: Testing if the names of the lists in object are all unique
 if(  length(names(input))==0   )   {  #begin first ifelse
@@ -50,8 +70,12 @@ else{
 }                  #end second ifelse
 
 } #end first ifelse
- # 2: Testing if the object has both weights and edges as lists
 
+
+
+
+
+ # 3: Testing if the object has both weights and edges as lists
 if(as.character( sum(grep("weights",names(input[[1]])))>0 & sum(grep("edges",names(input[[1]])))>0 )=="TRUE"){
   t3<-TRUE
 }
@@ -59,11 +83,23 @@ else{
   t3<-FALSE
 }
 
- # 3: Testing if the types of edges are integer and weights are double
-t_obj4_1 =data.frame(table(is.na(input[[1]]$edges) ) )
-t_obj4_2 =t_obj4_1[]
 
-if(){
+
+
+
+ # 4: Testing if the types of edges are integer and weights are double
+
+if(length(input[[1]]$edges)==0) {
+  t4<-FALSE
+}
+else{
+  
+
+n=length(input)
+t_obj4_1 =data.frame(table(is.na(input[[n]]$edges) ) )
+t_obj4_2 =t_obj4_1[which(t_obj4_1[,1]==TRUE),2]
+
+if(length(t_obj4_2) >0){
   t4<-FALSE
 }
 
@@ -79,6 +115,7 @@ else{
 
 }
 
+}
 
 #5: Testing if there are not any edges to non-existent vertices. 
 n=length(input)
@@ -302,12 +339,12 @@ bad_g7 = list(list(edges   = c(1),
 is_valid(g1)
 is_valid(g2) 
 is_valid(g3) 
-is_valid(g4)  
+is_valid(g4) #false 
 is_valid(g5)
 is_valid(g6)
 
 
-is_valid(bad_g1)
+is_valid(bad_g1) # ERror
 is_valid(bad_g2)
 is_valid(bad_g3) 
 is_valid(bad_g4) 
@@ -315,7 +352,7 @@ is_valid(bad_g5)
 is_valid(bad_g6) 
 is_valid(bad_g7)
 is_valid(bad_g8)
-is_valid(bad_g9) #true
+is_valid(bad_g9) 
 is_valid(bad_g10) 
 
 is_valid(bad_g11) 
