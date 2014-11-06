@@ -26,7 +26,7 @@ library(methods)
 
 is_valid=function(input){
 
-# Testing if the input has a list object
+# 1: Testing if the input has a list object
 
 if(as.character(typeof(input[[1]])=="list")=="TRUE"){
   t1<-TRUE
@@ -35,16 +35,22 @@ if(as.character(typeof(input[[1]])=="list")=="TRUE"){
   t1<-FALSE
   }
 
-# Testing if the names of the lists in object are all unique
+# 2: Testing if the names of the lists in object are all unique
+if(  length(names(input))==0   )   {  #begin first ifelse
+  t2<-TRUE
+  }
 
-if(as.character( length(names(input[1]))==length(input)) =="TRUE"){
+else { 
+  
+if(as.character( length(unique(names(input)))==length(input)) =="TRUE"){  #begin second ifelse
   t2<-TRUE
 }
 else{
   t2<-FALSE
-}
+}                  #end second ifelse
 
- # Testing if the object has both weights and edges as lists
+} #end first ifelse
+ # 2: Testing if the object has both weights and edges as lists
 
 if(as.character( sum(grep("weights",names(input[[1]])))>0 & sum(grep("edges",names(input[[1]])))>0 )=="TRUE"){
   t3<-TRUE
@@ -53,14 +59,22 @@ else{
   t3<-FALSE
 }
 
- # Testing if the types of edges are integer and weights are double
+ # 3: Testing if the types of edges are integer and weights are double
+# if( grep("NA",input[[1]]$edges)>0  ){
+#   t4<-FALSE
+# }
 
-if(as.character(  typeof(input[[1]]$edges)=="integer" & typeof(input[[1]]$weights)=="double")=="TRUE"){
+# else{
+  
+if(as.character(  typeof(input[[1]]$edges)  == "integer" & typeof(input[[1]]$weights)=="double")=="TRUE"){
    t4<-TRUE
  }
 else{
   t4<-FALSE
 }
+
+# }
+# a<-input[[1]]$edges
 
 #5: Testing if there are not any edges to non-existent vertices. 
 n=length(input)
@@ -82,8 +96,8 @@ if(length(no) > 0){  # begin First ifelse
               temp=c(temp, t_obj5_1[[i]])
               } 
    
-   if(max(temp)>0){  ## begin Second ifelse
-  # integer==(input[[unique(temp)]])==dim(input[[t_obj5_2]])
+   if(length(temp)>0){  ## begin Second ifelse
+ 
    t_obj5= as.character( length(order(unique(temp))) ==length(rep(1,length(t_obj5_2)) )  )  
                   }
              else{
@@ -120,8 +134,9 @@ if(   typeof( length(input[[1]]$weights))=="integer"  ){
         
             t_obj6<-as.character(input[[1]]$weights>0)
             t_obj6_1 <-data.frame(table(t_obj6))
-            t_obj6_2<-length(rep(1,t_obj6_1[which(t_obj6_1[,1]==TRUE),2] ))
-  
+            int<-t_obj6_1[which(t_obj6_1[,1]==TRUE),2]
+            t_obj6_2<-length(rep (int, int ))
+
             t_obj6_3<-length(input[[1]]$weights)
             if(t_obj6_2==t_obj6_3) {
                             t6<-TRUE
@@ -199,7 +214,7 @@ setwd(basepath)
 
 ```
 
-In case you are trying each object, use the codes below. Create g1:g6 and bad_g1:g3 first.
+In case you are trying each object, use the codes below. these are from the test script created by the prof.
 ```{r}
 #good ones
  g1 = list(list(edges   = c(1L, 2L),
@@ -281,7 +296,7 @@ bad_g7 = list(list(edges   = c(1),
 
 
 is_valid(g1)
-is_valid(g2)
+is_valid(g2) 
 is_valid(g3) 
 is_valid(g4)  
 is_valid(g5)
@@ -296,14 +311,17 @@ is_valid(bad_g5)
 is_valid(bad_g6) 
 is_valid(bad_g7)
 is_valid(bad_g8)
-is_valid(bad_g9) # t5 Error in if (max(temp) > 0) { : missing value where TRUE/FALSE needed
-is_valid(bad_g10) # t6 bug: Error in rep(1, t_obj6_1[which(t_obj6_1[, 1] == TRUE), 2]) :   invalid 'times' argument
+is_valid(bad_g9) #true
+is_valid(bad_g10) 
 
-is_valid(bad_g11) # t6 same bug as g10
-is_valid(bad_g12) # t6 same bug as above
+is_valid(bad_g11) 
+is_valid(bad_g12) 
 is_valid(bad_g13) 
 is_valid(bad_g14) 
 is_valid(bad_g15) 
 is_valid(bad_g16) 
 is_valid(bad_g17) 
+
+
+
 ```
