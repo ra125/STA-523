@@ -60,21 +60,25 @@ else{
 }
 
  # 3: Testing if the types of edges are integer and weights are double
-# if( grep("NA",input[[1]]$edges)>0  ){
-#   t4<-FALSE
-# }
+t_obj4_1 =data.frame(table(is.na(input[[1]]$edges) ) )
+t_obj4_2 =t_obj4_1[]
 
-# else{
-  
-if(as.character(  typeof(input[[1]]$edges)  == "integer" & typeof(input[[1]]$weights)=="double")=="TRUE"){
-   t4<-TRUE
- }
-else{
+if(){
   t4<-FALSE
 }
 
-# }
-# a<-input[[1]]$edges
+else{
+  
+if(as.character(  typeof(input[[1]]$edges)  == "integer" & typeof(input[[1]]$weights)=="double")=="TRUE"){
+   t4<-TRUE
+          }
+
+else{
+  t4<-FALSE
+    }
+
+}
+
 
 #5: Testing if there are not any edges to non-existent vertices. 
 n=length(input)
