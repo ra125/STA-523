@@ -22,15 +22,15 @@ min_span_tree=function(g)
     stop("Graph is not connected")
   }
   
-  n=length(g1)
+  n=length(g)
   m=matrix(rep(0,n^2),nrow=n,ncol=n)
   
   for(i in 1:n)
   {
     count=1
-    for(j in g1[[i]]$edges)
+    for(j in g[[i]]$edges)
     {
-      m[i,j]=g1[[i]]$weights[count]
+      m[i,j]=g[[i]]$weights[count]
       count=count+1
     }
   }
@@ -85,5 +85,6 @@ min_span_tree=function(g)
   }
   
   #create return graph using parent and m
+  #does stop report error for the main testthat code?
   
 }
