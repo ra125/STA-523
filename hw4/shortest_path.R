@@ -8,6 +8,26 @@ shortest_path(g,v1,v2)
   
   #Ask if connected or not
   
+  names=names(g)
+  
+  if(v1==v2)
+  {
+    if(length(g[[v1]]$edges)!=0)
+    {
+      for(i in 1:length(g[[v1]]$edges))
+      {
+        if(v1==g[[v1]]$edges[i])
+        {
+          vec=c(v1,v1)
+          print("f")
+          #return(vec)
+        }
+      }
+      print("g")
+      #return(NULL)
+    }
+  }
+  
   n=length(g)
   m=matrix(rep(0,n^2),nrow=n,ncol=n)
   
@@ -71,17 +91,33 @@ shortest_path(g,v1,v2)
   }
   
   i=v2
+  
+  if(prev[i]==Inf || prev[i]==-1)
+  {
+    #return(NULL)
+    print("Hey")
+  }
+  
   a=v2
-  while(prev[i]!=-1)
+  while(prev[i]!=Inf && prev[i]!=-1)
   {
     a=cbind(a,prev[i])
     i=prev[i]
   }
 
-  vector=rev(a) 
+  for(i in 1:length(a))
+  {
+    if(a[i]==Inf)
+    {
+      #return(NULL)
+      print("NU")
+    }
+  }
+  
+  vector=rev(a)
   
   return(vector)
   
-  #add label names
+  #add label names! Else passes all tests! prints will be removed in the end
   #ask if stop will give error in the main test too?
 }
