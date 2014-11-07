@@ -46,8 +46,7 @@ t_obj1_5<-t_obj1_4[which(t_obj1_4[,1]==FALSE),2]
 
 if(length(t_obj1_5)>0){
   t1<-FALSE
-}
-  else {
+}  else {
   t1<-TRUE
   }
 
@@ -58,14 +57,11 @@ if(length(t_obj1_5)>0){
 # 2: Testing if the names of the lists in object are all unique
 if(  length(names(input))==0   )   {  #begin first ifelse
   t2<-TRUE
-  }
-
-else { 
+  } else { 
   
 if(as.character( length(unique(names(input)))==length(input)) =="TRUE"){  #begin second ifelse
   t2<-TRUE
-}
-else{
+} else{
   t2<-FALSE
 }                  #end second ifelse
 
@@ -78,8 +74,7 @@ else{
  # 3: Testing if the object has both weights and edges as lists
 if(as.character( sum(grep("weights",names(input[[1]])))>0 & sum(grep("edges",names(input[[1]])))>0 )=="TRUE"){
   t3<-TRUE
-}
-else{
+} else{
   t3<-FALSE
 }
 
@@ -91,8 +86,7 @@ else{
 
 if(length(input[[1]]$edges)==0) {
   t4<-TRUE
-}
-else{
+} else{
   
 
 n=length(input)
@@ -101,15 +95,11 @@ t_obj4_2 =t_obj4_1[which(t_obj4_1[,1]==TRUE),2]
 
 if(length(t_obj4_2) >0){
   t4<-FALSE
-}
-
-else{
+} else{
   
 if(as.character(  typeof(input[[1]]$edges)  == "integer" & typeof(input[[1]]$weights)=="double")=="TRUE"){
    t4<-TRUE
-          }
-
-else{
+          } else{
   t4<-FALSE
     }
 
@@ -121,8 +111,7 @@ else{
 
 if (length(input[[1]]) ==0 ){
   t5<-FALSE
-}
-else {
+} else {
   
 
 n=length(input)
@@ -149,23 +138,19 @@ if(length(no) > 0){  # begin First ifelse
    if(length(temp)>0){  ## begin Second ifelse
  
    t_obj5= as.character( length(order(unique(temp))) ==length(rep(1,length(t_obj5_2)) )  )  
-                  }
-             else{
+                  }  else{
              t_obj5=as.character(TRUE)
                   }  ## end Second ifelse 
    
   
-        } 
-  
-else {
+        } else {
    t_obj5=as.character(FALSE) 
         }    # end First ifelse
 
 
   if( length(unique(t_obj5))==1 & unique(t_obj5)=="TRUE" ) {   ### begin Third ifelse
                                                           t5<-TRUE
-                                                           }
-                                                      else{
+                                                           }    else{
                                                         t5<-FALSE
                                                           }   ### end Third ifelse
 
@@ -178,9 +163,7 @@ if(   typeof( length(input[[1]]$weights))=="integer"  ){
 
     if( length(input[[1]]$weights)==0 ){
                                      t6<-TRUE
-                                     }
-    
-    else{
+                                     }    else{
         
             t_obj6<-as.character(input[[1]]$weights>0)
             t_obj6_1 <-data.frame(table(t_obj6))
@@ -190,15 +173,12 @@ if(   typeof( length(input[[1]]$weights))=="integer"  ){
             t_obj6_3<-length(input[[1]]$weights)
             if(t_obj6_2==t_obj6_3) {
                             t6<-TRUE
-                            }
-                        else{
+                            }  else{
                             t6<-FALSE                          
                             }
             
       }
-  }
-
-else{
+  } else{
   t6<-FALSE
     }
 
@@ -213,8 +193,7 @@ t_obj7_2<-t_obj7_1[which(t_obj7_1[,1]=="FALSE"),2]
 
 if (length(t_obj7_2) >0){
   t7<-FALSE
-}
-else{
+} else{
   t7<-TRUE
 }
 
@@ -230,8 +209,7 @@ for(i in 1:n){
 if (length(t_obj8_2)>0)
   {
   t8<-FALSE
-  }
-else{
+  } else{
   t8<-TRUE
 }
   
@@ -239,8 +217,7 @@ else{
 each<-cbind(t1,t2,t3,t4,t5,t6, t7, t8)
 if(sum(which(each==FALSE))>0) {
   print(FALSE)
-}
-else{
+} else{
   print(TRUE)
 }
   #print(each)  ## This should be removed before submission. For now, it shows the result of each test.
