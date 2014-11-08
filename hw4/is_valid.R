@@ -120,7 +120,7 @@ is_valid=function(input){
         return(F)
       }     else {
 
-        t_obj5=as.character(TRUE)
+        t5=TRUE
        }  ## end 4th ifelse 
     
 
