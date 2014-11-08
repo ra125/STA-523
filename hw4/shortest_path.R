@@ -1,14 +1,59 @@
-shortest_path(g,v1,v2)
+shortest_path=function(g,v1,v2)
 {
-  source(is_valid.R)
-  if(is_valid(g)==FALSE)
+  #source("is_valid.R")
+  #if(is_valid(g)==FALSE)
+  #{
+  #  stop("Graph is not valid")
+  #}
+  
+  if(is.na(v1) || is.na(v2))
   {
-    stop("Graph is not valid")
+    stop("Bad labels")
   }
   
-  #Ask if connected or not
+  type=c("integer","double","character")
+  
+  if(!typeof(v1) %in% type)
+  {
+    stop("Bad labels")
+  }
+  
+  if(!typeof(v2) %in% type)
+  {
+    stop("Bad labels")
+  }
   
   names=names(g)
+  
+  if(is.null(names)==FALSE)
+  {
+    if(typeof(v1)=="character")
+    {
+      v1=which(names(g)==v1)
+      if(length(v1)==0)
+      {
+        stop("Bad labels")
+      }
+    }
+    if(typeof(v2)=="character")
+    {
+      v2=which(names(g)==v2)
+      if(length(v2)==0)
+      {
+        stop("Bad labels")
+      }
+    }
+  }
+  
+  if(v1>length(g))
+  {
+    stop("Bad labels")
+  }
+  
+  if(v2>length(g))
+  {
+    stop("Bad labels")
+  }
   
   if(v1==v2)
   {
@@ -19,12 +64,11 @@ shortest_path(g,v1,v2)
         if(v1==g[[v1]]$edges[i])
         {
           vec=c(v1,v1)
-          print("f")
-          #return(vec)
+          vecfin=c(names[v1],names[v1])
+          return(vecfin)
         }
       }
-      print("g")
-      #return(NULL)
+      return(NULL)
     }
   }
   
@@ -94,8 +138,7 @@ shortest_path(g,v1,v2)
   
   if(prev[i]==Inf || prev[i]==-1)
   {
-    #return(NULL)
-    print("Hey")
+    return(NULL)
   }
   
   a=v2
@@ -109,15 +152,21 @@ shortest_path(g,v1,v2)
   {
     if(a[i]==Inf)
     {
-      #return(NULL)
-      print("NU")
+      return(NULL)
     }
   }
   
   vector=rev(a)
   
-  return(vector)
+  s_path=rep(Inf,length(vector))
   
-  #add label names! Else passes all tests! prints will be removed in the end
-  #ask if stop will give error in the main test too?
+  if(is.null(names)==FALSE)
+  {
+    for(i in 1:length(vector))
+    {
+      s_path[i]=names[vector[i]]
+    }
+  }
+  
+  return(s_path)
 }
