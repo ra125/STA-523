@@ -21,7 +21,6 @@ is_valid=function(input){
   }
   
   
-
   
   
   # 2: Testing if the names of the lists in object are all unique
@@ -39,7 +38,7 @@ is_valid=function(input){
   
   
   
-  
+    
   
   # 3: Testing if the object has both weights and edges as lists
   if(as.character( sum(grep("weights",names(input[[1]])))>0 & sum(grep("edges",names(input[[1]])))>0 )=="TRUE"){
@@ -79,53 +78,57 @@ is_valid=function(input){
   
   #5: Testing if there are not any edges to non-existent vertices. 
   
-  if (length(input[[1]]) ==0 ){
-   return(F)
-  } else {
-    
-    ######## Edges[i] -> exists vertices 
-    n=length(input)
-    result=list()
-    frame=NULL
-    for(i in 1:n){
-      result[i]<- exists("edges", where=input[[i]] )
-      frame=c(frame, result[[i]])
-    }
-    frame=data.frame(table(frame))
-    no=c(frame[which(frame[,1]=="TRUE"),2])
-    
-    
-    if(length(no) > 0){  # begin First ifelse
-      
+
+     n=length(input)
       temp=NULL
       t_obj5_1=list()
       t_obj5_2=(1:n)
+      
       for(i in 1:n){
         t_obj5_1[[i]]<-input[[i]]$edges
-        temp=c(temp, t_obj5_1[[i]])
-      } 
+        temp=c(temp, t_obj5_1[[i]])    #temp; directed edges. the list number of these numbers should exist
+                    } 
+
+     if(length(temp)==0){   #First ifelse: If there is no edge numbers, the object passes this test.
+       t5<-TRUE
+     } else {
+       
+       if(is.na(temp)[1]==TRUE){ # Second ifelse; no else condition
+         return(F)
+       }
+       
       
-      if(length(temp)>0){  ## begin Second ifelse
-        
-        t_obj5= as.character( length(order(unique(temp))) ==length(rep(1,length(t_obj5_2)) )  )  
-      }  else{
+      temp=unique(temp)
+      TF=NULL
+      dt=matrix(nrow=max(unique(c(temp,n))))
+    
+      for(i in 1:n){
+        dt[i,1]=is.integer(input[[i]]$edges)    #binary vector: if 1, such vertex exists
+              }
+
+           for(i in temp){
+            TF<- c(TF,  dt[i,1]=="TRUE")
+                          }
+    if(is.na(data.frame(TF)[nrow(dt),]) ){  # Third ifelse
+      return(F)
+    }   else{
+      test=data.frame(table(TF))[  which(data.frame(table(TF))[,1]==FALSE) ,2]
+    }   #End third ifelse
+      
+      
+      if(length(test)>0){        #begin 4th if else
+        return(F)
+      }     else {
+
         t_obj5=as.character(TRUE)
-      }  ## end Second ifelse 
-      
-      
-    } else {
-      t_obj5=as.character(FALSE) 
+       }  ## end 4th ifelse 
+    
+
     }    # end First ifelse
     
-    
-    if( length(unique(t_obj5))==1 & unique(t_obj5)=="TRUE" ) {   ### begin Third ifelse
-      t5<-TRUE
-    }    else{
-      return(F)
-    }   ### end Third ifelse
-    
-    
-  }
+
+  
+  
   
   # 6: Testing if the weights are greater than 0.
   if(   typeof( length(input[[1]]$weights))=="integer"  ){
@@ -152,6 +155,9 @@ is_valid=function(input){
     return(F)
   }
   
+  
+  
+  
   # 7: Testing if edges and weights have the same length
   n=length(input)
   t_obj7<-rep(NA,n)
@@ -166,6 +172,10 @@ is_valid=function(input){
   } else{
     t7<-TRUE
   }
+  
+  
+  
+  
   
   #8: Testing if there are duplicate edges
   n=length(input)
@@ -183,6 +193,9 @@ is_valid=function(input){
     t8<-TRUE
   }
   
+  
+  
+  
   # Testing if the object passes all tests above
   each<-cbind(t1,t2,t3,t4,t5,t6, t7, t8)
   if(sum(which(each==TRUE))==36) {
@@ -191,6 +204,5 @@ is_valid=function(input){
     return(F)
   }
 
-#print(each)  ## This should be removed before submission. For now, it shows the result of each test.
 
 }
