@@ -1,4 +1,0 @@
-A -> A [weight=1];
-B -> A [weight=1];
-B -> C [weight=1];
-C;
