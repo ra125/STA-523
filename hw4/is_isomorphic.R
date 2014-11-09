@@ -3,7 +3,7 @@
 #3. If order and unique pass, check the edges and weights
 source("is_valid.R")
 
-is_isomorphic=function(g1, g2)# this function is not right!!!
+is_isomorphic=function(g1, g2)
 {
   
     if (is_valid(g1)==F & is_valid(g2)==F)
