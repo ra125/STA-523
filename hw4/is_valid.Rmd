@@ -113,7 +113,7 @@ if (length(input[[1]]) ==0 ){
   t5<-FALSE
 } else {
   
-
+######## Edges[i] -> exists vertices 
 n=length(input)
 result=list()
 frame=NULL
@@ -220,7 +220,7 @@ if(sum(which(each==FALSE))>0) {
 } else{
   print(TRUE)
 }
-  #print(each)  ## This should be removed before submission. For now, it shows the result of each test.
+  print(each)  ## This should be removed before submission. For now, it shows the result of each test.
 }
 
 
@@ -269,6 +269,25 @@ In case you are trying each object, use the codes below. these are from the test
   g6 = list(list(weights = c(1),
                  edges   = c(1L)))
             
+g7 = list(A = list(edges   = c(1L),
+                     weights = c(1)),
+            B = list(edges   = c(1L, 3L),
+                     weights = c(1, 1)),
+            C = list(edges   = c(3L),
+                     weights = c(1)))
+
+g8 = list(A = list(edges   = c(2L),
+                     weights = c(1)),
+            B = list(edges   = c(3L),
+                     weights = c(1)),
+            C = list(edges   = c(4L),
+                     weights = c(1)),
+            D = list(edges   = c(5L),
+                     weights = c(1)),
+            E = list(edges   = c(6L),
+                     weights = c(1)),
+            F = list(edges   = integer(),
+                     weights = numeric()))
 
 
 #bad structure
@@ -322,19 +341,23 @@ bad_g7 = list(list(edges   = c(1),
                      weights = c(1, 1)))
 
 
+
+
+
 is_valid(g1)
 is_valid(g2) 
 is_valid(g3) 
 is_valid(g4) 
 is_valid(g5)
 is_valid(g6)
-
+is_valid(g7)
+is_valid(g8)
 
 is_valid(bad_g1) 
 is_valid(bad_g2)
 is_valid(bad_g3) 
-is_valid(bad_g4) 
-is_valid(bad_g5) 
+is_valid(bad_g4) #error
+is_valid(bad_g5) #
 is_valid(bad_g6) 
 is_valid(bad_g7)
 is_valid(bad_g8)
