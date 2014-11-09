@@ -2,7 +2,7 @@
 #2. Order and unique the vertices based on names
 #3. If order and unique pass, check the edges and weights
 source("is_valid.R")
-library(stringr)
+#library(stringr)
 
 is_isomorphic=function(g1, g2)# this function is not right!!!
 {
