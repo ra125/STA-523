@@ -15,7 +15,7 @@ output: html_document
 
 # is_valid
 
-This function was to validate the graph object to ensure that it meets the following requirements. 
+This function is to validate the graph object to ensure that it meets the following requirements. 
 
 1) The object is a list of lists.
 2) If the object has names for the primary list, they are all unique. 
@@ -27,7 +27,13 @@ This function was to validate the graph object to ensure that it meets the follo
 
 In doing so, we create a function that has 7 internal tests. If a graph object fails one of the tests, the function stops there and retunrs "FAIL." For the function to return "TRUE,"  the graph object has to pass all seven internal tests. Explanation for how each test is constructed is as follows.
 
-First, in testing 
+In the first test, if the graph object is a type of list, it moves on to the second level of the test where a for loop function goes over each list object and checks whether every single object inside the top list is a type of list. If that is the case, an object called T1 stores "TRUE" and otherwise exits the function with "FALSE." 
+
+In the second test, the graph object is tested if it has names first. If it doesnt, then the object automatically passes this test giving the value of "TRUE" to the object T2. If the lists in the graph object have names, a vector saves the 'unique' values of names and matches the length of a vector with 'all' list names.  
+
+In the third test, 
+
+
 
 
 
