@@ -79,13 +79,3 @@ is_isomorphic=function(g1, g2)# this function is not right!!!
   }
   return(TRUE)
 }
-
-#test the function
-# #source("is_isomorphic.R")
-# basepath<-getwd()
-# newpath<-paste0(basepath,"/tests")
-# setwd(newpath)
-# test_file("test_is_isomorphic.R")
-# test_that(is_isomorphic)
-# setwd(basepath)
-#test the function end
