@@ -1,11 +1,11 @@
 #1. Check names of vertices and fill names
 #2. Order and unique the vertices based on names
 #3. If order and unique pass, check the edges and weights
-source("is_valid.R")
 
 is_isomorphic=function(g1, g2)
 {
-  
+    source("is_valid.R")
+    
     if (is_valid(g1)==F & is_valid(g2)==F)
     {
       stop("Both graphes are not valid")
