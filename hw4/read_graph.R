@@ -1,3 +1,4 @@
+library('stringr')
 #1. Read a DOT language of graph data from a txt file
 #2. Once the format is not ritht, report error
 #3. If not weight for every line, asigned default weight to every edge
@@ -47,19 +48,16 @@ read_graph=function(filename)
       fromnode[i]=fnode
       tonode[i]=tnode
       if (is.na(str_match(gdata[i]," [[]weight=([[:digit:]e+]+)[]];$")[2])) 
-      {weight[i]=1}
-      else
+      {weight[i]=1} else
       {weight[i]=str_match(gdata[i]," [[]weight=([[:digit:]e+]+)[]];$")[2]}
-    }
-    else
+    } else
     {
       if (!is.na(snode)) 
       {
         fromnode[i]=snode
 #         tonode[i]=integer(0)
 #         weight[i]=numeric(0)
-      }
-      else
+      } else
       {
         stop("The graph file is not valid!")
       }

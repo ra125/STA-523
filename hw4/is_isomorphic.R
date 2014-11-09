@@ -9,14 +9,12 @@ is_isomorphic=function(g1, g2)# this function is not right!!!
     if (is_valid(g1)==F & is_valid(g2)==F)
     {
       stop("Both graphes are not valid")
-    }
-    else 
+    } else 
     {
       if (is_valid(g1)==F)
       {
         stop("Graph 1 is not valid")
-      }
-      else
+      } else
       {
         if (is_valid(g2)==F)
         {
@@ -59,8 +57,7 @@ is_isomorphic=function(g1, g2)# this function is not right!!!
     if (length(g1[[vname1[i]]]$edges) != length(g2[[vname1[i]]]$edges))
     {
       return(FALSE)
-    }
-    else
+    } else
     {
       if (length(g1[[vname1[i]]]$edges)==0 & length(g2[[vname1[i]]]$edges)==0)
       {
