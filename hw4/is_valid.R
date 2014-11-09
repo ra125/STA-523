@@ -101,15 +101,16 @@ is_valid=function(input){
       temp=unique(temp)
       TF=NULL
       dt=matrix(nrow=max(unique(c(temp,n))))
-    
-      for(i in 1:n){
+       for(i in 1:n){
         dt[i,1]=is.integer(input[[i]]$edges)    #binary vector: if 1, such vertex exists
               }
-
+      
+           TF=matrix(nrow=max(unique(c(temp,n))))
            for(i in temp){
-            TF<- c(TF,  dt[i,1]=="TRUE")
+            TF[i,]<- dt[i,1]=="TRUE"
                           }
-    if(is.na(data.frame(TF)[nrow(dt),]) ){  # Third ifelse
+    tf5<- which(data.frame(is.na(data.frame(TF)[temp,]) )[,1]=="TRUE")
+    if(length(tf5)>0 ){  # Third ifelse
       return(F)
     }   else{
       test=data.frame(table(TF))[  which(data.frame(table(TF))[,1]==FALSE) ,2]
