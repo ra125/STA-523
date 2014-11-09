@@ -1,31 +1,29 @@
-library(testthat)
-library(methods)
-
 #1. Check names of vertices and fill names
 #2. Order and unique the vertices based on names
 #3. If order and unique pass, check the edges and weights
+source("is_valid.R")
 
-is_isomorphic=function(g1=graph1, g2=graph2)# this function is not right!!!
+is_isomorphic=function(g1, g2)# this function is not right!!!
 {
-  #source("is_valid.R")
-#     if (is_valid(g1)==F & is_valid(g2)==F)
-#     {
-#       stop("Both graphes are not valid")
-#     }
-#     else 
-#     {
-#       if (is_valid(g1)==F)
-#       {
-#         stop("Graph 1 is not valid")
-#       }
-#       else
-#       {
-#         if (is_valid(g2)==F)
-#         {
-#           stop("Graph 2 is not valid")
-#         }
-#       }
-#     }
+  
+    if (is_valid(g1)==F & is_valid(g2)==F)
+    {
+      stop("Both graphes are not valid")
+    }
+    else 
+    {
+      if (is_valid(g1)==F)
+      {
+        stop("Graph 1 is not valid")
+      }
+      else
+      {
+        if (is_valid(g2)==F)
+        {
+          stop("Graph 2 is not valid")
+        }
+      }
+    }
   #number of nodes
   nnode1=length(g1)
   nnode2=length(g2)
@@ -34,21 +32,12 @@ is_isomorphic=function(g1=graph1, g2=graph2)# this function is not right!!!
   {
     return(FALSE)
   }
-  #recurion of comparing two graphs
-  #The stop condition contains: (1) when hit the starting node;
-  #(2) no outgoing edge; (3) no matching node
-  #the condition of mathcing is whether weights matching
-  recur.search<-function(ii=current_index_g1)
-  {
-    for (i in 1:nnode)
-    {
-      if (length(g1[[index]]$weights)==length(g2[[i]]$weights) & 
-            sum(sort(g1[[index]]$weights) == sort(g2[[i]]$weights)))
-      {
-        
-      }
-    }
-  }
+  #The complete problem of determining whether two graphs are the same should be following
+  #Complete Problem: No matter what are the indices or name of vertices (any permutation) for two graphs,
+  #there exist one permutation for each of the graph so that these two graphs have the same
+  #indices number, weights, and structure.
+  #The simplified problme in homework: when comparing the children node, we can use label name
+  
   
   #names of nodes, if there is no name, it will return ''
   vname1<-names(g1)
@@ -57,7 +46,8 @@ is_isomorphic=function(g1=graph1, g2=graph2)# this function is not right!!!
   vname1[vname1[]=='']=(1:length(vname1))[vname1[]=='']
   vname2[vname2[]=='']=(1:length(vname2))[vname2[]=='']
   #unique and sort their name and compare them
-  if (sum(sort(unique(vname1),decreasing = FALSE) != sort(unique(vname2),decreasing = FALSE)))
+  if (identical(sort(unique(vname1),decreasing = FALSE), 
+                sort(unique(vname2),decreasing = FALSE))==FALSE)
   {
     return(FALSE)
   }
@@ -77,11 +67,12 @@ is_isomorphic=function(g1=graph1, g2=graph2)# this function is not right!!!
         next
       }
     }
-    ii1<-order(g1[[vname1[i]]]$edges,g1[[vname1[i]]]$weights)
-    ii2<-order(g2[[vname1[i]]]$edges,g2[[vname1[i]]]$weights)
+    #Use name of vertices to compare
+    ii1<-order(vname1[g1[[vname1[i]]]$edges],g1[[vname1[i]]]$weights)
+    ii2<-order(vname2[g2[[vname1[i]]]$edges],g2[[vname1[i]]]$weights)
     #If the edges and weights are not exactly match
-    if (sum(rbind(g1[[vname1[i]]]$edges,g1[[vname1[i]]]$weights)[,ii1] != 
-          rbind(g2[[vname1[i]]]$edges,g2[[vname1[i]]]$weights)[,ii2]))
+    if (identical(rbind(vname1[g1[[vname1[i]]]$edges],g1[[vname1[i]]]$weights)[,ii1],
+                  rbind(vname2[g2[[vname1[i]]]$edges],g2[[vname1[i]]]$weights)[,ii2])==FALSE)
     {
       return(FALSE)
     }
@@ -90,11 +81,11 @@ is_isomorphic=function(g1=graph1, g2=graph2)# this function is not right!!!
 }
 
 #test the function
-source("is_isomorphic.R")
-basepath<-getwd()
-newpath<-paste0(basepath,"/tests")
-setwd(newpath)
-test_file("test_is_isomorphic.R")
-test_that(is_isomorphic)
-setwd(basepath)
+# #source("is_isomorphic.R")
+# basepath<-getwd()
+# newpath<-paste0(basepath,"/tests")
+# setwd(newpath)
+# test_file("test_is_isomorphic.R")
+# test_that(is_isomorphic)
+# setwd(basepath)
 #test the function end
