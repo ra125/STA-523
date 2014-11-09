@@ -1,7 +1,10 @@
 shortest_path=function(g,v1,v2)
 {
-  if(as.character(sum(grep("weights",names(g[[1]])))>0 & sum(grep("edges",names(g[[1]])))>0)=="FALSE"){
-    stop("Invalid graph")
+  source("is_valid.R")
+  
+  if(is_valid(g)==FALSE)
+  {
+    stop("Graph is not valid")
   }
   
   if(is.na(v1) || is.na(v2))
