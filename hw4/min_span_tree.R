@@ -1,11 +1,7 @@
-library(testthat)
-library(methods)
-
 min_span_tree=function(g)
 {
-  source(is_valid.R)
-  source(is_undirected.R)
-  source(is_connected.R)
+  source("is_valid.R")
+  source("is_undirected.R")
   
   if(is_valid(g)==FALSE)
   {
@@ -17,12 +13,8 @@ min_span_tree=function(g)
     stop("Graph is directed")
   }
   
-  if(is_connected(g)==FALSE)
-  {
-    stop("Graph is not connected")
-  }
-  
   n=length(g)
+  names=names(g)
   m=matrix(rep(0,n^2),nrow=n,ncol=n)
   
   for(i in 1:n)
@@ -84,7 +76,37 @@ min_span_tree=function(g)
     }
   }
   
-  #create return graph using parent and m
-  #does stop report error for the main testthat code?
+  for(p in 1:length(parent))
+  {
+    if(parent[p]==-1)
+    {
+      m[p,]=0
+    }
+    m[p,-parent[p]]=0
+  }
   
+  for(i in 1:nrow(m))
+  {
+    for(j in 1:ncol(m))
+    {
+      m[i,j]=max(m[j,i],m[i,j])
+    }
+  }
+  
+  al = list()
+  for(i in 1:nrow(m)) {
+    if(is.null(names)==FALSE)
+      {
+      v = names[i]
+      } else {v=i}
+      al[[v]] = list(edges=c(), weights=c())
+      for(j in 1:ncol(m)) {
+        if(m[i,j] != 0) {
+          al[[v]]$edges = c(al[[v]]$edges, j)
+          al[[v]]$weights = c(al[[v]]$weights, m[i,j])
+        }
+      }
+    }
+  
+  return(al)
 }
