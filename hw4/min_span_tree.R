@@ -1,8 +1,8 @@
+source("is_valid.R")
+source("is_undirected.R")
+
 min_span_tree=function(g)
 {
-  source("is_valid.R")
-  source("is_undirected.R")
-  
   if(is_valid(g)==FALSE)
   {
     stop("Graph is not valid")

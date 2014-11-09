@@ -1,6 +1,7 @@
+source("is_valid.R")
+
 shortest_path=function(g,v1,v2)
 {
-  source("is_valid.R")
 
   if(is_valid(g)==FALSE)
   {

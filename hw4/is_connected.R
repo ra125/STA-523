@@ -1,6 +1,7 @@
+source("is_valid.R")
+
 is_connected = function(g,v1,v2)
 {
-  source("is_valid.R")
   stopifnot(is_valid(g))
   
   if(is.na(v1) || is.na(v2))

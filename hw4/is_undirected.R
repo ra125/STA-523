@@ -1,6 +1,6 @@
+source("is_valid.R")
+
 is_undirected = function(g) {
-  
-  source("is_valid.R")
   
   if(is_valid(g)==FALSE)
   {
