@@ -1,27 +1,28 @@
 #Task for function write_graph
 #1. Write the vertex;
-#2. Write seperate ->;
+#2. Write separator ->;
 #3. Write weight;
 #4. Write isolate nodes;
 #5. If a node doesn't have a name, asign the integer index of its in the list as its name
 
-write_graph=function(graphobj = g,filename = gname)#g is the object of graph; gname is the name of file
+source("is_valid.R")
+
+write_graph=function(g,gname)#g is the object of graph; gname is the name of file
 {
-  source("is_valid.R")
-  if (is.list(g)==F) 
+  if (is_valid(g)==FALSE)
   {
-    print("The input is not a list!")
-    return(NULL)
-  }
-  if (is_valid(g)==F)
-  {
-    print("The input is not a valid graph")
-    return(NULL)
+    stop("The input is not a valid graph")
   }
   #number of nodes
   nnode=length(g)
   #names of nodes, if there is no name, it will return ''
   vname<-names(g)
+  #If the name of node has space, add a pair of quote out side of the nam
+  spacenode<-str_match(vname," ")
+  for (i in (1:length(vname))[!is.na(spacenode)])
+  {
+    vname[i]=paste0("\"",vname[i],"\"")
+  }
   #asign the index of nodes as their name, if no name
   vname[vname[]=='']=(1:length(vname))[vname[]=='']
   #extract the 'to' node and corresponding weight
@@ -57,12 +58,11 @@ write_graph=function(graphobj = g,filename = gname)#g is the object of graph; gn
                 matrix('',nrow = nline0,ncol = 5),
                 rep(';',nline0))
   gdata<-rbind(gdata1,gdata0)
-  write.table(gdata, file=paste0(gname,'.txt'), 
+  write.table(gdata, gname, 
               append=F, 
               quote=F, 
               sep="", 
               row.names=F,
               col.names=F)
+  return(file)
 }
-
-write_graph(g3, "g3")
