@@ -4,7 +4,7 @@
 #3. Write weight;
 #4. Write isolate nodes;
 #5. If a node doesn't have a name, asign the integer index of its in the list as its name
-
+library(stringr)
 source("is_valid.R")
 
 write_graph=function(g,gname)#g is the object of graph; gname is the name of file

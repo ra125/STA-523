@@ -3,6 +3,7 @@ library('stringr')
 #2. Once the format is not ritht, report error
 #3. If not weight for every line, asigned default weight to every edge
 #4. Return an object of the graph
+library(stringr)
 
 read_graph=function(filename)
 {
