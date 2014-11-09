@@ -1,19 +1,19 @@
 ---
 title: "hw4"
-author: "Team 6"
+author: "Team 6 - Radhika Anand, Sophie Lee, Minjung Park, Kungang Zhang"
 date: "11/8/2014"
 output: html_document
 ---
 
+In this homework we have tried to recreate some of the common functions/algorithms related to the data structure: Graph!
 
+The 4 predicate functions are as follows:
 
-```{r}
+### 1) Function - is_valid
 
-```
+Input - g, a graph object.
 
-
-
-# is_valid
+Output - true if valid, false if not.
 
 This function is to validate the graph object to ensure that it meets the following requirements. 
 
@@ -25,7 +25,7 @@ This function is to validate the graph object to ensure that it meets the follow
 6) The values in the weights exist, they are greater than 0. 
 7) The edges and the weights vectors have the same length.
 
-In doing so, we create a function that has 7 internal tests. If a graph object fails one of the tests, the function stops there and retunrs "FAIL." For the function to return "TRUE,"  the graph object has to pass all seven internal tests. Explanation for how each test is constructed is as follows.
+In doing so, we create a function that has 7 internal tests. If a graph object fails one of the tests, the function stops there and returns "FALSE" For the function to return "TRUE,"  the graph object has to pass all seven internal tests. Explanation for how each test is constructed is as follows.
 
 In the first test, if the graph object is a type of list, it moves on to the second level of the test where a for loop function goes over each list object and checks whether every single object inside the top list is a type of list. If that is the case, an object called T1 stores "TRUE" and otherwise exits the function with "FALSE." 
 
@@ -33,15 +33,21 @@ In the second test, the graph object is tested if it has names first. If it does
 
 In the third test, 
 
+### 2) Function - is_undirected
+
+Input - g, a graph object.
+
+Output - true if undirected, false if not.
+
+
+### 3) Function - is_isomorphic
+
+Input - g1, a graph object; g2, a graph object.
+
+Output - true if g1 and g2 are isomorphic, false if not.
 
 
 
 
-
-
-
-```{r}
-
-```
 
 
