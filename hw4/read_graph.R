@@ -1,6 +1,3 @@
-library(testthat)
-library(methods)
-
 #1. Read a DOT language of graph data from a txt file
 #2. Once the format is not ritht, report error
 #3. If not weight for every line, asigned default weight to every edge
