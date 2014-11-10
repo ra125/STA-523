@@ -7,9 +7,9 @@ output: html_document
 
 In this homework we have tried to recreate some of the common functions/algorithms related to the data structure: Graph!
 
-The 4 predicate functions are as follows:
+## Predicate Functions
 
-### 1) Function - is_valid
+#### 1) Function - is_valid
 
 Input - g, a graph object.
 
@@ -33,21 +33,72 @@ In the second test, the graph object is tested if it has names first. If it does
 
 In the third test, 
 
-### 2) Function - is_undirected
+#### 2) Function - is_undirected
 
 Input - g, a graph object.
 
 Output - true if undirected, false if not.
 
 
-### 3) Function - is_isomorphic
+#### 3) Function - is_isomorphic
 
 Input - g1, a graph object; g2, a graph object.
 
 Output - true if g1 and g2 are isomorphic, false if not.
 
 
+#### 4) Function - is_connected
 
+Input - g, a graph object; v1, a vertex label in g; v2, a vertex label in g.
+
+Output - true if there is a path from v1 to v2 in g, false if not.
+
+This function checks if there is a path between the vertices from v1 to v2 in the directed graph, g. First of all it checks if the graph is valid or not using is_valid.R. If the graph is invalid it throws error. Next, it takes care of all the bad labels by putting explicit checks and throws error for any bad vertex labels. Then comes the base case where v1 is equal to v2. In that case it checks if v2 is one of the edges of v1 i.e. there is a self loop. If yes it returns TRUE else FALSE. Then it finally proceeds to the generic case where it traverses the whole graph starting from vertex v1 and checks in the set of unvisited nodes (it keeps a track of all visited nodes by adding them to a set one by one) if it finds v2 or not. If v2 is found it implies there is a path and TRUE is returned else FALSE. This is done by recursively calling the function 'connected' defined inside the main function is_connected.R. Also, vertex labels can be names or indices (both have been taken care off).
+
+## File I/O Functions
+
+#### 1) Function - write_graph
+
+Input - g, a graph object; file, the file to write to.
+
+Output - None
+
+
+
+#### 2) Function - read_graph
+
+Input - file, the file to read from.
+
+Output - a graph object.
+
+
+## Shortest Path
+
+#### 1) Function - shortest_path
+
+Input - g, graph object; v1, a vertex label in g; v2, a vertex label in g.
+
+Output - a vector of the names (or indexes if unlabeled) of vertexes that make up the shortest path, in order.
+
+The goal of this function is to find the shortest path between vertices v1 to v2 in a directed graph g. First of all it checks if the graph is valid or not using is_valid.R. If the graph is invalid it throws error. Next, it takes care of all the bad vertex labels by putting explicit checks and throws error for any bad labels. Then comes the base case where v1 is equal to v2. In that case it checks if v2 is one of the edges of v1 i.e. there is a self loop. If yes, the shortest path is returned as a vector of v1 and v2 (which are simply equal) else a NULL (which is atomic and has length 0, as required in the tests) is returned. Then it proceeds to the more generic case wherein the standard Djikstra's Algorithm is implemented which finds the shortest path between v1 to all other vertices in the graph. The steps are:
+
+1) Create a set that keeps track of vertices included in shortest path tree. Initially, this set is empty.
+
+2) Assign a distance value to all vertices in the input graph. Initialize all distance values as INFINITE. Assign distance value as 0 for the source vertex so that it is picked first.
+
+3) Till the shortest path set doesn’t include all vertices
+a) Pick a 'u' vertex which is not there in the set and has minimum distance value using a new function 'minDistance' defined inside this main function.
+b) Include this vertex 'u' in the shortest path set.
+c) Update distance value of all adjacent vertices. To update the distance values, iterate through all adjacent vertices of 'u'. For every adjacent vertex 'v', if sum of distance value of 'u' (from source) and weight of edge u-v, is less than the distance value of v, then update the distance value of v.
+d) Store this point 'u' in a vector called 'prev' which stores the vertices in the order they are visited.
+
+4) Using the 'prev' vector find the shortest path vector to any vertex from v1. 'prev' stores all the visited vertices so just track back from the vertex v2 till v1 to find the shortest path from v1 to v2.
+
+Note: We could have also broken the loop in part 3 when 'u' was equal to 'v2' to make the algorithm faster (since we need path only to v2) but we decided to store shortest paths for all the vertices here (which could come in handy if required later) since the graphs were not too large.
+
+Also, vertex labels can be names or indices (both have been taken care off).
+
+## Minimum Spanning Tree
 
 
 
