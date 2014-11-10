@@ -40,12 +40,32 @@ Input - g, a graph object.
 Output - true if undirected, false if not.
 
 
+
 #### 3) Function - is_isomorphic
 
 Input - g1, a graph object; g2, a graph object.
 
 Output - true if g1 and g2 are isomorphic, false if not.
 
+This function determine wehther the given two graphs are isomorphic. 
+
+Before comparison, use is_valid.R to check if the two graphs a valid. If not, report error. Otherwise, continue following commands.
+
+First, extract names labels from both graphs. If no name for a vertix, the index of the vertix in the list is assigned as its name. 
+
+Second, sort unique names from the two graphs. If the names of nodes from two graphs don't match, return FALSE.  
+
+Third, traverse all vertix from graph 1 and find if the vertix existing in the graph 2 have the same children vertix with it. During matching, use the index of these children vertices to find respective names of these vertices and then conduct comparison. If the two sets of children cannot match by labels and weights, return FALSE  
+
+Fourth, if all vertices match, return TRUE.
+
+Discussion:
+
+The complete problem of determining whether two graphs are the same should be following: No matter what are the indices or name of vertices (any permutation) for two graphs, there exists one permutation for each of the graph so that these two graphs have the same indices number, weights, and structure. This problem can be expensively solved by checking any permutation of vertices in one graph against the other graph, to see if there exists one case that they can match. The worst complexity of this method is n!. Use recursive method may reduce the complexity. 
+
+However, it is not easily to write the recursive function, because whenever going through the list of children vertices of one vertix, the order of hierachy of their following vertices should be stored and passed to the next level of recursion (if the weights matchs), until all the vertices have been traversed and finally check if the sets of children of the last sets of children point to the same hierachical indices marked during going through this checking path. Notice that the hierachical indices is different from the indices in the vertices lists. Basically, this is just building a tree structure for all vertices, and check if those two trees have the same structure. This comparison between two trees built from a certain vertix should be done for every vertix in two graphs. Finally, if all comparison match. We can say the two graphs are the same.     
+
+The simplified problme in homework: when comparing the children node, we can use label names. Even thought two graphs may have the same structure (without considering the labels), this method may return FALSE. 
 
 #### 4) Function - is_connected
 
@@ -53,7 +73,7 @@ Input - g, a graph object; v1, a vertex label in g; v2, a vertex label in g.
 
 Output - true if there is a path from v1 to v2 in g, false if not.
 
-This function checks if there is a path between the vertices from v1 to v2 in the directed graph, g. First of all it checks if the graph is valid or not using is_valid.R. If the graph is invalid it throws error. Next, it takes care of all the bad labels by putting explicit checks and throws error for any bad vertex labels. Then comes the base case where v1 is equal to v2. In that case it checks if v2 is one of the edges of v1 i.e. there is a self loop. If yes it returns TRUE else FALSE. Then it finally proceeds to the generic case where it traverses the whole graph starting from vertex v1 and checks in the set of unvisited nodes (it keeps a track of all visited nodes by adding them to a set one by one) if it finds v2 or not. If v2 is found it implies there is a path and TRUE is returned else FALSE. This is done by recursively calling the function 'connected' defined inside the main function is_connected.R. Also, vertex labels can be names or indices (both have been taken care off).
+This function checks if there is a path between the vertices from v1 to v2 in the directed graph, g. First of all it checks if the graph is valid or not using is_valide.R If the graph is invalid it throws error. Next, it takes care of all the bad labels by putting explicit checks and throws error for any bad vertex labels. Then comes the base case where v1 is equal to v2. In that case it checks if v2 is one of the edges of v1 i.e. there is a self loop. If yes it returns TRUE else FALSE. Then it finally proceeds to the generic case where it traverses the whole graph starting from vertex v1 and checks in the set of unvisited nodes (it keeps a track of all visited nodes by adding them to a set one by one) if it finds v2 or not. If v2 is found it implies there is a path and TRUE is returned else FALSE. This is done by recursively calling the function 'connected' defined inside the main function is_connected.R. Also, vertex labels can be names or indices (both have been taken care off).
 
 ## File I/O Functions
 
@@ -63,7 +83,17 @@ Input - g, a graph object; file, the file to write to.
 
 Output - None
 
+The package used is stringr.
 
+Before sorting information from a graph structure, use is_valid.R to check if the graph object represents a valid graph. If not, report error.
+
+First, sort names of those vertices. If no name, assign its index as its name.
+
+Second, traverse all the vertices in the graph object. Find edges and those without outgoing edge. For edges, sort their information in terms of tail and head (the edge point from tail to head) and their weights. For vertices without outgoing edge, only one node need to be sorted.
+
+Third, check if any name have space inside. If does, add quotes enclosing the names. 
+
+Finally, write those sorted information into the file specified by the input of file name. 
 
 #### 2) Function - read_graph
 
@@ -71,6 +101,24 @@ Input - file, the file to read from.
 
 Output - a graph object.
 
+The package used in this function is stringr.
+
+First read data into system, and unlist it.
+
+Second, specify the valid format of lines. There exist several rules for valid formats:
+1. Name, arrows, and weights should be separated by space.
+2. Lines should end with semi-column.
+3. Weights should be enclosed by a pair of brackts. 
+4. The weights should be digits (from those test cases) or scientific format.
+5. The name of vertices can have double quotes.
+6. If there is no weight, default weight 1 is assgined.
+7. If there is no outgoing edge, the line only consists of the name of the vertix and a semi-column.
+Based on those rules, check every line. If any line doesn't fall in one of these formats, report error.
+During traversing, sort tails, heads, weights. If only one node, the head and weight are NA.
+
+Third, create list to store these vertices labels (or names), edges, and weights for the graph. When writing the children vertices for a vertix, tranfer their names into relative indices in the list. If there is not outgoing egde, nothing will be done for that vertix (note that "edges" and "weights" should be integer(0) and numeric(0) respectively, instead of NA or others).
+
+Finally, return the list storing the graph.
 
 ## Shortest Path
 
