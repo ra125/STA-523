@@ -39,6 +39,13 @@ Input - g, a graph object.
 
 Output - true if undirected, false if not.
 
+This function checks if the graph object is undirected
+TRUE if undirected, FLASE if not.
+This function gives TRUE if all directed edges have a complementary directed edge with the same weight in the opposite direction.
+
+Firstly, making a (nxn) matrix to see if the graph object is undirected.
+Sencondly, if the length of edges of the g graph is not 0, matrix[i,] = output$weights. if not, it goes to NA which we later change it to 0.00
+and then, it gives a TRUE if this matrix is idential to the transpose of this matrix
 
 
 #### 3) Function - is_isomorphic
@@ -128,25 +135,60 @@ Input - g, graph object; v1, a vertex label in g; v2, a vertex label in g.
 
 Output - a vector of the names (or indexes if unlabeled) of vertexes that make up the shortest path, in order.
 
-The goal of this function is to find the shortest path between vertices v1 to v2 in a directed graph g. First of all it checks if the graph is valid or not using is_valid.R. If the graph is invalid it throws error. Next, it takes care of all the bad vertex labels by putting explicit checks and throws error for any bad labels. Then comes the base case where v1 is equal to v2. In that case it checks if v2 is one of the edges of v1 i.e. there is a self loop. If yes, the shortest path is returned as a vector of v1 and v2 (which are simply equal) else a NULL (which is atomic and has length 0, as required in the tests) is returned. Then it proceeds to the more generic case wherein the standard Djikstra's Algorithm is implemented which finds the shortest path between v1 to all other vertices in the graph. The steps are:
+The goal of this function is to find the shortest path between vertices v1 to v2 in a directed graph g. First of all it checks if the graph is valid or not using is_valid.R. If the graph is invalid it throws error. Next, it takes care of all the bad vertex labels by putting explicit checks and throws error for any bad labels. Then comes the base case where v1 is equal to v2. In that case it checks if v2 is one of the edges of v1 i.e. there is a self loop. If yes, the shortest path is returned as a vector of v1 and v2 (which are simply equal) else a NULL (which is atomic and has length 0, as required in the tests) is returned. Then it proceeds to the more generic case wherein the standard Djikstra's Algorithm is implemented which finds the shortest path between v1 to all other vertices in the graph. The graph is first converted to an adjacency matrix and diagonal elements are set to 0 since visiting loops makes no sense in the shortest path. The steps of the algorithm are:
 
 1) Create a set that keeps track of vertices included in shortest path tree. Initially, this set is empty.
 
-2) Assign a distance value to all vertices in the input graph. Initialize all distance values as INFINITE. Assign distance value as 0 for the source vertex so that it is picked first.
+2) Assign a distance value to all vertices in the input graph. Initialize all distance values as INFINITE. Assign distance value as 0 for the source vertex so that it is picked first. Assign previous of the first vertex as -1 in the 'prev' vector.
 
 3) Till the shortest path set doesn’t include all vertices
-a) Pick a 'u' vertex which is not there in the set and has minimum distance value using a new function 'minDistance' defined inside this main function.
-b) Include this vertex 'u' in the shortest path set.
-c) Update distance value of all adjacent vertices. To update the distance values, iterate through all adjacent vertices of 'u'. For every adjacent vertex 'v', if sum of distance value of 'u' (from source) and weight of edge u-v, is less than the distance value of v, then update the distance value of v.
-d) Store this point 'u' in a vector called 'prev' which stores the vertices in the order they are visited.
 
-4) Using the 'prev' vector find the shortest path vector to any vertex from v1. 'prev' stores all the visited vertices so just track back from the vertex v2 till v1 to find the shortest path from v1 to v2.
++ Pick a 'u' vertex which is not there in the set and has minimum distance value using a new function 'minDistance' defined inside this main function.
+
++ Include this vertex 'u' in the shortest path set.
+
++ Update distance value of all adjacent vertices. To update the distance values, iterate through all adjacent vertices of 'u'. For every adjacent vertex 'v', if sum of distance value of 'u' (from source) and weight of edge u-v, is less than the distance value of v, update the distance value of 'v' by this sum.
+
++ Store this point 'u' as the previous of 'v' in a vector called 'prev' which stores, for every vertex, its previously visited vertex. 
+
+4) Using the 'prev' vector find the shortest path vector to any vertex from v1. 'prev' stores the previously visited note for every vertex, so just track back from the vertex v2 till v1 to find the shortest path from v1 to v2.
 
 Note: We could have also broken the loop in part 3 when 'u' was equal to 'v2' to make the algorithm faster (since we need path only to v2) but we decided to store shortest paths for all the vertices here (which could come in handy if required later) since the graphs were not too large.
 
 Also, vertex labels can be names or indices (both have been taken care off).
 
 ## Minimum Spanning Tree
+
+#### 1) Function - min_span_tree
+
+Input - g, graph object.
+
+Output - a graph object (undirected) containing the minimum spanning tree
+
+The goal of this function is to find the minimal spanning tree in a graph g. For this we have implemented the standard Prim's algorithm. The function first checks if the graph is valid using 'is_valid.R'. If it is invalid it throws error. It then checks if the graph is undirected. If it is directed it throws error (as is asked by the question). Then it proceeds to the Prim's Algorithm. The graph is first converted to an adjacency matrix and diagonal elements are set to 0 since visiting loops makes no sense in the minimum spanning tree. The steps of the algorithm are:
+
+1) Create a set of minimum spanning tree that keeps track of vertices already included in the tree.
+
+2) Assign a key value to all vertices in the input graph. Initialize all key values as INFINITE. Assign key value as 0 for the first vertex so that it is picked first. Assign parent of the first vertex as -1 in the parent vector.
+
+3) Till the minimum spanning tree set doesn’t include all vertices
+
++ Pick a vertex 'u' which is not there in the tree set and has minimum key value returned by the function 'minKey' defined inside this main function.
+
++ Include 'u' to minimum spanning tree set.
+
++ Update key value of all adjacent vertices of u. To update the key values, iterate through all adjacent vertices. For every adjacent vertex v, if weight of edge u-v is less than the previous key value of v, update the key value as weight of u-v.
+
++ Store this 'u' as parent of 'v' in a vector called 'parent' which keeps track of the parent of each vertex in the tree.
+
+4) Using the 'parent' vector we can construct the whole tree since we know the parent of each node. We also know the edge weights from the adjacency matrix. An adjacency list is then created for the undirected minimum spanning tree and returned in the required graph format. 
+
+NOTE: If the graph is not connected an error is thrown.
+
+
+
+
+
 
 
 
