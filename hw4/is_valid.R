@@ -33,12 +33,26 @@ is_valid=function(input){
   
   
   # 3: Testing if the object has both weights and edges as lists
-  if(as.character(sum(grep("weights",names(input[[1]])))>0 & sum(grep("edges",names(input[[1]])))>0 )=="TRUE"){
+  
+  n=length(input)
+  obj1=NULL
+  for(i in 1:n){
+    obj1<-c(obj1, names(input[[i]]) )
+  }  
+  m=unique(obj1)
+  if(length(m)==2) {
     t3<-TRUE
   } else{
     return(F)
   }
   
+  
+  #   if(as.character(sum(grep("weights",names(input[[1]])))>0 & sum(grep("edges",names(input[[1]])))>0 )=="TRUE"){
+  #     t3<-TRUE
+  #   } else{
+  #     return(F)
+  #   }
+  #   
   
   # 4: Testing if the types of edges are integer and weights are double
   if(length(input[[1]]$edges)==0) {
@@ -66,46 +80,46 @@ is_valid=function(input){
   temp=NULL
   t_obj5_1=list()
   t_obj5_2=(1:n)
-      
+  
   for(i in 1:n){
-        t_obj5_1[[i]]<-input[[i]]$edges
-        temp=c(temp, t_obj5_1[[i]])    #temp; directed edges. the list number of these numbers should exist
-                    } 
-
-     if(length(temp)==0){   #First ifelse: If there is no edge numbers, the object passes this test.
-       t5<-TRUE
-     } else {  
-       if(is.na(temp)[1]==TRUE){ # Second ifelse; no else condition
-         return(F)
-       }
-       
-      
-      temp=unique(temp)
-      TF=NULL
-      dt=matrix(nrow=max(unique(c(temp,n))))
-       for(i in 1:n){
-        dt[i,1]=is.integer(input[[i]]$edges)    #binary vector: if 1, such vertex exists
-              }
-           TF=matrix(nrow=max(unique(c(temp,n))))
-           for(i in temp){
-            TF[i,]<- dt[i,1]=="TRUE"
-                          }
+    t_obj5_1[[i]]<-input[[i]]$edges
+    temp=c(temp, t_obj5_1[[i]])    #temp; directed edges. the list number of these numbers should exist
+  } 
+  
+  if(length(temp)==0){   #First ifelse: If there is no edge numbers, the object passes this test.
+    t5<-TRUE
+  } else {  
+    if(is.na(temp)[1]==TRUE){ # Second ifelse; no else condition
+      return(F)
+    }
+    
+    
+    temp=unique(temp)
+    TF=NULL
+    dt=matrix(nrow=max(unique(c(temp,n))))
+    for(i in 1:n){
+      dt[i,1]=is.integer(input[[i]]$edges)    #binary vector: if 1, such vertex exists
+    }
+    TF=matrix(nrow=max(unique(c(temp,n))))
+    for(i in temp){
+      TF[i,]<- dt[i,1]=="TRUE"
+    }
     tf5<- which(data.frame(is.na(data.frame(TF)[temp,]) )[,1]=="TRUE")
     if(length(tf5)>0 ){  # Third ifelse
       return(F)
     }   else{
       test=data.frame(table(TF))[  which(data.frame(table(TF))[,1]==FALSE) ,2]
     }   #End third ifelse
-      
-      
-      if(length(test)>0){        #begin 4th if else
-        return(F)
-      }     else {
-        t5=TRUE
-       }  ## end 4th ifelse 
-    }    # end First ifelse
     
-
+    
+    if(length(test)>0){        #begin 4th if else
+      return(F)
+    }     else {
+      t5=TRUE
+    }  ## end 4th ifelse 
+  }    # end First ifelse
+  
+  
   # 6: Testing if the weights are greater than 0.
   if(typeof( length(input[[1]]$weights))=="integer"  ){  
     
@@ -121,7 +135,7 @@ is_valid=function(input){
       if(t_obj6_2==t_obj6_3) {
         t6<-TRUE
       }  else{
-       return(F)              
+        return(F)              
       }
     }
   } else{
@@ -169,5 +183,5 @@ is_valid=function(input){
   } else{
     return(F)
   }
-
+  
 }
