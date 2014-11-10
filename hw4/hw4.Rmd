@@ -22,7 +22,7 @@ This function is to validate the graph object to ensure that it meets the follow
 3) Each secondary list in the graph object contains only edges and weights vectors
 4) The types of edges are integers and weights are double.
 5) The vertices that the values in the edges vector direct exist.    
-6) The values in the weights exist, they are greater than 0. 
+6) The values in the weights exist and they are greater than 0. 
 7) The edges and the weights vectors have the same length.
 
 In doing so, we create a function that has 7 internal tests. If a graph object fails one of the tests, the function stops there and returns "FALSE" For the function to return "TRUE,"  the graph object has to pass all seven internal tests. Explanation for how each test is constructed is as follows.
@@ -31,7 +31,17 @@ In the first test, if the graph object is a type of list, it moves on to the sec
 
 In the second test, the graph object is tested if it has names first. If it doesnt, then the object automatically passes this test giving the value of "TRUE" to the object T2. If the lists in the graph object have names, a vector saves the 'unique' values of names and matches the length of a vector with 'all' list names.  
 
-In the third test, 
+In the third test, the names of the object in the each list is saved. A good graph object should only have "edges" and "weights". After storing them all using a for loop, we get the unique names of these values. If the graph object has only edges and weights, the length of this vector that only has unique values should be equal to 2. Again, if the object passes this test, T3 store "TRUE". Otherwise, the function exits and returns "FALSE". 
+
+In the fourth test, a graph object is tested for its weights and edges type. The object passes this test if the values stored in the edges vector are integers and weights are doubles.
+
+The fifth subtest first stores all values of the edges in the object called "temp".  If the unique values of the edges is an empty vector, there is no direction, which means that the graph object automatically passes this test. If the graph has some values in the edges, the unique values of them, stored in the temp vector, is now compared to the vector that has the information about the existing vertices - a data frame of the row that equals input length. A good graph object has the vertices that corresponds to the edge number. And each row in the vecor is examined to check whether the vertex that a value in the edges direct exist. If so, the row stores the value of "TRUE" and "FALSE" for non-existent vertices.  Then, the rows with "FALSE" is counted. If such number is greater than 0, this means that at least one value in edges vector points to a non-existent vertex, therefore should fail the test. 
+
+Graph objects that have no weights automatically pass the 6th sub-test. If it does have weights, then such values are tested to check whether they are greater than 0.
+
+In the seventh test, lengths of each edges vector and weights vecor are compared. Like in other sub-tests of is_valid function, the result of this comparison is stored as TRUE or FALSE. After storing this result vector as a dataframe of a table, the number of FALSEs are counted. If this is greater than 0, the graph object fails the 7th test.
+
+Finally, objects t1 through t7 are combined. If all values in the objects are TRUE, the function returns TRUE. One benefit of creating the function in this way is to be able to have an option of seeing which test the graph object fails. Although such line is eliminated since that is not part of the task, the function initially had an option of details=TRUE, which returns a vector length of 7 showing the results of each sub-test. 
 
 #### 2) Function - is_undirected
 
