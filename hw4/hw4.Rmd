@@ -39,6 +39,13 @@ Input - g, a graph object.
 
 Output - true if undirected, false if not.
 
+This function checks if the graph object is undirected
+TRUE if undirected, FLASE if not.
+This function gives TRUE if all directed edges have a complementary directed edge with the same weight in the opposite direction.
+
+Firstly, making a (nxn) matrix to see if the graph object is undirected.
+Sencondly, if the length of edges of the g graph is not 0, matrix[i,] = output$weights. if not, it goes to NA which we later change it to 0.00
+and then, it gives a TRUE if this matrix is idential to the transpose of this matrix
 
 #### 3) Function - is_isomorphic
 
