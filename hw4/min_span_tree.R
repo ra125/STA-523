@@ -13,6 +13,7 @@ min_span_tree=function(g)
     stop("Graph is directed")
   }
   
+  #Adjacency matrix
   n=length(g)
   names=names(g)
   m=matrix(rep(0,n^2),nrow=n,ncol=n)
@@ -38,8 +39,10 @@ min_span_tree=function(g)
     }
   }
   
+  # Prims Algorithm
   V=n
   
+  #Function to find the minimum key value
   minKey=function(key, mstSet)
   {
     min=Inf
@@ -60,6 +63,8 @@ min_span_tree=function(g)
   
   key[1]=0
   parent[1]=-1
+  
+  #Main Prims loop explained in writeup
   
   for(count in 1:V)
   {
@@ -92,6 +97,8 @@ min_span_tree=function(g)
       m[i,j]=max(m[j,i],m[i,j])
     }
   }
+  
+  #Converting to list
   
   al = list()
   for(i in 1:nrow(m)) {

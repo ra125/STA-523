@@ -8,6 +8,8 @@ shortest_path=function(g,v1,v2)
       stop("Graph is not valid")
   }
   
+  #Bad labels checking
+  
   if(is.na(v1) || is.na(v2))
   {
     stop("Bad labels")
@@ -26,6 +28,8 @@ shortest_path=function(g,v1,v2)
   }
   
   names=names(g)
+  
+  #Converting names to indices
   
   if(is.null(names)==FALSE)
   {
@@ -57,6 +61,8 @@ shortest_path=function(g,v1,v2)
     stop("Bad labels")
   }
   
+  # Base case
+  
   if(v1==v2)
   {
     if(length(g[[v1]]$edges)!=0)
@@ -73,6 +79,8 @@ shortest_path=function(g,v1,v2)
       return(NULL)
     }
   }
+  
+  #Adjacency matrix
   
   n=length(g)
   m=matrix(rep(0,n^2),nrow=n,ncol=n)
@@ -98,7 +106,11 @@ shortest_path=function(g,v1,v2)
     }
   }
   
+  #Djikstra
+  
   V=n
+  
+  #Function to calculate min distance
   
   minDistance=function(dist, sptSet)
   {
@@ -120,6 +132,8 @@ shortest_path=function(g,v1,v2)
   
   dist[v1]=0
   prev[v1]=-1
+  
+  #Main djikstra loop explained in write up
   
   for(count in 1:V)
   {

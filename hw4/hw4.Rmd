@@ -54,9 +54,9 @@ Input - g1, a graph object; g2, a graph object.
 
 Output - true if g1 and g2 are isomorphic, false if not.
 
-This function determine wehther the given two graphs are isomorphic. 
+This function determines wehther the given two graphs are isomorphic. 
 
-Before comparison, use is_valid.R to check if the two graphs a valid. If not, report error. Otherwise, continue following commands.
+Before comparison, use is_valid.R to check if the two graphs are valid. If not, report error. Otherwise, continue following commands.
 
 First, extract names labels from both graphs. If no name for a vertix, the index of the vertix in the list is assigned as its name. 
 

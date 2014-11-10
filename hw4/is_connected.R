@@ -9,6 +9,7 @@ is_connected = function(g,v1,v2)
     stop("Bad labels")
   }
   
+  #Bad label checking
   type=c("integer","double","character")
   
   if(!typeof(v1) %in% type)
@@ -53,6 +54,8 @@ is_connected = function(g,v1,v2)
     stop("Bad labels")
   }
   
+  #Base case
+  
   if(v1==v2)
   {
     if(v2 %in% g[[v1]]$edges)
@@ -60,6 +63,8 @@ is_connected = function(g,v1,v2)
       return(TRUE)
     } else {return(FALSE)}
   }
+  
+  #Generic case
   
   connected = function(g, v, visited = integer())
   {
