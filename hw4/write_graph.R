@@ -65,5 +65,4 @@ write_graph=function(g,gname)#g is the object of graph; gname is the name of fil
               sep="", 
               row.names=F,
               col.names=F)
-  return(file)
 }
