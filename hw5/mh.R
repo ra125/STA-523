@@ -2,35 +2,35 @@
 
 mh = function(n, dfunc, range, mc.cores=FALSE){ 
   
-stopifnot(is.function(dfunc) & is.numeric(n))
-
-x=runif(1,range[1],range[2])
-vec=rep(0,n)
-dvec=rep(0,n)
-vec[1]=x
-dvec[1]=dfunc(x)
-
-for(i in 2:n)
-{
-  sample=rnorm(1,x,2)
+  stopifnot(is.function(dfunc) & is.numeric(n))
   
-  if(sample>range[1] & sample<range[2]){
-  acc=dfunc(sample)/dfunc(x)
+  x=runif(1,range[1],range[2])
+  vec=rep(0,n)
+  dvec=rep(0,n)
+  vec[1]=x
+  dvec[1]=dfunc(x)
   
-  vec[i]=x
-  dvec[i]=dfunc(x)
-  if(acc>runif(1,0,1))
+  for(i in 2:n)
   {
-    x=sample
-    vec[i]=x
-    dvec[i]=dfunc(x)
+    sample=rnorm(1,x,2)
+    
+    if(sample>range[1] & sample<range[2]){
+      acc=dfunc(sample)/dfunc(x)
+      
+      vec[i]=x
+      dvec[i]=dfunc(x)
+      if(acc>runif(1,0,1))
+      {
+        x=sample
+        vec[i]=x
+        dvec[i]=dfunc(x)
+      }
+    }
   }
-  }
-}
-
-p=plot(vec,dvec)
-
-return(p)
+  
+  p=plot(vec,dvec)
+  
+  return(p)
 }
 
 ## test samples
