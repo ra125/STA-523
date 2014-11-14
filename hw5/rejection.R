@@ -1,9 +1,8 @@
 
 #Rejection sampler
 #strategy
-
-
 #1. sample uniformly from the X axis
+
 #2. Reject value if it's over the value
 
 
@@ -12,25 +11,40 @@ reject = function(n, dfunc, range, mc.cores=FALSE){
 stopifnot(is.function(dfunc) & is.numeric(n))
 
 ## 1) generate values of Y from uniform
-ys<-dfunct(x)
+axes=runif(n, min(range), max(range))
+
+sample=runif(n, min(axes), max(axes))
+ys<-dfunc(x=sample)
 sample<-runif(n, min=min(ys), max=max(ys))
 
 ## 2) reject if Y is larger than the value from dfunc
 
+vector=NULL
+for(i in 1:length(axes)){
+if(sample[i]<dfunc(axes[i]) ){
+vector<-c(vector, sample[i])  
+}
+print(vector)
+}
 
-vector<-dfunc(x=sample)
-binary<-rbinom(n=n, size=1, prob=0.5)
-final<-vector[!binary==0]
 
-p<-plot(sample[!binary==0],final)
+# hist(vector)
+# hist(ys)
+# 
 
-# # Partitioner --- 
+# vector<-dfunc(x=sample)
+# binary<-rbinom(n=n, size=1, prob=0.5)
+# final<-vector[!binary==0]
+# 
+# p<-plot(sample[!binary==0],final)
+
+# ### Partitioner --- 
 # nm = names(map_res) %>% unique() %>% sort()
 # part_res = lapply(nm, function(x) unlist(map_res[names(map_res)==x])) %>% 
 #   setNames(nm)
 
-return(summary(final))
-return(p)
+# return(summary(final))
+# return(p)
 }
 
 
