@@ -8,7 +8,7 @@
 
 
 
-reject = function(n, dfunc, range, mc.cores=FALSE){ 
+reject = function(n, dfunc, range, mc=FALSE){ 
 stopifnot(is.function(dfunc) & is.numeric(n))
 
 ## 1) generate values of Xs and Ys from uniform
@@ -24,12 +24,17 @@ for(i in 1:length(xs)){
         vector<-c(vector, sample[i])  
                               }
                       }
+
 #hist(as.vector(vector))  # for testing purpose
 
+
 # ### Partitioner ###
+# if(mc=TRUE) {
 # nm = names(map_res) %>% unique() %>% sort()
 # part_res = lapply(nm, function(x) unlist(map_res[names(map_res)==x])) %>% 
 #   setNames(nm)
+# }
+  
 }
 
 
@@ -83,14 +88,12 @@ dtnorm_mix2 = function(x)
 
 
 
-reject(n=10000, dfunc=dbetann, range=c(0,1), mc.cores=FALSE)
-reject(n=10000, dfunc=dtnorm, range=c(-3,3), mc.cores=FALSE)
-reject(n=10000, dfunc=dtexp, range=c(0,6), mc.cores=FALSE)
-reject(n=10000, dfunc=dunif_mix, range=c(-3,4), mc.cores=FALSE)
-reject(n=10000, dfunc=dtnorm_mix1, range=c(0,10), mc.cores=FALSE)
-
-
-reject(n=10000, dfunc=dtnorm_mix2, range=c(-4,4), mc.cores=FALSE)
+reject(n=10000, dfunc=dbetann, range=c(0,1), mc=FALSE)
+reject(n=10000, dfunc=dtnorm, range=c(-3,3), mc=FALSE)
+reject(n=10000, dfunc=dtexp, range=c(0,6), mc=FALSE)
+reject(n=10000, dfunc=dunif_mix, range=c(-3,4), mc=FALSE)
+reject(n=10000, dfunc=dtnorm_mix1, range=c(0,10), mc=FALSE)
+reject(n=10000, dfunc=dtnorm_mix2, range=c(-4,4), mc=FALSE)
 
 
 
@@ -111,5 +114,5 @@ score = function(x, dfunc)
   return( sqrt(sum((ex-ed)^2)/n) )
 }
 
-score(10, reject(n=10000, dfunc=dtnorm, range=c(-3,3), mc.cores=FALSE))
+score(1, reject(n=100, dfunc=dtnorm, range=c(-3,3), mc=FALSE))
 
