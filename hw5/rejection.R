@@ -117,4 +117,9 @@ score = function(x, dfunc)
 
 
 score(reject(n=100000, dfunc=dbetann, range=c(0,1), mc=FALSE), dbetann)
+score(reject(n=100000, dfunc=dtnorm, range=c(-3,3), mc=FALSE),dtnorm)
+score(reject(n=100000, dfunc=dtexp, range=c(0,6), mc=FALSE),dtexp)
+score(reject(n=100000, dfunc=dunif_mix, range=c(-3,4), mc=FALSE),dunif_mix)
+score(reject(n=100000, dfunc=dtnorm_mix1, range=c(0,10), mc=FALSE),dtnorm_mix1)
+score(reject(n=100000, dfunc=dtnorm_mix2, range=c(-4,4), mc=FALSE),dtnorm_mix2)
 
