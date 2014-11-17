@@ -24,7 +24,7 @@ for(i in 1:length(xs)){
         vector<-c(vector, sample[i])  
                               }
                       }
-
+return(vector)
 #hist(as.vector(vector))  # for testing purpose
 
 
@@ -114,5 +114,7 @@ score = function(x, dfunc)
   return( sqrt(sum((ex-ed)^2)/n) )
 }
 
-score(1, reject(n=100, dfunc=dtnorm, range=c(-3,3), mc=FALSE))
+
+
+score(reject(n=100000, dfunc=dbetann, range=c(0,1), mc=FALSE), dbetann)
 
