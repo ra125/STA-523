@@ -1,50 +1,35 @@
 
 #Rejection sampler
 #strategy
-#1. sample uniformly from the X axis
+#1. sample uniformly from the X axis -- this is the envelop density. Since each test distribution functions specified
+# ranges, the envelop function is Unifrom (min(range), max(range))
+#2. using the max and min values of the density function, sample Ys from uniform as well.
+#3. Throw away the Y value if it's over the value drawn from the density function and keep the rest.
 
-#2. Reject value if it's over the value
 
 
 reject = function(n, dfunc, range, mc.cores=FALSE){ 
-
 stopifnot(is.function(dfunc) & is.numeric(n))
 
-## 1) generate values of Y from uniform
-axes=runif(n, min(range), max(range))
-
-sample=runif(n, min(axes), max(axes))
-ys<-dfunc(x=sample)
+## 1) generate values of Xs and Ys from uniform
+xs=runif(n, min(range), max(range))
+ys<-dfunc(x=xs)
 sample<-runif(n, min=min(ys), max=max(ys))
 
+
 ## 2) reject if Y is larger than the value from dfunc
-
 vector=NULL
-for(i in 1:length(axes)){
-if(sample[i]<dfunc(axes[i]) ){
-vector<-c(vector, sample[i])  
-}
-print(vector)
-}
+for(i in 1:length(xs)){
+        if( sample[i]<ys[i] ) {
+        vector<-c(vector, sample[i])  
+                              }
+                      }
+#hist(as.vector(vector))  # for testing purpose
 
-
-# hist(vector)
-# hist(ys)
-# 
-
-# vector<-dfunc(x=sample)
-# binary<-rbinom(n=n, size=1, prob=0.5)
-# final<-vector[!binary==0]
-# 
-# p<-plot(sample[!binary==0],final)
-
-# ### Partitioner --- 
+# ### Partitioner ###
 # nm = names(map_res) %>% unique() %>% sort()
 # part_res = lapply(nm, function(x) unlist(map_res[names(map_res)==x])) %>% 
 #   setNames(nm)
-
-# return(summary(final))
-# return(p)
 }
 
 
@@ -98,7 +83,7 @@ dtnorm_mix2 = function(x)
 
 
 
-reject(n=100000, dfunc=dbetann, range=c(0,1), mc.cores=FALSE)
+reject(n=10000, dfunc=dbetann, range=c(0,1), mc.cores=FALSE)
 reject(n=10000, dfunc=dtnorm, range=c(-3,3), mc.cores=FALSE)
 reject(n=10000, dfunc=dtexp, range=c(0,6), mc.cores=FALSE)
 reject(n=10000, dfunc=dunif_mix, range=c(-3,4), mc.cores=FALSE)
@@ -126,4 +111,5 @@ score = function(x, dfunc)
   return( sqrt(sum((ex-ed)^2)/n) )
 }
 
-score(1000, dbetann)
+score(10, reject(n=10000, dfunc=dtnorm, range=c(-3,3), mc.cores=FALSE))
+
