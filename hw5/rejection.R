@@ -7,6 +7,7 @@
 #3. Throw away the Y value if it's over the value drawn from the density function and keep the rest.
 
 
+### Single core
 
 reject = function(n, dfunc, range, mc=FALSE){ 
 stopifnot(is.function(dfunc) & is.numeric(n))
@@ -25,16 +26,7 @@ for(i in 1:length(xs)){
                               }
                       }
 return(vector)
-#hist(as.vector(vector))  # for testing purpose
 
-
-# ### Partitioner ###
-# if(mc=TRUE) {
-# nm = names(map_res) %>% unique() %>% sort()
-# part_res = lapply(nm, function(x) unlist(map_res[names(map_res)==x])) %>% 
-#   setNames(nm)
-# }
-  
 }
 
 
@@ -88,14 +80,6 @@ dtnorm_mix2 = function(x)
 
 
 
-reject(n=10000, dfunc=dbetann, range=c(0,1), mc=FALSE)
-reject(n=10000, dfunc=dtnorm, range=c(-3,3), mc=FALSE)
-reject(n=10000, dfunc=dtexp, range=c(0,6), mc=FALSE)
-reject(n=10000, dfunc=dunif_mix, range=c(-3,4), mc=FALSE)
-reject(n=10000, dfunc=dtnorm_mix1, range=c(0,10), mc=FALSE)
-reject(n=10000, dfunc=dtnorm_mix2, range=c(-4,4), mc=FALSE)
-
-
 
 ##scoring
 
@@ -115,11 +99,129 @@ score = function(x, dfunc)
 }
 
 
+s1=100
+s2=10000
+s3=1000000
+s4=10000000
 
-score(reject(n=100000, dfunc=dbetann, range=c(0,1), mc=FALSE), dbetann)
-score(reject(n=100000, dfunc=dtnorm, range=c(-3,3), mc=FALSE),dtnorm)
-score(reject(n=100000, dfunc=dtexp, range=c(0,6), mc=FALSE),dtexp)
-score(reject(n=100000, dfunc=dunif_mix, range=c(-3,4), mc=FALSE),dunif_mix)
-score(reject(n=100000, dfunc=dtnorm_mix1, range=c(0,10), mc=FALSE),dtnorm_mix1)
-score(reject(n=100000, dfunc=dtnorm_mix2, range=c(-4,4), mc=FALSE),dtnorm_mix2)
+
+# score(reject(n=s4, dfunc=dbetann, range=c(0,1), mc=FALSE), dbetann)
+# score(reject(n=s4, dfunc=dtnorm, range=c(-3,3), mc=FALSE),dtnorm)
+# score(reject(n=s4, dfunc=dtexp, range=c(0,6), mc=FALSE),dtexp)
+# score(reject(n=s4, dfunc=dunif_mix, range=c(-3,4), mc=FALSE),dunif_mix)
+# score(reject(n=s4, dfunc=dtnorm_mix1, range=c(0,10), mc=FALSE),dtnorm_mix1)
+# score(reject(n=s4, dfunc=dtnorm_mix2, range=c(-4,4), mc=FALSE),dtnorm_mix2)
+
+
+### recording time
+
+reject_dbetann=rbind(
+system.time(reject(n=s1, dfunc=dbetann, range=c(0,1), mc=FALSE)),
+system.time(reject(n=s2, dfunc=dbetann, range=c(0,1), mc=FALSE)),
+system.time(reject(n=s3, dfunc=dbetann, range=c(0,1), mc=FALSE)),
+system.time(reject(n=s4, dfunc=dbetann, range=c(0,1), mc=FALSE))
+)
+
+reject_dtnorm=rbind(
+system.time(reject(n=s1, dfunc=dtnorm, range=c(-3,3), mc=FALSE)),
+system.time(reject(n=s2, dfunc=dtnorm, range=c(-3,3), mc=FALSE)),
+system.time(reject(n=s3, dfunc=dtnorm, range=c(-3,3), mc=FALSE)),
+system.time(reject(n=s4, dfunc=dtnorm, range=c(-3,3), mc=FALSE))
+)
+
+reject_dtexp=rbind(
+system.time(reject(n=s1, dfunc=dtexp, range=c(0,6), mc=FALSE)),
+system.time(reject(n=s2, dfunc=dtexp, range=c(0,6), mc=FALSE)),
+system.time(reject(n=s3, dfunc=dtexp, range=c(0,6), mc=FALSE)),
+system.time(reject(n=s4, dfunc=dtexp, range=c(0,6), mc=FALSE))
+)
+
+reject_dunif_mix=rbind(
+system.time(reject(n=s1, dfunc=dunif_mix, range=c(-3,4), mc=FALSE)),
+system.time(reject(n=s2, dfunc=dunif_mix, range=c(-3,4), mc=FALSE)),
+system.time(reject(n=s3, dfunc=dunif_mix, range=c(-3,4), mc=FALSE)),
+system.time(reject(n=s4, dfunc=dunif_mix, range=c(-3,4), mc=FALSE))
+)
+
+reject_dtnorm_mix1=rbind(
+system.time(reject(n=s1, dfunc=dtnorm_mix1, range=c(0,10), mc=FALSE)),
+system.time(reject(n=s2, dfunc=dtnorm_mix1, range=c(0,10), mc=FALSE)),
+system.time(reject(n=s3, dfunc=dtnorm_mix1, range=c(0,10), mc=FALSE)),
+system.time(reject(n=s4, dfunc=dtnorm_mix1, range=c(0,10), mc=FALSE))
+)
+
+reject_dtnorm_mix2=rbind(
+system.time(reject(n=s1, dfunc=dtnorm_mix2, range=c(-4,4), mc=FALSE)),
+system.time(reject(n=s1, dfunc=dtnorm_mix2, range=c(-4,4), mc=FALSE)),
+system.time(reject(n=s1, dfunc=dtnorm_mix2, range=c(-4,4), mc=FALSE)),
+system.time(reject(n=s1, dfunc=dtnorm_mix2, range=c(-4,4), mc=FALSE))
+)
+
+
+reject_single=c(
+"reject_dbetann",
+"reject_dtnorm",
+"reject_dtexp",
+"reject_dunif_mix",
+"reject_dunif_mix",
+"reject_dtnorm_mix1",
+"reject_dtnorm_mix2"
+)
+
+s=c(100, 
+            10000,
+            1000000,
+            10000000)
+
+names=c(rep(reject_single[1],4), rep(reject_single[2],4), rep(reject_single[3],4),
+  rep(reject_single[4],4),rep(reject_single[5],4),rep(reject_single[6],4),
+  rep(reject_single[7],4)  )
+
+
+iteration=rep(s,7)
+
+
+reject_data=data.frame(cbind(names, iteration, reject_dbetann, reject_dtnorm,
+      reject_dtexp, reject_dunif_mix, reject_dunif_mix,
+      reject_dtnorm_mix1, reject_dtnorm_mix2) )
+
+save(reject_data, file="reject_data.Rdata")
+reject_data
+
+#### Multicore
+
+library(parallel) # We know that this is something already installed on Saxon.
+
+reject = function(n, dfunc, range, mc=detectCores()/2){ 
+  stopifnot(is.function(dfunc) & is.numeric(n))
+  
+#   function{
+#     mcapply( mc.cores =mc.cores)
+  
+  ## 1) generate values of Xs and Ys from uniform
+  xs=runif(n, min(range), max(range))
+  ys<-dfunc(x=xs)
+  sample<-runif(n, min=min(ys), max=max(ys))
+  
+  
+  ## 2) reject if Y is larger than the value from dfunc
+  vector=NULL
+  for(i in 1:length(xs)){
+    if( sample[i]<ys[i] ) {
+      vector<-c(vector, sample[i])  
+    }
+  }
+  return(vector)
+  
+
+#     
+#             return()
+#     } # end of internal function
+#     
+ 
+} # end of if condition
+  
+}  # end of rejection sampler
+
+
 
