@@ -107,3 +107,5 @@ mh = function(n, dfunc, range, mc=FALSE){
   vec=vec[1:n]
   return(vec)
 }
+
+
