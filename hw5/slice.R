@@ -1,9 +1,5 @@
 slice = function(n, dfunc, range, mc)
 {
-  library(parallel)
-  library(iterators)
-  library(foreach)
-  library(doMC)
   stopifnot(is.function(dfunc))
   stopifnot(is.numeric(n))
   stopifnot(is.logical(mc))
@@ -71,7 +67,7 @@ slice = function(n, dfunc, range, mc)
         if(k>10)
         {
           kk=kk+1
-          print(c(k,kk,res[i],cores))
+  #        print(c(k,kk,res[i],cores))
           rangec=range
           res[i]=runif(1,rangec[1],rangec[2])
 #           stopifnot(check(res[i])==0)
@@ -355,7 +351,6 @@ system.time(edtnorm_mix2<-slice(n=nofr, dfunc=dtnorm_mix2, range=c(-4,4), mc=FAL
 ##scoring
 
 
-
 score(edbetann, dbetann)
 score(edtnorm,dtnorm)
 score(edtexp,dtexp)
@@ -365,3 +360,209 @@ score(edtnorm_mix2,dtnorm_mix2)
 
 flist=c(dbetann,dtnorm)
 
+
+
+
+################ 
+################ Creating tables!!!
+################ 
+
+###### Scoring table
+
+s1=100
+s2=10000
+s3=1000000
+s4=10000000
+
+
+slice_score_dbetann_sc<-score(slice(n=s3, dfunc=dbetann, range=c(0,1), mc=FALSE), dbetann)
+slice_score_dbetann_mc<-score(slice(n=s3, dfunc=dbetann, range=c(0,1), mc=FALSE), dbetann)
+
+slice_score_dtnorm_sc<-score(slice(n=s3, dfunc=dtnorm, range=c(-3,3), mc=FALSE),dtnorm)
+slice_score_dtnorm_mc<-score(slice(n=s3, dfunc=dtnorm, range=c(-3,3), mc=FALSE),dtnorm)
+
+slice_score_dtexp_sc<-score(slice(n=s3, dfunc=dtexp, range=c(0,6), mc=FALSE),dtexp)
+slice_score_dtexp_mc<-score(slice(n=s3, dfunc=dtexp, range=c(0,6), mc=FALSE),dtexp)
+
+slice_score_dunif_mix_sc<-score(slice(n=s3, dfunc=dunif_mix, range=c(-3,4), mc=FALSE),dunif_mix)
+slice_score_dunif_mix_mc<-score(slice(n=s3, dfunc=dunif_mix, range=c(-3,4), mc=FALSE),dunif_mix)
+
+slice_score_dtnorm_mix1_sc<-score(slice(n=s3, dfunc=dtnorm_mix1, range=c(0,10), mc=FALSE),dtnorm_mix1)
+slice_score_dtnorm_mix1_mc<-score(slice(n=s3, dfunc=dtnorm_mix1, range=c(0,10), mc=FALSE),dtnorm_mix1)
+
+slice_score_dtnorm_mix2_sc<-score(slice(n=s3, dfunc=dtnorm_mix2, range=c(-4,4), mc=FALSE),dtnorm_mix2)
+slice_score_dtnorm_mix2_mc<-score(slice(n=s3, dfunc=dtnorm_mix2, range=c(-4,4), mc=FALSE),dtnorm_mix2)
+
+score_slice_names=c("slice_score_dbetann_sc","slice_score_dbetann_mc","slice_score_dtnorm_sc","slice_score_dtnorm_mc",
+                     "slice_score_dtexp_sc","slice_score_dtexp_mc","slice_score_dunif_mix_sc","slice_score_dunif_mix_mc",
+                     "slice_score_dtnorm_mix1_sc","slice_score_dtnorm_mix1_mc","slice_score_dtnorm_mix2_sc","slice_score_dtnorm_mix2_mc")
+
+score_slice=c(slice_score_dbetann_sc,slice_score_dbetann_mc,slice_score_dtnorm_sc,slice_score_dtnorm_mc,
+              slice_score_dtexp_sc,slice_score_dtexp_mc,slice_score_dunif_mix_sc,slice_score_dunif_mix_mc,
+              slice_score_dtnorm_mix1_sc,slice_score_dtnorm_mix1_mc,slice_score_dtnorm_mix2_sc,slice_score_dtnorm_mix2_mc)
+
+score_slice_data=data.frame(cbind(score_slice_names, score_slice))
+
+# save as a dataframe
+
+save(score_slice_data, file="score_slice_data.Rdata")
+
+
+
+###### recording time --- SINGLE CORE (slice sampler)
+
+slice_dbetann=rbind(
+  system.time(slice(n=s1, dfunc=dbetann, range=c(0,1), mc=FALSE)),
+  system.time(slice(n=s2, dfunc=dbetann, range=c(0,1), mc=FALSE)),
+  system.time(slice(n=s3, dfunc=dbetann, range=c(0,1), mc=FALSE)),
+  system.time(slice(n=s4, dfunc=dbetann, range=c(0,1), mc=FALSE))
+)
+
+slice_dtnorm=rbind(
+  system.time(slice(n=s1, dfunc=dtnorm, range=c(-3,3), mc=FALSE)),
+  system.time(slice(n=s2, dfunc=dtnorm, range=c(-3,3), mc=FALSE)),
+  system.time(slice(n=s3, dfunc=dtnorm, range=c(-3,3), mc=FALSE)),
+  system.time(slice(n=s4, dfunc=dtnorm, range=c(-3,3), mc=FALSE))
+)
+
+slice_dtexp=rbind(
+  system.time(slice(n=s1, dfunc=dtexp, range=c(0,6), mc=FALSE)),
+  system.time(slice(n=s2, dfunc=dtexp, range=c(0,6), mc=FALSE)),
+  system.time(slice(n=s3, dfunc=dtexp, range=c(0,6), mc=FALSE)),
+  system.time(slice(n=s4, dfunc=dtexp, range=c(0,6), mc=FALSE))
+)
+
+slice_dunif_mix=rbind(
+  system.time(slice(n=s1, dfunc=dunif_mix, range=c(-3,4), mc=FALSE)),
+  system.time(slice(n=s2, dfunc=dunif_mix, range=c(-3,4), mc=FALSE)),
+  system.time(slice(n=s3, dfunc=dunif_mix, range=c(-3,4), mc=FALSE)),
+  system.time(slice(n=s4, dfunc=dunif_mix, range=c(-3,4), mc=FALSE))
+)
+
+slice_dtnorm_mix1=rbind(
+  system.time(slice(n=s1, dfunc=dtnorm_mix1, range=c(0,10), mc=FALSE)),
+  system.time(slice(n=s2, dfunc=dtnorm_mix1, range=c(0,10), mc=FALSE)),
+  system.time(slice(n=s3, dfunc=dtnorm_mix1, range=c(0,10), mc=FALSE)),
+  system.time(slice(n=s4, dfunc=dtnorm_mix1, range=c(0,10), mc=FALSE))
+)
+
+slice_dtnorm_mix2=rbind(
+  system.time(slice(n=s1, dfunc=dtnorm_mix2, range=c(-4,4), mc=FALSE)),
+  system.time(slice(n=s2, dfunc=dtnorm_mix2, range=c(-4,4), mc=FALSE)),
+  system.time(slice(n=s3, dfunc=dtnorm_mix2, range=c(-4,4), mc=FALSE)),
+  system.time(slice(n=s4, dfunc=dtnorm_mix2, range=c(-4,4), mc=FALSE))
+)
+
+
+slice_single=c(
+  "slice_dbetann",
+  "slice_dtnorm",
+  "slice_dtexp",
+  "slice_dunif_mix",
+  "slice_dunif_mix",
+  "slice_dtnorm_mix1",
+  "slice_dtnorm_mix2"
+)
+
+s=c(100, 
+    10000,
+    1000000,
+    10000000)
+
+names=c(rep(slice_single[1],4), rep(slice_single[2],4), rep(slice_single[3],4),
+        rep(slice_single[4],4),rep(slice_single[5],4),rep(slice_single[6],4),
+        rep(slice_single[7],4)  )
+
+
+iteration=rep(s,7)
+
+slice_all=c(slice_dbetann[,3], slice_dtnorm[,3],
+             slice_dtexp[,3], slice_dunif_mix[,3], slice_dunif_mix[,3],
+            slice_dtnorm_mix1[,3], slice_dtnorm_mix2[,3])
+
+slice_data=data.frame(cbind(names, iteration, "time"=slice_all) )
+
+## save as a dataframe
+
+save(slice_data, file="slice_data.Rdata")
+
+
+
+######  recording time --- MULTI CORE (slice sampler)
+
+slice_dbetann_T=rbind(
+  system.time(slice(n=s1, dfunc=dbetann, range=c(0,1), mc=TRUE)),
+  system.time(slice(n=s2, dfunc=dbetann, range=c(0,1), mc=TRUE)),
+  system.time(slice(n=s3, dfunc=dbetann, range=c(0,1), mc=TRUE)),
+  system.time(slice(n=s4, dfunc=dbetann, range=c(0,1), mc=TRUE))
+)
+
+slice_dtnorm_T=rbind(
+  system.time(slice(n=s1, dfunc=dtnorm, range=c(-3,3), mc=TRUE),
+              system.time(slice(n=s2, dfunc=dtnorm, range=c(-3,3), mc=TRUE)),
+              system.time(slice(n=s3, dfunc=dtnorm, range=c(-3,3), mc=TRUE)),
+              system.time(slice(n=s4, dfunc=dtnorm, range=c(-3,3), mc=TRUE))
+  )
+  
+  slice_dtexp_T=rbind(
+    system.time(slice(n=s1, dfunc=dtexp, range=c(0,6), mc=TRUE)),
+    system.time(slice(n=s2, dfunc=dtexp, range=c(0,6), mc=TRUE)),
+    system.time(slice(n=s3, dfunc=dtexp, range=c(0,6), mc=TRUE)),
+    system.time(slice(n=s4, dfunc=dtexp, range=c(0,6), mc=TRUE))
+  )
+  
+slice_dunif_mix_T=rbind(
+    system.time(slice(n=s1, dfunc=dunif_mix, range=c(-3,4), mc=TRUE)),
+    system.time(slice(n=s2, dfunc=dunif_mix, range=c(-3,4), mc=TRUE)),
+    system.time(slice(n=s3, dfunc=dunif_mix, range=c(-3,4), mc=TRUE)),
+    system.time(slice(n=s4, dfunc=dunif_mix, range=c(-3,4), mc=TRUE))
+  )
+  
+slice_dtnorm_mix1_T=rbind(
+    system.time(slice(n=s1, dfunc=dtnorm_mix1, range=c(0,10), mc=TRUE)),
+    system.time(slice(n=s2, dfunc=dtnorm_mix1, range=c(0,10), mc=TRUE)),
+    system.time(slice(n=s3, dfunc=dtnorm_mix1, range=c(0,10), mc=TRUE)),
+    system.time(slice(n=s4, dfunc=dtnorm_mix1, range=c(0,10), mc=TRUE))
+  )
+  
+slice_dtnorm_mix2_T=rbind(
+    system.time(slice(n=s1, dfunc=dtnorm_mix2, range=c(-4,4), mc=TRUE)),
+    system.time(slice(n=s2, dfunc=dtnorm_mix2, range=c(-4,4), mc=TRUE)),
+    system.time(slice(n=s3, dfunc=dtnorm_mix2, range=c(-4,4), mc=TRUE)),
+    system.time(slice(n=s4, dfunc=dtnorm_mix2, range=c(-4,4), mc=TRUE))
+  )
+  
+  
+slice_single_T=c(
+    "slice_dbetann_T",
+    "slice_dtnorm_T",
+    "slice_dtexp_T",
+    "slice_dunif_mix_T",
+    "slice_dunif_mix_T",
+    "slice_dtnorm_mix1_T",
+    "slice_dtnorm_mix2_T"
+  )
+  
+  s=c(100, 
+      10000,
+      1000000,
+      10000000)
+  
+  names=c(rep(slice_single_T[1],4), rep(slice_single_T[2],4), rep(slice_single_T[3],4),
+          rep(slice_single_T[4],4),rep(slice_single_T[5],4),rep(slice_single_T[6],4),
+          rep(slice_single_T[7],4)  )
+  
+  
+  iteration=rep(s,7)
+  
+  
+slice_all_T=c(slice_dbetann_T[,3], slice_dtnorm_T[,3],
+              slice_dtexp_T[,3], slice_dunif_mix_T[,3], slice_dunif_mix_T[,3],
+              slice_dtnorm_mix1_T[,3], slice_dtnorm_mix2_T[,3])
+  
+slice_data_T=data.frame(cbind(names, iteration, "time"=slice_all_T) )
+  
+  ## save as a dataframe
+  
+save(slice_data_T, file="slice_data_T.Rdata")
+  

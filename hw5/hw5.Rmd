@@ -94,7 +94,7 @@ score = function(x, dfunc)
 The four samplers constructed in testing the running time for single core and multi core are as follows. 
 
 
-### 1. Rejection sampling
+# 1. Rejection sampling
 
 Strategy
 1. sample uniformly from the X axis -- this is the envelop density. Since each test distribution functions specified ranges, the envelop function is Unifrom (min(range), max(range)). This is to create an envelope function which is greater than or equal to the target distribution we wish to sample from at all points, and which we can sample from easily.
@@ -151,29 +151,31 @@ reject = function(n, dfunc, range, mc){
 
 ```
 
-## Score table for rejection sampler when n = 1,000,000
+#Score table for rejection sampler when n = 1,000,000
 The code to generate the following table is included in the reject.R file, which is saved under hw5 directory. 
 
 ```{r}
-
-### present the table
 load("score_reject_data.Rdata")
 options(warn=-1)
 xtable(score_reject_data, type="html", digits=3)
 options(warn=0)
-
 ```
 
 ## Running time table for rejection sampler
 The code to generate the following table is included in the reject.R file, which is saved under hw5 directory. 
 
-```{r}
+# Singlecore - Rejection sampler
 
+```{r}
 load("reject_data.Rdata")
 options(warn=-1)
 xtable(reject_data, type="html", digits=3)
 options(warn=0)
+```
 
+# Multicore - Rejection sampler
+
+```{r}
 load("reject_data_T.Rdata")
 options(warn=-1)
 xtable(reject_data, type="html", digits=3)
@@ -306,8 +308,36 @@ slice = function(n, dfunc, range, mc){
 }
 
 ```
-### tables
 
+# Score table for slice sampler when n = 1,000,000
+The code to generate the following table is included in the slice.R file, which is saved under hw5 directory. 
+
+```{r}
+load("score_slice_data.Rdata")
+options(warn=-1)
+xtable(score_slice_data, type="html", digits=3)
+options(warn=0)
+
+```
+
+## Running time table for slice sampler
+The code to generate the following table is included in the slice.R file, which is saved under hw5 directory. 
+
+# singlecore - Slice sampler
+```{r}
+load("slice_data.Rdata")
+options(warn=-1)
+xtable(slice_data, type="html", digits=3)
+options(warn=0)
+```
+# multiore - Slice sampler
+```{r}
+load("slice_data_T.Rdata")
+options(warn=-1)
+xtable(reject_data, type="html", digits=3)
+options(warn=0)
+
+```
 
 
 
