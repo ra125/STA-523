@@ -22,18 +22,18 @@ reject = function(n, dfunc, range, mc){
  
   rejection=function(n,dfunc,range,mc){  
     proposal_x=runif(n, min(range), max(range))
-    ys<-dfunc(x=proposal_x)
-    proposal_y<-runif(n, min=min(ys), max=max(ys)) #envelop function
+#     ys<-dfunc(x=proposal_x)
+#     proposal_y<-runif(n, min=min(ys), max=max(ys)) #envelop function
     
-    
+  
     ## 2) reject if Y is larger than the value from dfunc
     result_x=rep(0,n)
     result_x[1]=proposal_x[1]
     for(i in 2:n) {
       x=proposal_x[i]      
       y=dfunc(x) #target dist. evaluated at x
-      proposal_int=proposal_y[i] #envelop dist. evaluated at x
-      ratio=y/proposal_int # calculate the ratio
+#       proposal_int=proposal_y[i] #envelop dist. evaluated at x
+      ratio=y/1 # calculate the ratio
       if(runif(1,0,1)<ratio){ 
         result_x[i]=x
       } else{result_x[i]=result_x[i-1]} # end of acceptance condition
@@ -166,7 +166,7 @@ score_reject_names=c("reject_score_dbetann_sc","reject_score_dbetann_mc","reject
                      "reject_score_dtexp_sc","reject_score_dtexp_mc","reject_score_dunif_mix_sc","reject_score_dunif_mix_mc",
                      "reject_score_dtnorm_mix1_sc","reject_score_dtnorm_mix1_mc","reject_score_dtnorm_mix2_sc","reject_score_dtnorm_mix2_mc")
 
-score_rejec=c(reject_score_dbetann_sc,reject_score_dbetann_mc,reject_score_dtnorm_sc,reject_score_dtnorm_mc,
+score_reject=c(reject_score_dbetann_sc,reject_score_dbetann_mc,reject_score_dtnorm_sc,reject_score_dtnorm_mc,
               reject_score_dtexp_sc,reject_score_dtexp_mc,reject_score_dunif_mix_sc,reject_score_dunif_mix_mc,
               reject_score_dtnorm_mix1_sc,reject_score_dtnorm_mix1_mc,reject_score_dtnorm_mix2_sc,reject_score_dtnorm_mix2_mc)
 
