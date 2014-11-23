@@ -90,7 +90,6 @@ The code to generate the following table is included in the reject.R file, which
 
 ```{r}
 load("reject_data.Rdata")
-reject_data
 options(warn=-1)
 x=xtable(reject_data, type="html", digits=3)
 options(warn=0)
@@ -102,7 +101,6 @@ print.xtable(x,type="html")
 
 ```{r}
 load("reject_data_T.Rdata")
-reject_data_T
 options(warn=-1)
 x=xtable(reject_data, type="html", digits=3)
 options(warn=0)
@@ -242,7 +240,6 @@ The code to generate the following table is included in the slice.R file, which 
 
 ```{r}
 load("score_slice_data.Rdata")
-score_slice_data
 options(warn=-1)
 x=xtable(score_slice_data, type="html", digits=3)
 options(warn=0)
@@ -255,7 +252,6 @@ print.xtable(x,type="html")
 The code to generate the following table is included in the slice.R file, which is saved under hw5 directory. 
 ```{r}
 load("slice_data.Rdata")
-slice_data
 options(warn=-1)
 x=xtable(slice_data, type="html", digits=3)
 options(warn=0)
@@ -266,7 +262,6 @@ print.xtable(x,type="html")
 # multiore - Slice sampler
 ```{r}
 load("slice_data_T.Rdata")
-slice_data_T
 options(warn=-1)
 x=xtable(reject_data, type="html", digits=3)
 options(warn=0)
