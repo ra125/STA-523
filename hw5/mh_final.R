@@ -179,6 +179,6 @@ r6=cbind(mhs61,mhs62,mhs63,mhs64,mhm61,mhm62,mhm63,mhm64)
 t=rbind(r1,r2,r3,r4,r5,r6)
 
 options(warn=-1)
-table=xtable(t,type="html")
+table=xtable(t,type="html",digits=3)
 options(warn=0)
 

@@ -129,5 +129,5 @@ r6=cbind(Rs61,Rs62,Rs63,Rs64,Rm61,Rm62,Rm63,Rm64)
 t=rbind(r1,r2,r3,r4,r5,r6)
 
 options(warn=-1)
-table=xtable(t,type="html")
+table=xtable(t,type="html",digits=3)
 options(warn=0)
