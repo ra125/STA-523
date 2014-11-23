@@ -1,44 +1,68 @@
-library(parallel)
-library(iterators)
-library(foreach)
-library(doMC)
-
-slice = function(n, dfunc, range, mc=FALSE)
+slice = function(n, dfunc, range, mc)
 {
-  rangec=range
-  res<-matrix(NA,n,ncol=1,nrow=n)
-  w=abs(range[1]-range[2])/20
-  y=0
-  for (i in 1:n)
-  {
-    res[i]=runif(1,rangec[1],rangec[2])
-    while (dfunc(res[i])<y) 
+  library(parallel)
+  library(iterators)
+  library(foreach)
+  library(doMC)
+  stopifnot(is.function(dfunc))
+  stopifnot(is.numeric(n))
+  stopifnot(is.logical(mc))
+  stopifnot(is.vector(range))
+  
+  if(mc==FALSE){
+    mc=1
+  } else{
+    if(n>10000)
     {
-      if (res[i]<rangec[1]+w)
-      {
-        rangec[1]=res[i]
-      }
-      else
-      {
-        if (res[i]>rangec[2]-w)
-        {
-          rangec[2]=res[i]
-        }
-      }
-      res[i]=runif(1,rangec[1],rangec[2])
-    }
-    y=runif(1,0,dfunc(res[i]))
-    rangec=rep(res[i],2)
-    while (dfunc(rangec[1])>y)
-    {
-      rangec[1]=rangec[1]-w
-    }
-    while (dfunc(rangec[2])>y)
-    {
-      rangec[2]=rangec[2]+w
+      mc=8
+    } else{
+      mc=2
     }
   }
-  return(res)
+    
+  sampling<-function(nc,dfunc,range,cores) 
+  {
+    rangec=range
+    res<-matrix(NA,n,ncol=1,nrow=nc)
+    w=abs(range[1]-range[2])/20
+    y=0
+    for (i in 1:nc)
+    {
+      res[i]=runif(1,rangec[1],rangec[2])
+      while (dfunc(res[i])<y) 
+      {
+        if (res[i]<rangec[1]+w)
+        {
+          rangec[1]=res[i]
+        }
+        else
+        {
+          if (res[i]>rangec[2]-w)
+          {
+            rangec[2]=res[i]
+          }
+        }
+        res[i]=runif(1,rangec[1],rangec[2])
+      }
+      y=runif(1,0,dfunc(res[i]))
+      rangec=rep(res[i],2)
+      while (dfunc(rangec[1])>y)
+      {
+        rangec[1]=rangec[1]-w
+      }
+      while (dfunc(rangec[2])>y)
+      {
+        rangec[2]=rangec[2]+w
+      }
+    }
+    return(res)
+  }
+  
+  cores=mc
+  nc=ceiling(n/cores)
+  sample<-unlist(mclapply(1:cores, function(z) sampling(nc,dfunc,range,cores),mc.cores = cores))
+  sample=sample[1:n]
+  return(sample)
 }
 
 ## test samples
@@ -92,102 +116,96 @@ dtnorm_mix2 = function(x)
 (time<-sapply(c(10000),
        function(x)
        {
-          sapply(c(1,8),
-                 function(y)
+          sapply(c(FALSE,TRUE),
+                 function(y) 
                    {
-#                    if (mc==TRUE && n>1000){
-                     cores = y
-                     return(system.time(unlist(mclapply(1:cores, function(z) slice(ceiling(x/cores),dbetann,range=c(0,1),TRUE),mc.cores = cores)))[3]/x)
-#                    }else{
-#                      return(system.time(slice(x, dfunc, range, TRUE)[3])/x)
-#                    }
-                 }) 
+                   return(system.time(slice(x,dbetann,c(0,1),mc = y)/x)[3]/x)
+                 })
        }))
 
 #dtnorm
-sapply(c(100,10000,1000000,10000000),
-       function(x)
-       {
-         sapply(1:8,
-                function(y)
-                {
-                  #                    if (mc==TRUE && n>1000){
-                  cores = y
-                  return(system.time(unlist(mclapply(1:cores, function(z) slice(ceiling(x/cores), dtnorm, range=c(-3,3), TRUE),
-                                                     mc.cores = cores) ))[3]/x)
-                  #                    }else{
-                  #                      return(system.time(slice(x, dfunc, range, TRUE)[3])/x)
-                  #                    }
-                }) 
-       })
-
-#dtexp
-sapply(c(100,10000,1000000,10000000),
-       function(x)
-       {
-         sapply(1:8,
-                function(y)
-                {
-                  #                    if (mc==TRUE && n>1000){
-                  cores = y
-                  return(system.time(unlist(mclapply(1:cores, function(z) slice(ceiling(x/cores), dtexp, range=c(0,6), TRUE),
-                                                     mc.cores = cores) ))[3]/x)
-                  #                    }else{
-                  #                      return(system.time(slice(x, dfunc, range, TRUE)[3])/x)
-                  #                    }
-                }) 
-       })
-
-#dunif_mix
-sapply(c(100,10000,1000000,10000000),
-       function(x)
-       {
-         sapply(1:8,
-                function(y)
-                {
-                  #                    if (mc==TRUE && n>1000){
-                  cores = y
-                  return(system.time(unlist(mclapply(1:cores, function(z) slice(ceiling(x/cores), dunif_mix, range=c(-3,4), TRUE),
-                                                     mc.cores = cores) ))[3]/x)
-                  #                    }else{
-                  #                      return(system.time(slice(x, dfunc, range, TRUE)[3])/x)
-                  #                    }
-                }) 
-       })
-
-#dtnorm_mix1
-sapply(c(100,10000,1000000,10000000),
-       function(x)
-       {
-         sapply(c(4,8),
-                function(y)
-                {
-                  #                    if (mc==TRUE && n>1000){
-                  cores = y
-                  return(system.time(unlist(mclapply(1:cores, function(z) slice(ceiling(x/cores), dtnorm_mix1, range=c(0,10), TRUE),
-                                                     mc.cores = cores) ))[3]/x)
-                  #                    }else{
-                  #                      return(system.time(slice(x, dfunc, range, TRUE)[3])/x)
-                  #                    }
-                }) 
-       })
-
-#dtnorm_mix2
-sapply(c(100,10000,1000000,10000000),
-       function(x)
-       {
-         sapply(1:8,
-                function(y)
-                {
-                  #                    if (mc==TRUE && n>1000){
-                  cores = y
-                  return(system.time(unlist(mclapply(1:cores, function(z) slice(ceiling(x/cores), dtnorm_mix2, range=c(0,10), TRUE),
-                                                     mc.cores = cores) ))[3]/x)
-                  #                    }else{
-                  #                      return(system.time(slice(x, dfunc, range, TRUE)[3])/x)
-                  #                    }
-                }) 
-       })
+# sapply(c(100,10000,1000000,10000000),
+#        function(x)
+#        {
+#          sapply(1:8,
+#                 function(y)
+#                 {
+#                   #                    if (mc==TRUE && n>1000){
+#                   cores = y
+#                   return(system.time(unlist(mclapply(1:cores, function(z) slice(ceiling(x/cores), dtnorm, range=c(-3,3), TRUE),
+#                                                      mc.cores = cores) ))[3]/x)
+#                   #                    }else{
+#                   #                      return(system.time(slice(x, dfunc, range, TRUE)[3])/x)
+#                   #                    }
+#                 }) 
+#        })
+# 
+# #dtexp
+# sapply(c(100,10000,1000000,10000000),
+#        function(x)
+#        {
+#          sapply(1:8,
+#                 function(y)
+#                 {
+#                   #                    if (mc==TRUE && n>1000){
+#                   cores = y
+#                   return(system.time(unlist(mclapply(1:cores, function(z) slice(ceiling(x/cores), dtexp, range=c(0,6), TRUE),
+#                                                      mc.cores = cores) ))[3]/x)
+#                   #                    }else{
+#                   #                      return(system.time(slice(x, dfunc, range, TRUE)[3])/x)
+#                   #                    }
+#                 }) 
+#        })
+# 
+# #dunif_mix
+# sapply(c(100,10000,1000000,10000000),
+#        function(x)
+#        {
+#          sapply(1:8,
+#                 function(y)
+#                 {
+#                   #                    if (mc==TRUE && n>1000){
+#                   cores = y
+#                   return(system.time(unlist(mclapply(1:cores, function(z) slice(ceiling(x/cores), dunif_mix, range=c(-3,4), TRUE),
+#                                                      mc.cores = cores) ))[3]/x)
+#                   #                    }else{
+#                   #                      return(system.time(slice(x, dfunc, range, TRUE)[3])/x)
+#                   #                    }
+#                 }) 
+#        })
+# 
+# #dtnorm_mix1
+# sapply(c(100,10000,1000000,10000000),
+#        function(x)
+#        {
+#          sapply(c(4,8),
+#                 function(y)
+#                 {
+#                   #                    if (mc==TRUE && n>1000){
+#                   cores = y
+#                   return(system.time(unlist(mclapply(1:cores, function(z) slice(ceiling(x/cores), dtnorm_mix1, range=c(0,10), TRUE),
+#                                                      mc.cores = cores) ))[3]/x)
+#                   #                    }else{
+#                   #                      return(system.time(slice(x, dfunc, range, TRUE)[3])/x)
+#                   #                    }
+#                 }) 
+#        })
+# 
+# #dtnorm_mix2
+# sapply(c(100,10000,1000000,10000000),
+#        function(x)
+#        {
+#          sapply(c(1,8),
+#                 function(y)
+#                 {
+#                   #                    if (mc==TRUE && n>1000){
+#                   cores = y
+#                   return(system.time(slice())[3]/x)
+#                   #                    }else{
+#                   #                      return(system.time(slice(x, dfunc, range, TRUE)[3])/x)
+#                   #                    }
+#                 }) 
+#        })
 
 # if (mc==TRUE && n>1000){
 #   cores = y
@@ -234,3 +252,4 @@ score(edtnorm_mix1,dtnorm_mix1)
 score(edtnorm_mix2,dtnorm_mix2)
 
 flist=c(dbetann,dtnorm)
+
