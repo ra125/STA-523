@@ -1,4 +1,3 @@
-
 mh = function(n, dfunc, range, mc=FALSE){
   library(parallel)
   library(doMC)
@@ -103,7 +102,7 @@ mh = function(n, dfunc, range, mc=FALSE){
       }
     }
     return(x)}
-  vec=unlist(mclapply(1:mc, function(x) sampling(ceiling(n/mc),dfunc,min,max,v), mc.cores = mc))
+  vec=unlist(mclapply(1:mc, function(x) sampling(ceiling(n/mc),dfunc,min,max,v),mc.cores=mc))
   vec=vec[1:n]
   return(vec)
 }

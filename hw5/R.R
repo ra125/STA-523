@@ -25,106 +25,68 @@ for (truncated normal mixture2), sampling method is similar to the above (trunca
 
 ### R function 
 
-R = function(dfunc,n,mc=FALSE){
+R = function(n,dfunc,range,mc){
   
-  stopifnot(is.function(dfunc) & is.numeric(n))
+  library(parallel)
+  library(doMC)
+  library(foreach)
+  library(truncnorm)
+  
+  stopifnot(is.function(dfunc))
+  stopifnot(is.numeric(n))
+  stopifnot(is.logical(mc))
+  stopifnot(is.vector(range))
+  
+  if(mc==FALSE){
+    mc=1
+  } else{
+    if(n>10000)
+    {
+      mc=8
+    } else{
+      mc=2
+    }
+  }
   
   if(as.character(substitute(dfunc))=="dbetann"){
-    v=rbeta(n,0.9,0.9)}
+    return(unlist(mclapply(1:mc,function(x) rbeta(ceiling(n/mc),0.9,0.9),
+                           mc.cores=mc)))}
   
   if(as.character(substitute(dfunc))=="dtnorm"){
-    v=c()
-    for(i in 1:n){
-      x=rnorm(1)
-      if(x > -3 & x < 3){
-        v=c(v,x)}
-      else {v=v} }}
+    return(unlist(mclapply(1:mc,function(x) rtruncnorm(ceiling(n/mc),-3,3),
+                           mc.cores=mc)))}
   
   if(as.character(substitute(dfunc))=="dtexp"){
-    v=c()
+    exp=function(n){
+      v=rep(0,n)
     for(i in 1:n) {
-      x=rexp(1,rate=1/3)
-      if(x > 0 & x < 6){ 
-        v=c(v,x)}
-      else {v=v} }}
+      x=-1
+      while(x < 0 || x > 6){ 
+        x=rexp(1,rate=1/3)
+        v[i]=x}}
+    return(v)}
+    return(unlist(mclapply(1:mc, function(x) exp(ceiling(n/mc)),
+                           mc.cores=mc)))
+  }
   
   if(as.character(substitute(dfunc))=="dunif_mix"){
-    v=c()
-    for(i in 1:n){
-      prob <- runif(1, 0, 1)
-      if(prob <= 0.6){
-        x=runif(1,-3,-1)
-        v[i]=x}
-      else if(prob > 0.6 & prob <= 0.7){ 
-        x=runif(1,-1,1)
-        v[i]=x}
-      else{ 
-        x=runif(1,1,4)
-        v[i]=x} }}
+    return(unlist(mclapply(1:mc, function(x) c(runif(ceiling(0.6*n/mc),-3,-1),
+                                                  runif(ceiling(0.1*n/mc),-1,1),
+                                                  runif(ceiling(0.3*n/mc), 1,4)),
+                           mc.cores=mc)))}
   
   if(as.character(substitute(dfunc))=="dtnorm_mix1"){
-    v=c()
-    for(i in 1:n){
-      prob <- runif(1, 0, 1)
-      if(prob <= 0.5){
-        x=rnorm(1,2,2)
-        if(x > 0 & x < 10){
-          v=c(v,x)}
-        else { v=v }} 
-      else{ 
-        x=rnorm(1,6,1)
-        if(x > 0 & x < 10){
-          v=c(v,x)}
-        else { v=v } }}}
+    return(unlist(mclapply(1:mc, function(x) c(rtruncnorm(ceiling(0.5*n/mc),0,10,2,2),
+                                                  rtruncnorm(ceiling(0.5*n/mc),0,10,6,1)),
+                           mc.cores=mc)))}
   
   if(as.character(substitute(dfunc))=="dtnorm_mix2"){
-    v=c()
-    for(i in 1:n){
-      prob <- runif(1, 0, 1)
-      if(prob <= 0.45){
-        x=rnorm(1,-4,1)
-        if(x > -4 & x < 4){
-          v=c(v,x)}
-        else { v=v }} 
-      else if(prob > 0.45 & prob <= 0.9){ 
-        x=rnorm(1,4,1)
-        if(x > -4 & x < 4){
-          v=c(v,x)}
-        else { v=v }} 
-      else{ 
-        x=rnorm(1,0,0.5)
-        if(x > -4 & x < 4){
-          v=c(v,x)}
-        else { v=v }} }}
-  
-  return(v)
+    return(unlist(mclapply(1:mc,
+                           function(x) c(rtruncnorm(ceiling(0.45*n/mc),-4,4,-4),
+                                         rtruncnorm(ceiling(0.45*n/mc),-4,4,4),
+                                         rtruncnorm(ceiling(0.1*n/mc),-4,4,0,0.5)),
+                           mc.cores=mc)))
+  }
 }
-
-
-
-
-### Testing
-
-dbetann = function(x){dbeta(x,0.9,0.9)}
-dtnorm = function(x){ifelse(x < -3 | x > 3, 0, dnorm(x)/0.9973002)}
-dtexp = function(x){ifelse(x < 0 | x > 6, 0, dexp(x, rate=1/3)/0.8646647)}
-dunif_mix = function(x){
-  ifelse(x >= -3 & x < -1, 0.6*dunif(x,-3,-1),
-         ifelse(x >= -1 & x <  1, 0.1*dunif(x,-1, 1),
-                ifelse(x >=  1 & x <  4, 0.3*dunif(x, 1, 4), 
-                       0)))}
-dtnorm_mix1 = function(x){
-  ifelse(x < 0 | x > 10, 
-         0, 
-         ( 0.5*dnorm(x,mean=2,sd=2)
-           +0.5*dnorm(x,mean=6,sd=1))/0.90059152)}
-dtnorm_mix2 = function(x){
-  ifelse(x < -4 | x > 4, 
-         0, 
-         ( 0.45*dnorm(x,mean=-4)
-           +0.45*dnorm(x,mean= 4)
-           +0.1 *dnorm(x,mean= 0,sd=0.5))/0.4999683)
-}
-
 
 
