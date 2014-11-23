@@ -1,29 +1,5 @@
-### R function explanation
-
-firstly, detecting the type of function by using as.charactor(substitute()).
-
-Once it defines the type of function,
-each function follows the logic below.
-
-for (beta), we can use (rbeta) function for sampling
-
-for (truncated exponential), firsty, making an empty vector
-and then generate and save samples by using (rnorm) function, if conditions are met
-
-for (truncated exponential), sampling method is similar to the above (truncated normal).
-
-for (uniform mixture), after making an empty vector, we can generate probablity from (runif) function.
-and then if probabilty <= 0.6, generate sample from runif(1,-3,-1). 
-if 0.6<probablity<=0.7, generate sample from runif(1,-1,1). else generate from runif(1,1,4)
-
-for (truncated normal mixture1), after making an empty vector, in the same way above, we can generate probablity from (runif) function.
-ans then if probablity <= 0.5, generate sample from rnorm(1,2,2). else generate from rnorm(1,6,1).
-
-for (truncated normal mixture2), sampling method is similar to the above (truncated normal mixture1)
-
-
-
 ### R function 
+library(xtable)
 
 R = function(n,dfunc,range,mc){
   
@@ -57,16 +33,9 @@ R = function(n,dfunc,range,mc){
                            mc.cores=mc)))}
   
   if(as.character(substitute(dfunc))=="dtexp"){
-    exp=function(n){
-      v=rep(0,n)
-    for(i in 1:n) {
-      x=-1
-      while(x < 0 || x > 6){ 
-        x=rexp(1,rate=1/3)
-        v[i]=x}}
-    return(v)}
-    return(unlist(mclapply(1:mc, function(x) exp(ceiling(n/mc)),
-                           mc.cores=mc)))
+    sample=unlist(mclapply(1:mc, function(x) rexp(ceiling((n/mc)*1.02),rate=1/3),
+                   mc.cores=mc))
+    return(sample[sample<6])
   }
   
   if(as.character(substitute(dfunc))=="dunif_mix"){
@@ -90,3 +59,75 @@ R = function(n,dfunc,range,mc){
 }
 
 
+Rs11<-system.time(R(100,dbetann,c(0,1),FALSE))[3]
+Rs12<-system.time(R(10000,dbetann,c(0,1),FALSE))[3]
+Rs13<-system.time(R(1000000,dbetann,c(0,1),FALSE))[3]
+Rs14<-system.time(R(10000000,dbetann,c(0,1),FALSE))[3]
+
+Rs21<-system.time(R(100,dtnorm,c(-3,3),FALSE))[3]
+Rs22<-system.time(R(10000,dtnorm,c(-3,3),FALSE))[3]
+Rs23<-system.time(R(1000000,dtnorm,c(-3,3),FALSE))[3]
+Rs24<-system.time(R(10000000,dtnorm,c(-3,3),FALSE))[3]
+
+Rs31<-system.time(R(100,dtexp,c(0,4),FALSE))[3]
+Rs32<-system.time(R(10000,dtexp,c(0,4),FALSE))[3]
+Rs33<-system.time(R(1000000,dtexp,c(0,4),FALSE))[3]
+Rs34<-system.time(R(10000000,dtexp,c(0,4),FALSE))[3]
+
+Rs41<-system.time(R(100,dunif_mix,c(-3,4),FALSE))[3]
+Rs42<-system.time(R(10000,dunif_mix,c(-3,4),FALSE))[3]
+Rs43<-system.time(R(1000000,dunif_mix,c(-3,4),FALSE))[3]
+Rs44<-system.time(R(10000000,dunif_mix,c(-3,4),FALSE))[3]
+
+Rs51<-system.time(R(100,dtnorm_mix1,c(0,10),FALSE))[3]
+Rs52<-system.time(R(10000,dtnorm_mix1,c(0,10),FALSE))[3]
+Rs53<-system.time(R(1000000,dtnorm_mix1,c(0,10),FALSE))[3]
+Rs54<-system.time(R(10000000,dtnorm_mix1,c(0,10),FALSE))[3]
+
+Rs61<-system.time(R(100,dtnorm_mix2,c(-4,4),FALSE))[3]
+Rs62<-system.time(R(10000,dtnorm_mix2,c(-4,4),FALSE))[3]
+Rs63<-system.time(R(1000000,dtnorm_mix2,c(-4,4),FALSE))[3]
+Rs64<-system.time(R(10000000,dtnorm_mix2,c(-4,4),FALSE))[3]
+
+Rm11<-system.time(R(100,dbetann,c(0,1),TRUE))[3]
+Rm12<-system.time(R(10000,dbetann,c(0,1),TRUE))[3]
+Rm13<-system.time(R(1000000,dbetann,c(0,1),TRUE))[3]
+Rm14<-system.time(R(10000000,dbetann,c(0,1),TRUE))[3]
+
+Rm21<-system.time(R(100,dtnorm,c(-3,3),TRUE))[3]
+Rm22<-system.time(R(10000,dtnorm,c(-3,3),TRUE))[3]
+Rm23<-system.time(R(1000000,dtnorm,c(-3,3),TRUE))[3]
+Rm24<-system.time(R(10000000,dtnorm,c(-3,3),TRUE))[3]
+
+Rm31<-system.time(R(100,dtexp,c(0,4),TRUE))[3]
+Rm32<-system.time(R(10000,dtexp,c(0,4),TRUE))[3]
+Rm33<-system.time(R(1000000,dtexp,c(0,4),TRUE))[3]
+Rm34<-system.time(R(10000000,dtexp,c(0,4),TRUE))[3]
+
+Rm41<-system.time(R(100,dunif_mix,c(-3,4),TRUE))[3]
+Rm42<-system.time(R(10000,dunif_mix,c(-3,4),TRUE))[3]
+Rm43<-system.time(R(1000000,dunif_mix,c(-3,4),TRUE))[3]
+Rm44<-system.time(R(10000000,dunif_mix,c(-3,4),TRUE))[3]
+
+Rm51<-system.time(R(100,dtnorm_mix1,c(0,10),TRUE))[3]
+Rm52<-system.time(R(10000,dtnorm_mix1,c(0,10),TRUE))[3]
+Rm53<-system.time(R(1000000,dtnorm_mix1,c(0,10),TRUE))[3]
+Rm54<-system.time(R(10000000,dtnorm_mix1,c(0,10),TRUE))[3]
+
+Rm61<-system.time(R(100,dtnorm_mix2,c(-4,4),TRUE))[3]
+Rm62<-system.time(R(10000,dtnorm_mix2,c(-4,4),TRUE))[3]
+Rm63<-system.time(R(1000000,dtnorm_mix2,c(-4,4),TRUE))[3]
+Rm64<-system.time(R(10000000,dtnorm_mix2,c(-4,4),TRUE))[3]
+
+r1=cbind(Rs11,Rs12,Rs13,Rs14,Rm11,Rm12,Rm13,Rm14)
+r2=cbind(Rs21,Rs22,Rs23,Rs24,Rm21,Rm22,Rm23,Rm24)
+r3=cbind(Rs31,Rs32,Rs33,Rs34,Rm31,Rm32,Rm33,Rm34)
+r4=cbind(Rs41,Rs42,Rs43,Rs44,Rm41,Rm42,Rm43,Rm44)
+r5=cbind(Rs51,Rs52,Rs53,Rs54,Rm51,Rm52,Rm53,Rm54)
+r6=cbind(Rs61,Rs62,Rs63,Rs64,Rm61,Rm62,Rm63,Rm64)
+
+t=rbind(r1,r2,r3,r4,r5,r6)
+
+options(warn=-1)
+table=xtable(t,type="html")
+options(warn=0)
