@@ -1,6 +1,6 @@
 ---
 title: "hw5"
-author: "Team 6"
+author: "Team 6 - Radhika Anand, Sophie Lee, Minjung Park, Kungang Zhang"
 date: "11/10/2014"
 output: html_document
 ---
@@ -14,7 +14,7 @@ check_packages(c("parallel","xtable", "doMC", "foreach", "truncnorm", "iterators
 
 In this assignment, we test the time difference between the single core and the multicore, required for running four samplers. In doing so, the following six distribution functions and the scoring function given are used. 
 
-### test distributions
+### Test distributions
 
 ```{r}
 
@@ -152,44 +152,12 @@ reject = function(n, dfunc, range, mc){
 ```
 
 ## Score table for rejection sampler when n = 1,000,000
+The code to generate the following table is included in the reject.R file, which is saved under hw5 directory. 
 
 ```{r}
 
-s1=100
-s2=10000
-s3=1000000
-s4=10000000
-
-
-reject_score_dbetann_sc<-score(reject(n=s3, dfunc=dbetann, range=c(0,1), mc=FALSE), dbetann)
-reject_score_dbetann_mc<-score(reject(n=s3, dfunc=dbetann, range=c(0,1), mc=FALSE), dbetann)
-
-reject_score_dtnorm_sc<-score(reject(n=s3, dfunc=dtnorm, range=c(-3,3), mc=FALSE),dtnorm)
-reject_score_dtnorm_mc<-score(reject(n=s3, dfunc=dtnorm, range=c(-3,3), mc=FALSE),dtnorm)
-
-reject_score_dtexp_sc<-score(reject(n=s3, dfunc=dtexp, range=c(0,6), mc=FALSE),dtexp)
-reject_score_dtexp_mc<-score(reject(n=s3, dfunc=dtexp, range=c(0,6), mc=FALSE),dtexp)
-
-reject_score_dunif_mix_sc<-score(reject(n=s3, dfunc=dunif_mix, range=c(-3,4), mc=FALSE),dunif_mix)
-reject_score_dunif_mix_mc<-score(reject(n=s3, dfunc=dunif_mix, range=c(-3,4), mc=FALSE),dunif_mix)
-
-reject_score_dtnorm_mix1_sc<-score(reject(n=s3, dfunc=dtnorm_mix1, range=c(0,10), mc=FALSE),dtnorm_mix1)
-reject_score_dtnorm_mix1_mc<-score(reject(n=s3, dfunc=dtnorm_mix1, range=c(0,10), mc=FALSE),dtnorm_mix1)
-
-reject_score_dtnorm_mix2_sc<-score(reject(n=s3, dfunc=dtnorm_mix2, range=c(-4,4), mc=FALSE),dtnorm_mix2)
-reject_score_dtnorm_mix2_mc<-score(reject(n=s3, dfunc=dtnorm_mix2, range=c(-4,4), mc=FALSE),dtnorm_mix2)
-
-score_reject_names=c("reject_score_dbetann_sc","reject_score_dbetann_mc","reject_score_dtnorm_sc","reject_score_dtnorm_mc",
-              "reject_score_dtexp_sc","reject_score_dtexp_mc","reject_score_dunif_mix_sc","reject_score_dunif_mix_mc",
-              "reject_score_dtnorm_mix1_sc","reject_score_dtnorm_mix1_mc","reject_score_dtnorm_mix2_sc","reject_score_dtnorm_mix2_mc")
-
-score_rejec=c(reject_score_dbetann_sc,reject_score_dbetann_mc,reject_score_dtnorm_sc,reject_score_dtnorm_mc,
-              reject_score_dtexp_sc,reject_score_dtexp_mc,reject_score_dunif_mix_sc,reject_score_dunif_mix_mc,
-              reject_score_dtnorm_mix1_sc,reject_score_dtnorm_mix1_mc,reject_score_dtnorm_mix2_sc,reject_score_dtnorm_mix2_mc)
-
-score_reject_data=data.frame(cbind(score_reject_names, score_reject))
-
 ### present the table
+load("score_reject_data.Rdata")
 options(warn=-1)
 xtable(score_reject_data, type="html", digits=3)
 options(warn=0)
@@ -197,167 +165,21 @@ options(warn=0)
 ```
 
 ## Running time table for rejection sampler
+The code to generate the following table is included in the reject.R file, which is saved under hw5 directory. 
 
 ```{r}
-### recording time --- SINGLE CORE
 
-reject_dbetann=rbind(
-  system.time(reject(n=s1, dfunc=dbetann, range=c(0,1), mc=FALSE)),
-  system.time(reject(n=s2, dfunc=dbetann, range=c(0,1), mc=FALSE)),
-  system.time(reject(n=s3, dfunc=dbetann, range=c(0,1), mc=FALSE)),
-  system.time(reject(n=s4, dfunc=dbetann, range=c(0,1), mc=FALSE))
-)
-
-reject_dtnorm=rbind(
-  system.time(reject(n=s1, dfunc=dtnorm, range=c(-3,3), mc=FALSE)),
-  system.time(reject(n=s2, dfunc=dtnorm, range=c(-3,3), mc=FALSE)),
-  system.time(reject(n=s3, dfunc=dtnorm, range=c(-3,3), mc=FALSE)),
-  system.time(reject(n=s4, dfunc=dtnorm, range=c(-3,3), mc=FALSE))
-)
-
-reject_dtexp=rbind(
-  system.time(reject(n=s1, dfunc=dtexp, range=c(0,6), mc=FALSE)),
-  system.time(reject(n=s2, dfunc=dtexp, range=c(0,6), mc=FALSE)),
-  system.time(reject(n=s3, dfunc=dtexp, range=c(0,6), mc=FALSE)),
-  system.time(reject(n=s4, dfunc=dtexp, range=c(0,6), mc=FALSE))
-)
-
-reject_dunif_mix=rbind(
-  system.time(reject(n=s1, dfunc=dunif_mix, range=c(-3,4), mc=FALSE)),
-  system.time(reject(n=s2, dfunc=dunif_mix, range=c(-3,4), mc=FALSE)),
-  system.time(reject(n=s3, dfunc=dunif_mix, range=c(-3,4), mc=FALSE)),
-  system.time(reject(n=s4, dfunc=dunif_mix, range=c(-3,4), mc=FALSE))
-)
-
-reject_dtnorm_mix1=rbind(
-  system.time(reject(n=s1, dfunc=dtnorm_mix1, range=c(0,10), mc=FALSE)),
-  system.time(reject(n=s2, dfunc=dtnorm_mix1, range=c(0,10), mc=FALSE)),
-  system.time(reject(n=s3, dfunc=dtnorm_mix1, range=c(0,10), mc=FALSE)),
-  system.time(reject(n=s4, dfunc=dtnorm_mix1, range=c(0,10), mc=FALSE))
-)
-
-reject_dtnorm_mix2=rbind(
-  system.time(reject(n=s1, dfunc=dtnorm_mix2, range=c(-4,4), mc=FALSE)),
-  system.time(reject(n=s2, dfunc=dtnorm_mix2, range=c(-4,4), mc=FALSE)),
-  system.time(reject(n=s3, dfunc=dtnorm_mix2, range=c(-4,4), mc=FALSE)),
-  system.time(reject(n=s4, dfunc=dtnorm_mix2, range=c(-4,4), mc=FALSE))
-)
-
-
-reject_single=c(
-  "reject_dbetann",
-  "reject_dtnorm",
-  "reject_dtexp",
-  "reject_dunif_mix",
-  "reject_dunif_mix",
-  "reject_dtnorm_mix1",
-  "reject_dtnorm_mix2"
-)
-
-s=c(100, 
-    10000,
-    1000000,
-    10000000)
-
-names=c(rep(reject_single[1],4), rep(reject_single[2],4), rep(reject_single[3],4),
-        rep(reject_single[4],4),rep(reject_single[5],4),rep(reject_single[6],4),
-        rep(reject_single[7],4)  )
-
-
-iteration=rep(s,7)
-
-reject_all=c(reject_dbetann[,3], reject_dtnorm[,3],
-reject_dtexp[,3], reject_dunif_mix[,3], reject_dunif_mix[,3],
-reject_dtnorm_mix1[,3], reject_dtnorm_mix2[,3])
-
-reject_data=data.frame(cbind(names, iteration, "time"=reject_all) )
-
+load("reject_data.Rdata")
 options(warn=-1)
 xtable(reject_data, type="html", digits=3)
 options(warn=0)
 
-
-### recording time --- MULTI CORE (rejection sampler)
-
-reject_dbetann_T=rbind(
-  system.time(reject(n=s1, dfunc=dbetann, range=c(0,1), mc=TRUE)),
-  system.time(reject(n=s2, dfunc=dbetann, range=c(0,1), mc=TRUE)),
-  system.time(reject(n=s3, dfunc=dbetann, range=c(0,1), mc=TRUE)),
-  system.time(reject(n=s4, dfunc=dbetann, range=c(0,1), mc=TRUE))
-)
-
-reject_dtnorm_T=rbind(
-  system.time(reject(n=s1, dfunc=dtnorm, range=c(-3,3), mc=TRUE),
-  system.time(reject(n=s2, dfunc=dtnorm, range=c(-3,3), mc=TRUE)),
-  system.time(reject(n=s3, dfunc=dtnorm, range=c(-3,3), mc=TRUE)),
-  system.time(reject(n=s4, dfunc=dtnorm, range=c(-3,3), mc=TRUE))
-)
-
-reject_dtexp_T=rbind(
-  system.time(reject(n=s1, dfunc=dtexp, range=c(0,6), mc=TRUE)),
-  system.time(reject(n=s2, dfunc=dtexp, range=c(0,6), mc=TRUE)),
-  system.time(reject(n=s3, dfunc=dtexp, range=c(0,6), mc=TRUE)),
-  system.time(reject(n=s4, dfunc=dtexp, range=c(0,6), mc=TRUE))
-)
-
-reject_dunif_mix_T=rbind(
-  system.time(reject(n=s1, dfunc=dunif_mix, range=c(-3,4), mc=TRUE)),
-  system.time(reject(n=s2, dfunc=dunif_mix, range=c(-3,4), mc=TRUE)),
-  system.time(reject(n=s3, dfunc=dunif_mix, range=c(-3,4), mc=TRUE)),
-  system.time(reject(n=s4, dfunc=dunif_mix, range=c(-3,4), mc=TRUE))
-)
-
-reject_dtnorm_mix1_T=rbind(
-  system.time(reject(n=s1, dfunc=dtnorm_mix1, range=c(0,10), mc=TRUE)),
-  system.time(reject(n=s2, dfunc=dtnorm_mix1, range=c(0,10), mc=TRUE)),
-  system.time(reject(n=s3, dfunc=dtnorm_mix1, range=c(0,10), mc=TRUE)),
-  system.time(reject(n=s4, dfunc=dtnorm_mix1, range=c(0,10), mc=TRUE))
-)
-
-reject_dtnorm_mix2_T=rbind(
-  system.time(reject(n=s1, dfunc=dtnorm_mix2, range=c(-4,4), mc=TRUE)),
-  system.time(reject(n=s2, dfunc=dtnorm_mix2, range=c(-4,4), mc=TRUE)),
-  system.time(reject(n=s3, dfunc=dtnorm_mix2, range=c(-4,4), mc=TRUE)),
-  system.time(reject(n=s4, dfunc=dtnorm_mix2, range=c(-4,4), mc=TRUE))
-)
-
-
-reject_single_T=c(
-  "reject_dbetann_T",
-  "reject_dtnorm_T",
-  "reject_dtexp_T",
-  "reject_dunif_mix_T",
-  "reject_dunif_mix_T",
-  "reject_dtnorm_mix1_T",
-  "reject_dtnorm_mix2_T"
-)
-
-s=c(100, 
-    10000,
-    1000000,
-    10000000)
-
-names=c(rep(reject_single_T[1],4), rep(reject_single_T[2],4), rep(reject_single_T[3],4),
-        rep(reject_single_T[4],4),rep(reject_single_T[5],4),rep(reject_single_T[6],4),
-        rep(reject_single_T[7],4)  )
-
-
-iteration=rep(s,7)
-
-
-reject_all_T=c(reject_dbetann_T[,3], reject_dtnorm_T[,3],
-reject_dtexp_T[,3], reject_dunif_mix_T[,3], reject_dunif_mix_T[,3],
-reject_dtnorm_mix1_T[,3], reject_dtnorm_mix2_T[,3])
-
-reject_data_T=data.frame(cbind(names, iteration, "time"=reject_all_T) )
-
+load("reject_data_T.Rdata")
 options(warn=-1)
-xtable(reject_data_T, type="html", digits=3)
+xtable(reject_data, type="html", digits=3)
 options(warn=0)
 
-
 ```
-
 
 
 
@@ -382,6 +204,110 @@ The paper ``Radford Neal, the annals of stat., 03-slice sampling" shows a way to
 In step 3), finding a horizontal line segment with two end points giving $df(x_{left,i})=df(x_{right,i})=y_i$ is not easy. We need set a step length $w$. Starting from $x_i$, expand the regime in that step length in both direction while checking if the end points have reached outside of density curve. 
 
 There is one problem in the fixed step length. If there exists a infinitly sharp mode, meaning the width of the tip goes to zero, $w$ may not well capture the regime at very narrow place. Then, if $x_i$ falls outside of that regime, we need to reject it and re-draw. The slice sampling can get stuck at this rejection sampling for extremely long time. To solve this problem, a threshold number for iteration in rejection sampling is set. 
+
+
+```{r}
+
+slice = function(n, dfunc, range, mc){
+  stopifnot(is.function(dfunc))
+  stopifnot(is.numeric(n))
+  stopifnot(is.logical(mc))
+  stopifnot(is.vector(range))
+  
+  if(mc==FALSE){
+    mc=1
+  } else{
+    if(n>10000)
+    {
+      mc=8
+    } else{
+      mc=2
+    }
+  }
+  
+  check<-function(x)
+  {
+    if (is.finite(x) & is.numeric(x)) return(0)
+    else
+    {
+      if (is.na(x)==TRUE) return(1)
+      else
+      {
+        if (is.nan(x)==TRUE) return(2)
+        else 
+        {
+          if ((is.infinite(x)==TRUE)) return(3)
+          else return(4)
+        }
+      }
+    }
+  }
+  
+  sampling<-function(nc,dfunc,range,cores) 
+  {
+    rangec=range
+    res<-matrix(NA,n,ncol=1,nrow=nc)
+    w=abs(rangec[1]-rangec[2])/10
+    y=0
+    for (i in 1:nc)
+    {
+      res[i]=runif(1,rangec[1],rangec[2])
+#       stopifnot(check(res[i])==0)
+#       stopifnot(check(dfunc(res[i]))==0)
+      k=0
+      kk=0
+      while (dfunc(res[i])<y) 
+      {
+        if (res[i]<res[i-1])
+        {
+          rangec[1]=res[i]
+        }
+        else
+        {
+          if (res[i]>res[i-1])
+          {
+            rangec[2]=res[i]
+          }
+        }
+        res[i]=runif(1,rangec[1],rangec[2])
+#         stopifnot(check(res[i])==0)
+#         stopifnot(check(dfunc(res[i]))==0)
+        k=k+1
+        if(k>10)
+        {
+          kk=kk+1
+         # print(c(k,kk,res[i],cores))
+          rangec=range
+          res[i]=runif(1,rangec[1],rangec[2])
+#           stopifnot(check(res[i])==0)
+#           stopifnot(check(dfunc(res[i]))==0)
+          break
+        }
+      }
+      y=runif(1,0,dfunc(res[i]))
+      rangec=rep(res[i],2)
+      while (dfunc(rangec[1])>y)
+      {
+        rangec[1]=rangec[1]-w
+      }
+      while (dfunc(rangec[2])>y)
+      {
+        rangec[2]=rangec[2]+w
+      }
+    }
+    return(res)
+  }
+  
+  cores=mc
+  nc=ceiling(n/cores)
+  sample<-unlist(mclapply(1:cores, function(z) sampling(nc,dfunc,range,cores),mc.cores = cores))
+  sample=sample[1:n]
+  return(sample)
+}
+
+```
+### tables
+
 
 
 
