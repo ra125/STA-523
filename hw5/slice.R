@@ -71,7 +71,7 @@ slice = function(n, dfunc, range, mc)
         if(k>10)
         {
           kk=kk+1
-          print(c(k,kk,res[i],cores))
+#           print(c(k,kk,res[i],cores))
           rangec=range
           res[i]=runif(1,rangec[1],rangec[2])
 #           stopifnot(check(res[i])==0)
@@ -173,7 +173,7 @@ dtnorm_mix2 = function(x)
           sapply(c(FALSE,TRUE),
                  function(y) 
                    {
-                   print(c(x,y))
+#                    print(c(x,y))
                    tperit<-system.time(sample<-slice(x,dbetann,c(0,1),mc = y))[3]/x
                    ttotal<-tperit*x
                    sc=score(sample,dbetann)
@@ -187,7 +187,7 @@ dtnorm_mix2 = function(x)
                     sapply(c(FALSE,TRUE),
                            function(y) 
                            {
-                             print(c(x,y))
+#                              print(c(x,y))
                              tperit<-system.time(sample<-slice(x,dtnorm,c(-3,3),mc = y))[3]/x
                              ttotal<-tperit*x
                              sc=score(sample,dtnorm)
@@ -201,7 +201,7 @@ dtnorm_mix2 = function(x)
                    sapply(c(FALSE,TRUE),
                           function(y) 
                           {
-                            print(c(x,y))
+#                             print(c(x,y))
                             tperit<-system.time(sample<-slice(x,dtexp,c(0,6),mc = y))[3]/x
                             ttotal<-tperit*x
                             sc=score(sample,dtexp)
@@ -215,7 +215,7 @@ dtnorm_mix2 = function(x)
                   sapply(c(FALSE,TRUE),
                          function(y) 
                          {
-                           print(c(x,y))
+#                            print(c(x,y))
                            tperit<-system.time(sample<-slice(x,dunif_mix,c(-3,4),mc = y))[3]/x
                            ttotal<-tperit*x
                            sc=score(sample,dunif_mix)
@@ -229,7 +229,7 @@ dtnorm_mix2 = function(x)
                       sapply(c(FALSE,TRUE),
                              function(y) 
                              {
-                               print(c(x,y))
+#                                print(c(x,y))
                                tperit<-system.time(sample<-slice(x,dtnorm_mix1,c(0,10),mc = y))[3]/x
                                ttotal<-tperit*x
                                sc=score(sample,dtnorm_mix1)
@@ -243,7 +243,7 @@ dtnorm_mix2 = function(x)
                         sapply(c(FALSE,TRUE),
                                function(y) 
                                {
-                                 print(c(x,y))
+#                                  print(c(x,y))
                                  tperit<-system.time(sample<-slice(x,dtnorm_mix2,c(-4,4),mc = y))[3]/x
                                  ttotal<-tperit*x
                                  sc=score(sample,dtnorm_mix2)
