@@ -19,16 +19,38 @@ slice = function(n, dfunc, range, mc)
       mc=2
     }
   }
-    
+  
+  check<-function(x)
+  {
+    if (is.finite(x) & is.numeric(x)) return(0)
+    else
+    {
+      if (is.na(x)==TRUE) return(1)
+      else
+      {
+        if (is.nan(x)==TRUE) return(2)
+        else 
+        {
+          if ((is.infinite(x)==TRUE)) return(3)
+          else return(4)
+        }
+      }
+    }
+  }
+  
   sampling<-function(nc,dfunc,range,cores) 
   {
     rangec=range
     res<-matrix(NA,n,ncol=1,nrow=nc)
-    w=abs(range[1]-range[2])/20
+    w=abs(rangec[1]-rangec[2])/100
     y=0
     for (i in 1:nc)
     {
       res[i]=runif(1,rangec[1],rangec[2])
+      stopifnot(check(res[i])==0)
+      stopifnot(check(dfunc(res[i]))==0)
+      k=0
+      kk=0
       while (dfunc(res[i])<y) 
       {
         if (res[i]<rangec[1]+w)
@@ -43,6 +65,19 @@ slice = function(n, dfunc, range, mc)
           }
         }
         res[i]=runif(1,rangec[1],rangec[2])
+        stopifnot(check(res[i])==0)
+        stopifnot(check(dfunc(res[i]))==0)
+        k=k+1
+        if(k>10)
+        {
+          kk=kk+1
+          print(c(k,kk,res[i],cores))
+          rangec=range
+          res[i]=runif(1,rangec[1],rangec[2])
+          stopifnot(check(res[i])==0)
+          stopifnot(check(dfunc(res[i]))==0)
+          break
+        }
       }
       y=runif(1,0,dfunc(res[i]))
       rangec=rep(res[i],2)
@@ -63,6 +98,25 @@ slice = function(n, dfunc, range, mc)
   sample<-unlist(mclapply(1:cores, function(z) sampling(nc,dfunc,range,cores),mc.cores = cores))
   sample=sample[1:n]
   return(sample)
+}
+
+#score function
+score = function(x, dfunc) 
+{
+  stopifnot(is.numeric(x) & length(x))
+  
+  x = sort(x)
+  n = length(x)
+  
+  ex = ecdf(x)(x)
+  
+  dx = dfunc(x)
+  ed = cumsum(c(0, (x[-1]-x[-n])*(dx[-1]+dx[-n])/2))
+  
+  #hist(x, breaks = 1000,freq = FALSE)
+  #lines(x,dfunc(x))
+  
+  return( sqrt(sum((ex-ed)^2)/n) )
 }
 
 ## test samples
@@ -113,15 +167,89 @@ dtnorm_mix2 = function(x)
 }
 
 #dbetann
-(time<-sapply(c(10000),
+(tdbetann<-sapply(c(100,10000,1000000,10000000),
        function(x)
        {
           sapply(c(FALSE,TRUE),
                  function(y) 
                    {
-                   return(system.time(slice(x,dbetann,c(0,1),mc = y)/x)[3]/x)
+                   print(c(x,y))
+                   tperit<-system.time(sample<-slice(x,dbetann,c(0,1),mc = y))[3]/x
+                   ttotal<-tperit*x
+                   sc=score(sample,dbetann)
+                   return(c(ttotal,tperit,sc))
                  })
        }))
+
+(tdtnorm<-sapply(c(100,10000,1000000,10000000),
+                  function(x)
+                  {
+                    sapply(c(FALSE,TRUE),
+                           function(y) 
+                           {
+                             print(c(x,y))
+                             tperit<-system.time(sample<-slice(x,dtnorm,c(-3,3),mc = y))[3]/x
+                             ttotal<-tperit*x
+                             sc=score(sample,dtnorm)
+                             return(c(ttotal,tperit,sc))
+                           })
+                  }))
+
+(tdtexp<-sapply(c(100,10000,1000000,10000000),
+                 function(x)
+                 {
+                   sapply(c(FALSE,TRUE),
+                          function(y) 
+                          {
+                            print(c(x,y))
+                            tperit<-system.time(sample<-slice(x,dtexp,c(0,6),mc = y))[3]/x
+                            ttotal<-tperit*x
+                            sc=score(sample,dtexp)
+                            return(c(ttotal,tperit,sc))
+                          })
+                 }))
+
+(tdunif_mix<-sapply(c(100,10000,1000000,10000000),
+                function(x)
+                {
+                  sapply(c(FALSE,TRUE),
+                         function(y) 
+                         {
+                           print(c(x,y))
+                           tperit<-system.time(sample<-slice(x,dunif_mix,c(-3,4),mc = y))[3]/x
+                           ttotal<-tperit*x
+                           sc=score(sample,dunif_mix)
+                           return(c(ttotal,tperit,sc))
+                         })
+                }))
+
+(tdtnorm_mix1<-sapply(c(100,10000,1000000,10000000),
+                    function(x)
+                    {
+                      sapply(c(FALSE,TRUE),
+                             function(y) 
+                             {
+                               print(c(x,y))
+                               tperit<-system.time(sample<-slice(x,dtnorm_mix1,c(0,10),mc = y))[3]/x
+                               ttotal<-tperit*x
+                               sc=score(sample,dtnorm_mix1)
+                               return(c(ttotal,tperit,sc))
+                             })
+                    }))
+
+(tdtnorm_mix2<-sapply(c(100,10000,1000000,10000000),
+                      function(x)
+                      {
+                        sapply(c(FALSE,TRUE),
+                               function(y) 
+                               {
+                                 print(c(x,y))
+                                 tperit<-system.time(sample<-slice(x,dtnorm_mix2,c(-4,4),mc = y))[3]/x
+                                 ttotal<-tperit*x
+                                 sc=score(sample,dtnorm_mix2)
+                                 return(c(ttotal,tperit,sc))
+                               })
+                      }))
 
 #dtnorm
 # sapply(c(100,10000,1000000,10000000),
@@ -226,23 +354,7 @@ system.time(edtnorm_mix2<-slice(n=nofr, dfunc=dtnorm_mix2, range=c(-4,4), mc=FAL
 
 ##scoring
 
-score = function(x, dfunc) 
-{
-  stopifnot(is.numeric(x) & length(x))
-  
-  x = sort(x)
-  n = length(x)
-  
-  ex = ecdf(x)(x)
-  
-  dx = dfunc(x)
-  ed = cumsum(c(0, (x[-1]-x[-n])*(dx[-1]+dx[-n])/2))
-  
-  #hist(x, breaks = 1000,freq = FALSE)
-  #lines(x,dfunc(x))
-  
-  return( sqrt(sum((ex-ed)^2)/n) )
-}
+
 
 score(edbetann, dbetann)
 score(edtnorm,dtnorm)
