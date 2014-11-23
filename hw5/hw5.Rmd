@@ -7,6 +7,37 @@ output: html_document
 
 ## Sampler 
 
+###Slice
+##Algorithm
+The paper ``Radford Neal, the annals of stat., 03-slice sampling" shows a way to sample under the area of pdf function. The algorithm is following.
+
+1) Starting from the support regime of the density function $df(x)$, outside which the value of the function is only zero, uniformly draw one sample $x_0$ from that regime.
+2) Find the $df(x_0)$ and uniformly draw one sample from [$0$,$df(x_0)$] giving $y_0$.
+3) Draw a horizontal line, and find the smallest regime where $df(x)>y_0$. And uniformly draw on sample from that regime giving $x_1$.
+4) Draw a sample from vertical line segment [$0$,$df(x_1)$] giving $y_1$.
+5) Repeat step 3) and 4) until the sample size of $\{x_i\}$ reaches given value.
+
+##Realization
+In step 3), finding a horizontal line segment with two end points giving $df(x_{left,i})=df(x_{right,i})=y_i$ is not easy. We need set a step length $w$. Starting from $x_i$, expand the regime in that step length in both direction while checking if the end points have reached outside of density curve. 
+
+There is one problem in the fixed step length. If there exists a infinitly sharp mode, meaning the width of the tip goes to zero, $w$ may not well capture the regime at very narrow place. Then, if $x_i$ falls outside of that regime, we need to reject it and re-draw. The slice sampling can get stuck at this rejection sampling for extremely long time. To solve this problem, a threshold number for iteration in rejection sampling is set. 
+
+
+```{r}
+
+```
+
+
+```{r}
+
+```
+
+
+
+
+dbetann:
+
+
 ```{r}
 
 ```
