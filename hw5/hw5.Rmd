@@ -5,6 +5,14 @@ date: "11/10/2014"
 output: html_document
 ---
 
+
+```{r}
+#Load necessary packages first!
+source("check_packages.R")
+check_packages(c("parallel","xtable", "doMC", "foreach", "truncnorm", "iterators")) 
+```
+
+
 ## Sampler 
 
 ###Slice
@@ -24,6 +32,7 @@ There is one problem in the fixed step length. If there exists a infinitly sharp
 
 
 ```{r}
+
 
 ```
 
