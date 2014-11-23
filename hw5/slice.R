@@ -42,31 +42,31 @@ slice = function(n, dfunc, range, mc)
   {
     rangec=range
     res<-matrix(NA,n,ncol=1,nrow=nc)
-    w=abs(rangec[1]-rangec[2])/100
+    w=abs(rangec[1]-rangec[2])/10
     y=0
     for (i in 1:nc)
     {
       res[i]=runif(1,rangec[1],rangec[2])
-      stopifnot(check(res[i])==0)
-      stopifnot(check(dfunc(res[i]))==0)
+#       stopifnot(check(res[i])==0)
+#       stopifnot(check(dfunc(res[i]))==0)
       k=0
       kk=0
       while (dfunc(res[i])<y) 
       {
-        if (res[i]<rangec[1]+w)
+        if (res[i]<res[i-1])
         {
           rangec[1]=res[i]
         }
         else
         {
-          if (res[i]>rangec[2]-w)
+          if (res[i]>res[i-1])
           {
             rangec[2]=res[i]
           }
         }
         res[i]=runif(1,rangec[1],rangec[2])
-        stopifnot(check(res[i])==0)
-        stopifnot(check(dfunc(res[i]))==0)
+#         stopifnot(check(res[i])==0)
+#         stopifnot(check(dfunc(res[i]))==0)
         k=k+1
         if(k>10)
         {
@@ -74,8 +74,8 @@ slice = function(n, dfunc, range, mc)
           print(c(k,kk,res[i],cores))
           rangec=range
           res[i]=runif(1,rangec[1],rangec[2])
-          stopifnot(check(res[i])==0)
-          stopifnot(check(dfunc(res[i]))==0)
+#           stopifnot(check(res[i])==0)
+#           stopifnot(check(dfunc(res[i]))==0)
           break
         }
       }
