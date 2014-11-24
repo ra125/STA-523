@@ -1,7 +1,6 @@
-library(parallel)
-library(doMC)
-library(foreach)
-library(xtable)
+source("check_packages.R")
+check_packages(c("parallel","xtable", "doMC", "foreach")) 
+
 
 reject = function(n, dfunc, range, mc){ 
   stopifnot(is.function(dfunc))
