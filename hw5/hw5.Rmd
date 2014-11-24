@@ -123,10 +123,10 @@ load("reject_data_T.Rdata")
 tt2<-droplevels(reject_data_T[24,4])
 tt2<-as.numeric(levels(tt2))
 
-time_per_iteration2=c(as.numeric(levels(reject_data_T[,4])), tt2)
+time_per_iteration2=as.numeric(levels(reject_data_T[,4]))
 
 table2=data.frame("distribution_names"=unlist(reject_data_T[,1]),"N_iteration"=iteration,
-                time_per_iteration)
+                time_per_iteration2)
 
 ```
 ```{r table3,results='asis'}
