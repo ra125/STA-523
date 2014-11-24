@@ -13,7 +13,7 @@ check_packages(c("parallel","xtable", "doMC", "foreach", "truncnorm", "iterators
 ```
 
 #IMPORTANT NOTE:
-The .Rdata files are present in the hw5 folder so we can directly run the .RmD. But to reproduce the data, please run the 4 .R files before running the .RmD. The 4 .R files are: reject.R, mh_final.R, slice.R and R.R. 
+The .Rdata files are present in the hw5 folder so we can directly run the .RmD. But to reproduce the data, please run the 4 .R files before running the .RmD. The 4 .R files are: reject.R, mh_final.R, slice.R and R.R. Alternately, run the makefile! 
 
 In this assignment, we test the time difference between the single core and the multicore implementations of codes in R, required for running four samplers. 
 
@@ -24,7 +24,7 @@ The four samplers constructed in testing the running time for single core and mu
 ###NOTE:
 We have used a general strategy common to all samplers that when mc=FALSE we use a single core and when mc=TRUE we use 2 cores if sample size is 10000 or less and 8 cores if sample size is greater than 10000.
 
-## 1. Rejection sampling
+# 1. Rejection sampling
 
 Strategy:
 1. We first sample uniformly from the X axis -- this is the x value of the envelop density. Since all the given test distribution functions have specified ranges, the X values for the envelop function is (min(range), max(range)). With the X values, we create an envelope function which is greater than or equal to the target distribution we wish to sample from at all points. 
@@ -78,7 +78,7 @@ reject = function(n, dfunc, range, mc){
 
 ```
 
-###Score table for rejection sampler when n = 1,000,000
+## Score table for rejection sampler when n = 1,000,000
 The code to generate the following table is included in the reject.R file, which is saved under hw5 directory. 
 
 ```{r}
@@ -91,23 +91,12 @@ options(warn=0)
 print.xtable(x,type="html")
 ```
 
-### Singlecore timings (per iteration)- Rejection sampler
+## Singlecore timings (per iteration)- Rejection sampler
 The code to generate the following table is included in the reject.R file, which is saved under hw5 directory. 
+In the table below, we show the total times it took to run each function as well as the time required for each iteration. Since the numbers are informative, we present the raw values here.
 
 ```{r}
 load("reject_data.Rdata")
-# tt<-droplevels(reject_data[24,4])
-# tt<-as.numeric(levels(tt))
-# 
-# time_per_iteration=c(as.numeric(levels(reject_data[,4])), tt)
-# 
-# s=c("100", 
-#     "10000",
-#     "1000000",
-#     "10000000")
-# iteration=rep(s,6)
-# table1=data.frame("distribution_names"=unlist(reject_data[,1]),"N_iteration"=iteration,
-#                 time_per_iteration)
 ```
 ```{r table2,results='asis'}
 options(warn=-1)
@@ -116,18 +105,12 @@ options(warn=0)
 print.xtable(x1,type="html")
 
 ```
-### Multicore timings (per iteration)- Rejection sampler
+## Multicore timings (per iteration)- Rejection sampler
+
+This is the same table for rection sampler, but in running each function, multiple cores are used. In particular, we use 2 cores for the first two sample sizes and 8 cores for the iterations that are larger than 10,000 for efficiency. We notice that multicore functions take a lot less time. The difference is highlighted when when n is large. 
 
 ```{r}
 load("reject_data_T.Rdata")
-# tt2<-droplevels(reject_data_T[24,4])
-# tt2<-as.numeric(levels(tt2))
-# 
-# time_per_iteration2=as.numeric(levels(reject_data_T[,4]))
-# 
-# table2=data.frame("distribution_names"=unlist(reject_data_T[,1]),"N_iteration"=iteration,
-#                 time_per_iteration2)
-
 ```
 ```{r table3,results='asis'}
 options(warn=-1)
@@ -136,11 +119,14 @@ options(warn=0)
 print.xtable(x2,type="html")
 ```
 
-## 2. Metropolis Hastings sampling
+# 2. Metropolis Hastings sampling
 
 Approach:
+
 1) We have used metropolis random walk method with a normal proposal density.
+
 2) We use the first 200 samples to tune the value of sigma square used in the normal proposal density. The tuning is such that the acceptance probability is between 0.3 to 0.4 percent. If acceptance probability is small, the sigma square is made smaller and vice versa. We have written a function called 'tuning' for this purpose. It returns the tuned value of sigma square.
+
 3) We then implement the metropolis random walk in the function called sampling. Here, the standard metropolis random walk is implemented. That is if the sample from unif(0,1) is less than the acc prob then we accept the proposal, else reject it and keep the old sample.
 
 The code is as below:
@@ -254,7 +240,7 @@ mh = function(n, dfunc, range, mc=FALSE){
 }
 ```
 
-### Table with time/iteration for single core and multicore and scores (SC and MC) for 1 mil samples.
+## Table with time/iteration for single core and multicore and scores (SC and MC) for 1 mil samples.
 Code is available in mh_final.R file in hw5 folder.
 
 ```{r}
@@ -267,9 +253,10 @@ options(warn=0)
 print.xtable(x3,type="html")
 ```
 
-## 3. Slice sampling
 
-#Algorithm
+# 3. Slice sampling
+
+### Algorithm
 The paper ``Radford Neal, the annals of stat., 03-slice sampling" shows a way to sample under the area of pdf function. The algorithm is as follows.
 
 1) Starting from the support regime of the density function $df(x)$, outside which the value of the function is only zero, uniformly draw one sample $x_0$ from that regime.
@@ -278,7 +265,7 @@ The paper ``Radford Neal, the annals of stat., 03-slice sampling" shows a way to
 4) Draw a sample from vertical line segment [$0$,$df(x_1)$] giving $y_1$.
 5) Repeat step 3) and 4) until the sample size of $\{x_i\}$ reaches given value.
 
-##Realization
+### Realization
 In step 3), finding a horizontal line segment with two end points giving $df(x_{left,i})=df(x_{right,i})=y_i$ is not easy. We need set a step length $w$. Starting from $x_i$, expand the regime in that step length in both direction while checking if the end points have reached outside of density curve. 
 
 There is one problem in the fixed step length. If there exists a infinitly sharp mode, meaning the width of the tip goes to zero, $w$ may not well capture the regime at very narrow place. Then, if $x_i$ falls outside of that regime, we need to reject it and re-draw. The slice sampling can get stuck at this rejection sampling for extremely long time. To solve this problem, a threshold number for iteration in rejection sampling is set. Above this threhold, the sampling would start with the original range. This would results in some smoothness in the sharp modes. However, even though we use adaptive step width $w$, the sampling profile wouldn't be infinitely sharp. 
@@ -330,8 +317,6 @@ slice = function(n, dfunc, range, mc){
     for (i in 1:nc)
     {
       res[i]=runif(1,rangec[1],rangec[2])
-#       stopifnot(check(res[i])==0)
-#       stopifnot(check(dfunc(res[i]))==0)
       k=0
       kk=0
       while (dfunc(res[i])<y) 
@@ -348,17 +333,14 @@ slice = function(n, dfunc, range, mc){
           }
         }
         res[i]=runif(1,rangec[1],rangec[2])
-#         stopifnot(check(res[i])==0)
-#         stopifnot(check(dfunc(res[i]))==0)
         k=k+1
         if(k>10)
         {
           kk=kk+1
-         # print(c(k,kk,res[i],cores))
+
           rangec=range
           res[i]=runif(1,rangec[1],rangec[2])
-#           stopifnot(check(res[i])==0)
-#           stopifnot(check(dfunc(res[i]))==0)
+
           break
         }
       }
@@ -385,7 +367,7 @@ slice = function(n, dfunc, range, mc){
 
 ```
 
-### Score table for slice sampler when n = 1,000,000
+## Score table for slice sampler when n = 1,000,000
 The code to generate the following table is included in the slice.R file, which is saved under hw5 directory. 
 
 ```{r}
@@ -394,38 +376,25 @@ options(warn=-1)
 x=xtable(score_slice_data, type="html", digits=3)
 options(warn=0)
 ```
-```{r table4,results='asis'}
+```{r table4444,results='asis'}
 print.xtable(x,type="html")
 ```
-# 
-# ###Singlecore (time/iteration) - Slice sampler
-# The code to generate the following table is included in the slice.R file, which is saved under hw5 directory. 
-# ```{r}
-# load("slice_data.Rdata")
-# options(warn=-1)
-# x=xtable(slice_data, type="html", digits=3)
-# options(warn=0)
-# ```
-# ```{r table5,results='asis'}
-# print.xtable(x,type="html")
-# ```
-# ###Multicore (time/iteration) - Slice sampler
-# ```{r}
-# load("slice_data_T.Rdata")
-# options(warn=-1)
-# x=xtable(slice_data_T, type="html", digits=3)
-# options(warn=0)
-# ```
-# ```{r table6,results='asis'}
-# print.xtable(x,type="html")
-# ```
 
+## Single core and Multi core - Slice sampler
+The code to generate the following table is included in the slice.R file, which is saved under hw5 directory. The time shown in the total time column are the times for the whole function. It doesnt display the time/iteration right now but we will change that ASAP.
+```{r}
+load("slice_data_T.Rdata")
+options(warn=-1)
+x=xtable(slice_data_T, type="html")
+options(warn=0)
+```
+```{r table5555,results='asis'}
+print.xtable(x,type="html")
+```
 
+# 4. R sampling
 
-
-## 4. R sampling
-
-Here we have used R's inbuilt sampling functions such as rbeta, rexp, rnorm, rtruncnorm etc. to sample from the given distributions. To sample from the truncated distributions we have used a slightly larger value of n and then returned only the samples that were in the range. We did not loop over the n to get exact number of samples as that was very time consuming. For mixture models, we sampled in the same percentage as was done in ethe function implementation. 
+Here we have used R's inbuilt sampling functions such as rbeta, rexp, rnorm, rtruncnorm etc. to sample from the given distributions. To sample from the truncated distributions we have used a slightly larger value of n and then returned only the samples that were in the range. We did not loop over the n to get exact number of samples as that was very time consuming. For mixture models, we sampled in the same percentage as was done in the function implementation in the homework question. 
 
 The code is present in the R.R file which generates the .Rdata file for the table. The code for R sampler is as follows:
 
@@ -487,7 +456,8 @@ R = function(n,dfunc,range,mc){
 
 ```
 
-### Table with time/iteration for single core and multicore and scores (SC and MC) for 1 mil samples.
+
+## Table with time/iteration for single core and multicore and scores (SC and MC) for 1 mil samples.
 Code is available in R.R file in hw5 folder.
 
 ```{r}
@@ -499,5 +469,7 @@ options(warn=0)
 ```{r table5,results='asis'}
 print.xtable(x4,type="html")
 ```
+
+
 
 
