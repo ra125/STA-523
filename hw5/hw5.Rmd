@@ -18,6 +18,9 @@ In this assignment, we test the time difference between the single core and the 
 
 The four samplers constructed in testing the running time for single core and multi core are as follows. 
 
+###NOTE:
+We have used a general strategy common to all samplers that when mc=FALSE we use a single core and when mc=TRUE we use 2 cores if sample size is 10000 or less and 8 cores if sample size is greater than 10000.
+
 ## 1. Rejection sampling
 
 Strategy:
@@ -107,12 +110,142 @@ options(warn=0)
 print.xtable(x,type="html")
 ```
 
-
 ## 2. Metropolis Hastings sampling
 
+Approach:
+1) We have used metropolis random walk method with a normal proposal density.
+2) We use the first 200 samples to tune the value of sigma square used in the normal proposal density. The tuning is such that the acceptance probability is between 0.3 to 0.4 percent. If acceptance probability is small, the sigma square is made smaller and vice versa. We have written a function called 'tuning' for this purpose. It returns the tuned value of sigma square.
+3) We then implement the metropolis random walk in the function called sampling. Here, the standard metropolis random walk is implemented. That is if the sample from unif(0,1) is less than the acc prob then we accept the proposal, else reject it and keep the old sample.
 
+The code is as below:
 
-### 3. Slice sampling
+```{r}
+library(xtable)
+
+mh = function(n, dfunc, range, mc=FALSE){
+  library(parallel)
+  library(doMC)
+  library(foreach)
+  
+  stopifnot(is.function(dfunc))
+  stopifnot(is.numeric(n))
+  stopifnot(is.logical(mc))
+  stopifnot(is.vector(range))
+  
+  if(mc==FALSE){
+    mc=1
+  } else{
+    if(n>10000)
+    {
+      mc=8
+    } else{
+      mc=2
+    }
+  }
+  
+  min=min(range)
+  max=max(range)
+  
+  tuning=function(dfunc,min,max)
+  {
+    v=1.5
+    tune=0.1
+    while(tune<0.3 || tune>0.4){
+      if(tune<0.1)
+      {
+        v=v/1.2
+      } else 
+      {
+        if(tune>=0.1 && tune<0.3)
+        {
+          v=v/1.1
+        } else 
+          {
+            if(tune>0.55)
+            {
+              v=v*1.25
+            } else 
+              {
+                if(tune<=0.55 && tune>0.4)
+                {
+                  v=v*1.15
+                }
+              }
+          }
+      }
+      
+      count=0
+      tunmat=matrix(0,200,1)
+      tunmat[1]=runif(1,min,max)
+      
+      for(i in 2:200) 
+      {
+        prop=rnorm(1,tunmat[i-1],v)
+        
+        if(prop<min || prop>max)
+        {
+          tunmat[i]=tunmat[i-1] 
+        } else{
+          acprob=min(1,dfunc(prop)/dfunc(tunmat[i-1]))
+          sam=runif(1,0,1)
+          if(sam<=acprob)
+          {
+            tunmat[i]=prop
+            count=count+1
+          } else
+          {tunmat[i]=tunmat[i-1]
+          }
+        }
+      }  
+      tune=count/200
+    } 
+    return(v)
+  }
+  v=tuning(dfunc,min,max)
+  
+  sampling=function(n,dfunc,min,max,v){
+    
+    x=matrix(0,n,1)
+    x[1]=runif(1,min,max)
+    
+    for(i in 2:n) 
+    {
+      prop=rnorm(1,x[i-1],v)
+      
+      if(prop<min || prop>max)
+      {
+        x[i]=x[i-1]
+      } else{
+        accprob=min(1,dfunc(prop)/dfunc(x[i-1]))
+        sam=runif(1,0,1)
+        if(sam<=accprob)
+        {
+          x[i]=prop
+        } else
+        {x[i]=x[i-1]}
+      }
+    }
+    return(x)}
+  vec=unlist(mclapply(1:mc, function(x) sampling(ceiling(n/mc),dfunc,min,max,v),mc.cores=mc))
+  vec=vec[1:n]
+  return(vec)
+}
+```
+
+### Table with time/iteration for single core and multicore and scores (SC and MC) for 1 mil samples.
+Code is available in mh_final.R file in hw5 folder.
+
+```{r}
+load("MHtimes.Rdata")
+options(warn=-1)
+x=xtable(mhmain, type="html", digits=3)
+options(warn=0)
+```
+```{r table44,results='asis'}
+print.xtable(x,type="html")
+```
+
+## 3. Slice sampling
 
 #Algorithm
 The paper ``Radford Neal, the annals of stat., 03-slice sampling" shows a way to sample under the area of pdf function. The algorithm is as follows.
@@ -230,7 +363,7 @@ slice = function(n, dfunc, range, mc){
 
 ```
 
-# Score table for slice sampler when n = 1,000,000
+### Score table for slice sampler when n = 1,000,000
 The code to generate the following table is included in the slice.R file, which is saved under hw5 directory. 
 
 ```{r}
@@ -243,7 +376,7 @@ options(warn=0)
 print.xtable(x,type="html")
 ```
 
-# singlecore - Slice sampler
+###Singlecore (time/iteration) - Slice sampler
 The code to generate the following table is included in the slice.R file, which is saved under hw5 directory. 
 ```{r}
 load("slice_data.Rdata")
@@ -254,11 +387,11 @@ options(warn=0)
 ```{r table5,results='asis'}
 print.xtable(x,type="html")
 ```
-# multiore - Slice sampler
+###Multicore (time/iteration) - Slice sampler
 ```{r}
 load("slice_data_T.Rdata")
 options(warn=-1)
-x=xtable(reject_data, type="html", digits=3)
+x=xtable(slice_data_T, type="html", digits=3)
 options(warn=0)
 ```
 ```{r table6,results='asis'}
