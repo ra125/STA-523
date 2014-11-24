@@ -121,8 +121,11 @@ print.xtable(x2,type="html")
 ## 2. Metropolis Hastings sampling
 
 Approach:
+
 1) We have used metropolis random walk method with a normal proposal density.
+
 2) We use the first 200 samples to tune the value of sigma square used in the normal proposal density. The tuning is such that the acceptance probability is between 0.3 to 0.4 percent. If acceptance probability is small, the sigma square is made smaller and vice versa. We have written a function called 'tuning' for this purpose. It returns the tuned value of sigma square.
+
 3) We then implement the metropolis random walk in the function called sampling. Here, the standard metropolis random walk is implemented. That is if the sample from unif(0,1) is less than the acc prob then we accept the proposal, else reject it and keep the old sample.
 
 The code is as below:
@@ -389,7 +392,7 @@ print.xtable(x,type="html")
 
 ## 4. R sampling
 
-Here we have used R's inbuilt sampling functions such as rbeta, rexp, rnorm, rtruncnorm etc. to sample from the given distributions. To sample from the truncated distributions we have used a slightly larger value of n and then returned only the samples that were in the range. We did not loop over the n to get exact number of samples as that was very time consuming. For mixture models, we sampled in the same percentage as was done in ethe function implementation. 
+Here we have used R's inbuilt sampling functions such as rbeta, rexp, rnorm, rtruncnorm etc. to sample from the given distributions. To sample from the truncated distributions we have used a slightly larger value of n and then returned only the samples that were in the range. We did not loop over the n to get exact number of samples as that was very time consuming. For mixture models, we sampled in the same percentage as was done in the function implementation in the homework question. 
 
 The code is present in the R.R file which generates the .Rdata file for the table. The code for R sampler is as follows:
 
