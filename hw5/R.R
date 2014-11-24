@@ -58,6 +58,71 @@ R = function(n,dfunc,range,mc){
   }
 }
 
+#score function
+score = function(x, dfunc) 
+{
+  stopifnot(is.numeric(x) & length(x))
+  
+  x = sort(x)
+  n = length(x)
+  
+  ex = ecdf(x)(x)
+  
+  dx = dfunc(x)
+  ed = cumsum(c(0, (x[-1]-x[-n])*(dx[-1]+dx[-n])/2))
+  
+  #hist(x, breaks = 1000,freq = FALSE)
+  #lines(x,dfunc(x))
+  
+  return( sqrt(sum((ex-ed)^2)/n) )
+}
+
+## test samples
+#beta 0.9, 0.9
+dbetann = function(x)
+{
+  dbeta(x,0.9,0.9)
+}
+
+#truncated normal
+dtnorm = function(x)
+{
+  ifelse(x < -3 | x > 3, 0, dnorm(x)/0.9973002)
+}
+
+#truncated exponential
+dtexp = function(x)
+{
+  ifelse(x < 0 | x > 6, 0, dexp(x, rate=1/3)/0.8646647)
+}
+
+#uniform mixture
+dunif_mix = function(x)
+{
+  ifelse(x >= -3 & x < -1, 0.6*dunif(x,-3,-1),
+         ifelse(x >= -1 & x <  1, 0.1*dunif(x,-1, 1),
+                ifelse(x >=  1 & x <  4, 0.3*dunif(x, 1, 4), 
+                       0)))
+}
+
+#truncated normal mixture 1
+dtnorm_mix1 = function(x)
+{
+  ifelse(x < 0 | x > 10, 
+         0, 
+         ( 0.5*dnorm(x,mean=2,sd=2)
+           +0.5*dnorm(x,mean=6,sd=1))/0.9206407)
+}
+
+#truncated normal mixture 2
+dtnorm_mix2 = function(x)
+{
+  ifelse(x < -4 | x > 4, 
+         0, 
+         ( 0.45*dnorm(x,mean=-4)
+           +0.45*dnorm(x,mean= 4)
+           +0.1 *dnorm(x,mean= 0,sd=0.5))/0.55)
+}
 
 Rs11<-system.time(R(100,dbetann,c(0,1),FALSE))[3]
 Rs12<-system.time(R(10000,dbetann,c(0,1),FALSE))[3]
@@ -119,15 +184,41 @@ Rm62<-system.time(R(10000,dtnorm_mix2,c(-4,4),TRUE))[3]
 Rm63<-system.time(R(1000000,dtnorm_mix2,c(-4,4),TRUE))[3]
 Rm64<-system.time(R(10000000,dtnorm_mix2,c(-4,4),TRUE))[3]
 
-r1=cbind(Rs11,Rs12,Rs13,Rs14,Rm11,Rm12,Rm13,Rm14)
-r2=cbind(Rs21,Rs22,Rs23,Rs24,Rm21,Rm22,Rm23,Rm24)
-r3=cbind(Rs31,Rs32,Rs33,Rs34,Rm31,Rm32,Rm33,Rm34)
-r4=cbind(Rs41,Rs42,Rs43,Rs44,Rm41,Rm42,Rm43,Rm44)
-r5=cbind(Rs51,Rs52,Rs53,Rs54,Rm51,Rm52,Rm53,Rm54)
-r6=cbind(Rs61,Rs62,Rs63,Rs64,Rm61,Rm62,Rm63,Rm64)
+n1=100
+n2=10000
+n3=1000000
+n4=10000000
 
-t=rbind(r1,r2,r3,r4,r5,r6)
+r1=cbind(Rs11/n1,Rs12/n2,Rs13/n3,Rs14/n4,Rm11/n1,Rm12/n2,Rm13/n3,Rm14/n4)
+r2=cbind(Rs21/n1,Rs22/n2,Rs23/n3,Rs24/n4,Rm21/n1,Rm22/n2,Rm23/n3,Rm24/n4)
+r3=cbind(Rs31/n1,Rs32/n2,Rs33/n3,Rs34/n4,Rm31/n1,Rm32/n2,Rm33/n3,Rm34/n4)
+r4=cbind(Rs41/n1,Rs42/n2,Rs43/n3,Rs44/n4,Rm41/n1,Rm42/n2,Rm43/n3,Rm44/n4)
+r5=cbind(Rs51/n1,Rs52/n2,Rs53/n3,Rs54/n4,Rm51/n1,Rm52/n2,Rm53/n3,Rm54/n4)
+r6=cbind(Rs61/n1,Rs62/n2,Rs63/n3,Rs64/n4,Rm61/n1,Rm62/n2,Rm63/n3,Rm64/n4)
+r7=cbind("single_100","single_10000","single_1000000","single_10000000","multiple_100","multiple_10000","multiple_1000000","multiple_10000000")
 
 options(warn=-1)
-table=xtable(t,type="html",digits=3)
+t=data.frame(rbind(r7,r1,r2,r3,r4,r5,r6))
 options(warn=0)
+label=data.frame(rbind("R_sampler","dbetann","dtnorm","dtexp","dunif_mix","dtnorm_mix1","dtnorm_mix2"))
+
+sc1=score(R(1000000,dbetann,c(0,1),FALSE),dbetann)
+sc2=score(R(1000000,dtnorm,c(-3,3),FALSE),dtnorm)
+sc3=score(R(1000000,dtexp,c(0,6),FALSE),dtexp)
+sc4=score(R(1000000,dunif_mix,c(-3,4),FALSE),dunif_mix)
+sc5=score(R(1000000,dtnorm_mix1,c(0,10),FALSE),dtnorm_mix1)
+sc6=score(R(1000000,dtnorm_mix2,c(-4,4),FALSE),dtnorm_mix2)
+
+mc1=score(R(1000000,dbetann,c(0,1),TRUE),dbetann)
+mc2=score(R(1000000,dtnorm,c(-3,3),TRUE),dtnorm)
+mc3=score(R(1000000,dtexp,c(0,6),TRUE),dtexp)
+mc4=score(R(1000000,dunif_mix,c(-3,4),TRUE),dunif_mix)
+mc5=score(R(1000000,dtnorm_mix1,c(0,10),TRUE),dtnorm_mix1)
+mc6=score(R(1000000,dtnorm_mix2,c(-4,4),TRUE),dtnorm_mix2)
+
+sc=data.frame(rbind("SCscore",sc1,sc2,sc3,sc4,sc5,sc6))
+mc=data.frame(rbind("MCscore",mc1,mc2,mc3,mc4,mc5,mc6))
+
+mainr=data.frame(cbind(label,t,sc,mc))
+
+save(mainr, file="Rtimes.Rdata")
