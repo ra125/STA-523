@@ -281,3 +281,45 @@ slice_data_T[21:24,3:6]=t(tdtnorm_mix2[usefulrow,])
 
 save(slice_data_T, file="slice_data_T.Rdata")
 
+###### Scoring table
+
+s1=100
+s2=10000
+s3=1000000
+s4=10000000
+
+
+slice_score_dbetann_sc<-score(slice(n=s3, dfunc=dbetann, range=c(0,1), mc=FALSE), dbetann)
+slice_score_dbetann_mc<-score(slice(n=s3, dfunc=dbetann, range=c(0,1), mc=TRUE), dbetann)
+
+slice_score_dtnorm_sc<-score(slice(n=s3, dfunc=dtnorm, range=c(-3,3), mc=FALSE),dtnorm)
+slice_score_dtnorm_mc<-score(slice(n=s3, dfunc=dtnorm, range=c(-3,3), mc=TRUE),dtnorm)
+
+slice_score_dtexp_sc<-score(slice(n=s3, dfunc=dtexp, range=c(0,6), mc=FALSE),dtexp)
+slice_score_dtexp_mc<-score(slice(n=s3, dfunc=dtexp, range=c(0,6), mc=TRUE),dtexp)
+
+slice_score_dunif_mix_sc<-score(slice(n=s3, dfunc=dunif_mix, range=c(-3,4), mc=FALSE),dunif_mix)
+slice_score_dunif_mix_mc<-score(slice(n=s3, dfunc=dunif_mix, range=c(-3,4), mc=TRUE),dunif_mix)
+
+slice_score_dtnorm_mix1_sc<-score(slice(n=s3, dfunc=dtnorm_mix1, range=c(0,10), mc=FALSE),dtnorm_mix1)
+slice_score_dtnorm_mix1_mc<-score(slice(n=s3, dfunc=dtnorm_mix1, range=c(0,10), mc=TRUE),dtnorm_mix1)
+
+slice_score_dtnorm_mix2_sc<-score(slice(n=s3, dfunc=dtnorm_mix2, range=c(-4,4), mc=FALSE),dtnorm_mix2)
+slice_score_dtnorm_mix2_mc<-score(slice(n=s3, dfunc=dtnorm_mix2, range=c(-4,4), mc=TRUE),dtnorm_mix2)
+
+score_slice_names=c("slice_score_dbetann_sc","slice_score_dbetann_mc","slice_score_dtnorm_sc","slice_score_dtnorm_mc",
+                     "slice_score_dtexp_sc","slice_score_dtexp_mc","slice_score_dunif_mix_sc","slice_score_dunif_mix_mc",
+                     "slice_score_dtnorm_mix1_sc","slice_score_dtnorm_mix1_mc","slice_score_dtnorm_mix2_sc","slice_score_dtnorm_mix2_mc")
+
+score_slice=c(slice_score_dbetann_sc,slice_score_dbetann_mc,slice_score_dtnorm_sc,slice_score_dtnorm_mc,
+               slice_score_dtexp_sc,slice_score_dtexp_mc,slice_score_dunif_mix_sc,slice_score_dunif_mix_mc,
+               slice_score_dtnorm_mix1_sc,slice_score_dtnorm_mix1_mc,slice_score_dtnorm_mix2_sc,slice_score_dtnorm_mix2_mc)
+
+score_slice_data=data.frame(cbind(score_slice_names, score_slice))
+
+# save as a dataframe
+
+save(score_slice_data, file="score_slice_data.Rdata")
+
+
+
