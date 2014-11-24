@@ -1,5 +1,7 @@
-
 library(parallel)
+library(doMC)
+library(foreach)
+library(xtable)
 
 reject = function(n, dfunc, range, mc){ 
   stopifnot(is.function(dfunc))

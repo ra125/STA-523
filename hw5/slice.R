@@ -1,3 +1,8 @@
+library(parallel)
+library(doMC)
+library(foreach)
+
+library(xtable)
 slice = function(n, dfunc, range, mc)
 {
   stopifnot(is.function(dfunc))

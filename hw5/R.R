@@ -1,12 +1,13 @@
 ### R function 
 library(xtable)
+source("check_packages.R")
+check_packages(c("parallel","xtable", "doMC", "foreach", "truncnorm", "iterators")) 
 
 R = function(n,dfunc,range,mc){
   
   library(parallel)
   library(doMC)
   library(foreach)
-  library(truncnorm)
   
   stopifnot(is.function(dfunc))
   stopifnot(is.numeric(n))
