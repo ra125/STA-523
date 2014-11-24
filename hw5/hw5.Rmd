@@ -27,11 +27,12 @@ We have used a general strategy common to all samplers that when mc=FALSE we use
 # 1. Rejection sampling
 
 Strategy:
-1. We first sample uniformly from the X axis -- this is the x value of the envelop density. Since all the given test distribution functions have specified ranges, the X values for the envelop function is (min(range), max(range)). With the X values, we create an envelope function which is greater than or equal to the target distribution we wish to sample from at all points. 
 
-2. We use a for loop function for each sampled value's rejection/acceptance. For each value from the target distribution, evaluated at the drawn X, is compared to that of the envelop function. Specifically, we calculate the ratio of each Y value drawn from the target distribution to the envelop function, which is the unifrom density. 
+1) We first sample uniformly from the X axis -- this is the x value of the envelop density. Since all the given test distribution functions have specified ranges, the X values for the envelop function is (min(range), max(range)). With the X values, we create an envelope function which is greater than or equal to the target distribution we wish to sample from at all points. 
 
-3. If the drawn Y value from the envelop function falls under the target distribution, then accept the value. Otherwise, throw away the Y value. This process is repeated for n times.
+2) We use a for loop function for each sampled value's rejection/acceptance. For each value from the target distribution, evaluated at the drawn X, is compared to that of the envelop function. Specifically, we calculate the ratio of each Y value drawn from the target distribution to the envelop function, which is the unifrom density. 
+
+3) If the drawn Y value from the envelop function falls under the target distribution, then accept the value. Otherwise, throw away the Y value. This process is repeated for n times.
 
 ```{r}
 reject = function(n, dfunc, range, mc){ 
@@ -80,6 +81,7 @@ reject = function(n, dfunc, range, mc){
 
 ## Score table for rejection sampler when n = 1,000,000
 The code to generate the following table is included in the reject.R file, which is saved under hw5 directory. 
+The scores associatd with the names that end with sc are the scores for single core and the ones with mc are the socres of the multicore functions.
 
 ```{r}
 load("score_reject_data.Rdata")
@@ -381,11 +383,13 @@ print.xtable(x,type="html",digits=6)
 ```
 
 ## Single core and Multi core - Slice sampler
-The code to generate the following table is included in the slice.R file, which is saved under hw5 directory. The time shown in the total time column are the times for the whole function. It doesnt display the time/iteration right now but we will change that ASAP.
+
+The code to generate the following table is included in the slice.R file, which is saved under hw5 directory.
+
 ```{r}
 load("slice_data_T.Rdata")
 options(warn=-1)
-x=xtable(slice_data_T, type="html")
+x=xtable(slice_data_T, type="html",digits=15)
 options(warn=0)
 ```
 ```{r table5555,results='asis'}

@@ -77,7 +77,6 @@ slice = function(n, dfunc, range, mc)
           kk=kk+1
 
 #           print(c(k,kk,res[i],cores))
-=======
   #        print(c(k,kk,res[i],cores))
 
           rangec=range
@@ -264,6 +263,10 @@ dtnorm_mix2 = function(x)
                                  return(c(ttotal,tperit,sc))
                                })
                       }))
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2d5a188ade2bf670249143203eefc9559816ee5c
 
 slice_data_T<-matrix(NA,ncol=6,nrow=24)
 name<-rep(c("slice_dbetann","slice_dtnorm","slice_texp","slice_dunif_mix","slice_dtnorm_mix1","slice_dtnorm_mix2"),each=4)
