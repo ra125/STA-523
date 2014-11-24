@@ -249,7 +249,7 @@ reject_all=c(reject_dbetann[,3], reject_dtnorm[,3],
              reject_dtexp[,3], reject_dunif_mix[,3],
              reject_dtnorm_mix1[,3], reject_dtnorm_mix2[,3])
 
-reject_data=data.frame(cbind(names, iteration, "time_per_iteration"=reject_all/iteration) )
+reject_data=data.frame(cbind(names, iteration, "time"=reject_all,"time_per_iteration"=reject_all/iteration) )
 
 
 ## save as a dataframe
@@ -329,7 +329,7 @@ reject_all_T=c(reject_dbetann_T[,3], reject_dtnorm_T[,3],
                reject_dtexp_T[,3], reject_dunif_mix_T[,3],
                reject_dtnorm_mix1_T[,3], reject_dtnorm_mix2_T[,3])
 
-reject_data_T=data.frame(cbind(names, iteration, "time_per_iteration"=reject_all_T/iteration) )
+reject_data_T=data.frame(cbind(names, iteration, "time"=reject_all_T,"time_per_iteration"=reject_all_T/iteration) )
 
 ## save as a dataframe
 
