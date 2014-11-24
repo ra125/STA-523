@@ -84,7 +84,7 @@ The code to generate the following table is included in the reject.R file, which
 ```{r}
 load("score_reject_data.Rdata")
 options(warn=-1)
-x=xtable(score_reject_data, type="html", digits=3)
+x=xtable(score_reject_data, type="html")
 options(warn=0)
 ```
 ```{r table1,results='asis'}
@@ -96,22 +96,22 @@ The code to generate the following table is included in the reject.R file, which
 
 ```{r}
 load("reject_data.Rdata")
-tt<-droplevels(reject_data[24,4])
-tt<-as.numeric(levels(tt))
-
-time_per_iteration=c(as.numeric(levels(reject_data[,4])), tt)
-
-s=c("100", 
-    "10000",
-    "1000000",
-    "10000000")
-iteration=rep(s,6)
-table1=data.frame("distribution_names"=unlist(reject_data[,1]),"N_iteration"=iteration,
-                time_per_iteration)
+# tt<-droplevels(reject_data[24,4])
+# tt<-as.numeric(levels(tt))
+# 
+# time_per_iteration=c(as.numeric(levels(reject_data[,4])), tt)
+# 
+# s=c("100", 
+#     "10000",
+#     "1000000",
+#     "10000000")
+# iteration=rep(s,6)
+# table1=data.frame("distribution_names"=unlist(reject_data[,1]),"N_iteration"=iteration,
+#                 time_per_iteration)
 ```
 ```{r table2,results='asis'}
 options(warn=-1)
-x1=xtable(table1, type="html", digits=6)
+x1=xtable(reject_data, type="html")
 options(warn=0)
 print.xtable(x1,type="html")
 
@@ -120,18 +120,18 @@ print.xtable(x1,type="html")
 
 ```{r}
 load("reject_data_T.Rdata")
-tt2<-droplevels(reject_data_T[24,4])
-tt2<-as.numeric(levels(tt2))
-
-time_per_iteration2=as.numeric(levels(reject_data_T[,4]))
-
-table2=data.frame("distribution_names"=unlist(reject_data_T[,1]),"N_iteration"=iteration,
-                time_per_iteration2)
+# tt2<-droplevels(reject_data_T[24,4])
+# tt2<-as.numeric(levels(tt2))
+# 
+# time_per_iteration2=as.numeric(levels(reject_data_T[,4]))
+# 
+# table2=data.frame("distribution_names"=unlist(reject_data_T[,1]),"N_iteration"=iteration,
+#                 time_per_iteration2)
 
 ```
 ```{r table3,results='asis'}
 options(warn=-1)
-x2=xtable(table2, type="html", digits=6)
+x2=xtable(reject_data_T, type="html", digits=6)
 options(warn=0)
 print.xtable(x2,type="html")
 ```
@@ -388,15 +388,15 @@ slice = function(n, dfunc, range, mc){
 ### Score table for slice sampler when n = 1,000,000
 The code to generate the following table is included in the slice.R file, which is saved under hw5 directory. 
 
-# ```{r}
-# load("score_slice_data.Rdata")
-# options(warn=-1)
-# x=xtable(score_slice_data, type="html", digits=3)
-# options(warn=0)
-# ```
-# ```{r table4,results='asis'}
-# print.xtable(x,type="html")
-# ```
+```{r}
+load("score_slice_data.Rdata")
+options(warn=-1)
+x=xtable(score_slice_data, type="html", digits=3)
+options(warn=0)
+```
+```{r table4,results='asis'}
+print.xtable(x,type="html")
+```
 # 
 # ###Singlecore (time/iteration) - Slice sampler
 # The code to generate the following table is included in the slice.R file, which is saved under hw5 directory. 
