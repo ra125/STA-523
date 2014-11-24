@@ -389,12 +389,8 @@ The code to generate the following table is included in the slice.R file, which 
 ```{r}
 load("slice_data_T.Rdata")
 options(warn=-1)
-<<<<<<< HEAD
-x=xtable(slice_data_T, type="html",digits=6)
+x=xtable(as.data.frame(slice_data_T), type="html",digits=6)
 names(x)=c("names","times","single core total time","single core time per iteration","multi-core total time","multi-core time per iteration")
-=======
-x=xtable(slice_data_T, type="html")
->>>>>>> f631c5275f209df03a96ecb4c77d6f9d0d1a2ee0
 options(warn=0)
 ```
 ```{r table5555,results='asis'}
