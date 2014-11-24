@@ -381,8 +381,8 @@ options(warn=0)
 print.xtable(x,type="html")
 ```
 
-## Single core and Multi core (time/iteration) - Slice sampler
-The code to generate the following table is included in the slice.R file, which is saved under hw5 directory. 
+## Single core and Multi core - Slice sampler
+The code to generate the following table is included in the slice.R file, which is saved under hw5 directory. The time shown in the total time column are the times for the whole function. 
 ```{r}
 load("slice_data_T.Rdata")
 options(warn=-1)
