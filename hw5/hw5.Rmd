@@ -93,21 +93,9 @@ print.xtable(x,type="html")
 
 ### Singlecore timings (per iteration)- Rejection sampler
 The code to generate the following table is included in the reject.R file, which is saved under hw5 directory. 
-
+In the table below, we show the total times it took to run each function as well as the time required for each iteration. Since the numbers are informative, we present the raw values here.
 ```{r}
 load("reject_data.Rdata")
-# tt<-droplevels(reject_data[24,4])
-# tt<-as.numeric(levels(tt))
-# 
-# time_per_iteration=c(as.numeric(levels(reject_data[,4])), tt)
-# 
-# s=c("100", 
-#     "10000",
-#     "1000000",
-#     "10000000")
-# iteration=rep(s,6)
-# table1=data.frame("distribution_names"=unlist(reject_data[,1]),"N_iteration"=iteration,
-#                 time_per_iteration)
 ```
 ```{r table2,results='asis'}
 options(warn=-1)
@@ -118,16 +106,10 @@ print.xtable(x1,type="html")
 ```
 ### Multicore timings (per iteration)- Rejection sampler
 
+This is the same table for rection sampler, but in running each function, multiple cores are used. In particular, we use 2 cores for the first two sample sizes and 8 cores for the iterations that are larger than 10,000 for efficiency. We notice that multicore functions take a lot less time. The difference is highlighted when when n is large. 
+
 ```{r}
 load("reject_data_T.Rdata")
-# tt2<-droplevels(reject_data_T[24,4])
-# tt2<-as.numeric(levels(tt2))
-# 
-# time_per_iteration2=as.numeric(levels(reject_data_T[,4]))
-# 
-# table2=data.frame("distribution_names"=unlist(reject_data_T[,1]),"N_iteration"=iteration,
-#                 time_per_iteration2)
-
 ```
 ```{r table3,results='asis'}
 options(warn=-1)
