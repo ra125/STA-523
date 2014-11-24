@@ -13,7 +13,7 @@ check_packages(c("parallel","xtable", "doMC", "foreach", "truncnorm", "iterators
 ```
 
 #IMPORTANT NOTE:
-The .Rdata files are present in the hw5 folder so we can directly run the .RmD. But to reproduce the data, please run the 4 .R files before running the .RmD. The 4 .R files are: reject.R, mh_final.R, slice.R and R.R. 
+The .Rdata files are present in the hw5 folder so we can directly run the .RmD. But to reproduce the data, please run the 4 .R files before running the .RmD. The 4 .R files are: reject.R, mh_final.R, slice.R and R.R. Alternately, run the makefile! 
 
 In this assignment, we test the time difference between the single core and the multicore implementations of codes in R, required for running four samplers. 
 
