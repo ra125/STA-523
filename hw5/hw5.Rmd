@@ -281,7 +281,7 @@ The paper ``Radford Neal, the annals of stat., 03-slice sampling" shows a way to
 ##Realization
 In step 3), finding a horizontal line segment with two end points giving $df(x_{left,i})=df(x_{right,i})=y_i$ is not easy. We need set a step length $w$. Starting from $x_i$, expand the regime in that step length in both direction while checking if the end points have reached outside of density curve. 
 
-There is one problem in the fixed step length. If there exists a infinitly sharp mode, meaning the width of the tip goes to zero, $w$ may not well capture the regime at very narrow place. Then, if $x_i$ falls outside of that regime, we need to reject it and re-draw. The slice sampling can get stuck at this rejection sampling for extremely long time. To solve this problem, a threshold number for iteration in rejection sampling is set. 
+There is one problem in the fixed step length. If there exists a infinitly sharp mode, meaning the width of the tip goes to zero, $w$ may not well capture the regime at very narrow place. Then, if $x_i$ falls outside of that regime, we need to reject it and re-draw. The slice sampling can get stuck at this rejection sampling for extremely long time. To solve this problem, a threshold number for iteration in rejection sampling is set. Above this threhold, the sampling would start with the original range. This would results in some smoothness in the sharp modes. However, even though we use adaptive step width $w$, the sampling profile wouldn't be infinitely sharp. 
 
 
 ```{r}
