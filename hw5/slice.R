@@ -522,7 +522,6 @@ slice_single=c(
   "slice_dtnorm",
   "slice_dtexp",
   "slice_dunif_mix",
-  "slice_dunif_mix",
   "slice_dtnorm_mix1",
   "slice_dtnorm_mix2"
 )
@@ -533,14 +532,14 @@ s=c(100,
     10000000)
 
 names=c(rep(slice_single[1],4), rep(slice_single[2],4), rep(slice_single[3],4),
-        rep(slice_single[4],4),rep(slice_single[5],4),rep(slice_single[6],4),
-        rep(slice_single[7],4)  )
+        rep(slice_single[4],4),rep(slice_single[5],4),rep(slice_single[6],4)
+       )
 
 
-iteration=rep(s,7)
+iteration=rep(s,6)
 
 slice_all=c(slice_dbetann[,3], slice_dtnorm[,3],
-             slice_dtexp[,3], slice_dunif_mix[,3], slice_dunif_mix[,3],
+             slice_dtexp[,3], slice_dunif_mix[,3], 
             slice_dtnorm_mix1[,3], slice_dtnorm_mix2[,3])
 
 slice_data=data.frame(cbind(names, iteration, "time"=slice_all, "time_per_iteration"=slice_all/iteration) )
@@ -601,7 +600,6 @@ slice_single_T=c(
     "slice_dtnorm_T",
     "slice_dtexp_T",
     "slice_dunif_mix_T",
-    "slice_dunif_mix_T",
     "slice_dtnorm_mix1_T",
     "slice_dtnorm_mix2_T"
   )
@@ -612,15 +610,15 @@ slice_single_T=c(
       10000000)
   
   names=c(rep(slice_single_T[1],4), rep(slice_single_T[2],4), rep(slice_single_T[3],4),
-          rep(slice_single_T[4],4),rep(slice_single_T[5],4),rep(slice_single_T[6],4),
-          rep(slice_single_T[7],4)  )
+          rep(slice_single_T[4],4),rep(slice_single_T[5],4),rep(slice_single_T[6],4)
+       )
   
   
-  iteration=rep(s,7)
+  iteration=rep(s,6)
   
   
 slice_all_T=c(slice_dbetann_T[,3], slice_dtnorm_T[,3],
-              slice_dtexp_T[,3], slice_dunif_mix_T[,3], slice_dunif_mix_T[,3],
+              slice_dtexp_T[,3], slice_dunif_mix_T[,3], 
               slice_dtnorm_mix1_T[,3], slice_dtnorm_mix2_T[,3])
   
 slice_data_T=data.frame(cbind(names, iteration, "time"=slice_all_T, "time_per_iteration"=slice_all_T/iteration) )
