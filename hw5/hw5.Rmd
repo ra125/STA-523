@@ -27,11 +27,12 @@ We have used a general strategy common to all samplers that when mc=FALSE we use
 # 1. Rejection sampling
 
 Strategy:
-1. We first sample uniformly from the X axis -- this is the x value of the envelop density. Since all the given test distribution functions have specified ranges, the X values for the envelop function is (min(range), max(range)). With the X values, we create an envelope function which is greater than or equal to the target distribution we wish to sample from at all points. 
 
-2. We use a for loop function for each sampled value's rejection/acceptance. For each value from the target distribution, evaluated at the drawn X, is compared to that of the envelop function. Specifically, we calculate the ratio of each Y value drawn from the target distribution to the envelop function, which is the unifrom density. 
+1) We first sample uniformly from the X axis -- this is the x value of the envelop density. Since all the given test distribution functions have specified ranges, the X values for the envelop function is (min(range), max(range)). With the X values, we create an envelope function which is greater than or equal to the target distribution we wish to sample from at all points. 
 
-3. If the drawn Y value from the envelop function falls under the target distribution, then accept the value. Otherwise, throw away the Y value. This process is repeated for n times.
+2) We use a for loop function for each sampled value's rejection/acceptance. For each value from the target distribution, evaluated at the drawn X, is compared to that of the envelop function. Specifically, we calculate the ratio of each Y value drawn from the target distribution to the envelop function, which is the unifrom density. 
+
+3) If the drawn Y value from the envelop function falls under the target distribution, then accept the value. Otherwise, throw away the Y value. This process is repeated for n times.
 
 ```{r}
 reject = function(n, dfunc, range, mc){ 
