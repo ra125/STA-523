@@ -397,31 +397,18 @@ options(warn=0)
 ```{r table4444,results='asis'}
 print.xtable(x,type="html")
 ```
-# 
-# ###Singlecore (time/iteration) - Slice sampler
-# The code to generate the following table is included in the slice.R file, which is saved under hw5 directory. 
-# ```{r}
-# load("slice_data.Rdata")
-# options(warn=-1)
-# x=xtable(slice_data, type="html", digits=3)
-# options(warn=0)
-# ```
-# ```{r table5,results='asis'}
-# print.xtable(x,type="html")
-# ```
-# ###Multicore (time/iteration) - Slice sampler
-# ```{r}
-# load("slice_data_T.Rdata")
-# options(warn=-1)
-# x=xtable(slice_data_T, type="html", digits=3)
-# options(warn=0)
-# ```
-# ```{r table6,results='asis'}
-# print.xtable(x,type="html")
-# ```
 
-
-
+### Single core and Multi core (time/iteration) - Slice sampler
+The code to generate the following table is included in the slice.R file, which is saved under hw5 directory. 
+```{r}
+load("slice_data_T.Rdata")
+options(warn=-1)
+x=xtable(slice_data_T, type="html")
+options(warn=0)
+```
+```{r table5555,results='asis'}
+print.xtable(x,type="html")
+```
 
 ## 4. R sampling
 
