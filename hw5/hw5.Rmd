@@ -373,11 +373,11 @@ The code to generate the following table is included in the slice.R file, which 
 ```{r}
 load("score_slice_data.Rdata")
 options(warn=-1)
-x=xtable(score_slice_data, type="html", digits=3)
+x=xtable(score_slice_data, type="html")
 options(warn=0)
 ```
 ```{r table4444,results='asis'}
-print.xtable(x,type="html")
+print.xtable(x,type="html",digits=6)
 ```
 
 ## Single core and Multi core - Slice sampler
