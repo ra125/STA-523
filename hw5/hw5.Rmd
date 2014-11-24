@@ -81,6 +81,7 @@ reject = function(n, dfunc, range, mc){
 
 ## Score table for rejection sampler when n = 1,000,000
 The code to generate the following table is included in the reject.R file, which is saved under hw5 directory. 
+The scores associatd with the names that end with sc are the scores for single core and the ones with mc are the socres of the multicore functions.
 
 ```{r}
 load("score_reject_data.Rdata")
