@@ -12,22 +12,20 @@ source("check_packages.R")
 check_packages(c("parallel","xtable", "doMC", "foreach", "truncnorm", "iterators")) 
 ```
 
-In this assignment, we test the time difference between the single core and the multicore, required for running four samplers. 
+In this assignment, we test the time difference between the single core and the multicore implementations of codes in R, required for running four samplers. 
 
-#### Samplers 
+# Samplers 
 
 The four samplers constructed in testing the running time for single core and multi core are as follows. 
 
+## 1. Rejection sampling
 
-# 1. Rejection sampling
-
-Strategy
+Strategy:
 1. We first sample uniformly from the X axis -- this is the x value of the envelop density. Since each test distribution functions specified ranges, the X values for the envelop function is (min(range), max(range)). With the X values, we create an envelope function which is greater than or equal to the target distribution we wish to sample from at all points. 
 2. Density function for Uniform distribution is generated. Using the max and min values of the density function, sample Ys from uniform as well.
 3. Throw away the Y value if it's over the value drawn from the density function and keep the rest.
 
 ```{r}
-
 reject = function(n, dfunc, range, mc){ 
   stopifnot(is.function(dfunc))
   stopifnot(is.numeric(n))
@@ -72,7 +70,7 @@ reject = function(n, dfunc, range, mc){
 
 ```
 
-#Score table for rejection sampler when n = 1,000,000
+###Score table for rejection sampler when n = 1,000,000
 The code to generate the following table is included in the reject.R file, which is saved under hw5 directory. 
 
 ```{r}
@@ -81,11 +79,11 @@ options(warn=-1)
 x=xtable(score_reject_data, type="html", digits=3)
 options(warn=0)
 ```
-```{r table,results='asis'}
+```{r table1,results='asis'}
 print.xtable(x,type="html")
 ```
 
-# Singlecore - Rejection sampler
+### Singlecore timings (per iteration)- Rejection sampler
 The code to generate the following table is included in the reject.R file, which is saved under hw5 directory. 
 
 ```{r}
@@ -94,10 +92,10 @@ options(warn=-1)
 x=xtable(reject_data, type="html", digits=3)
 options(warn=0)
 ```
-```{r table,results='asis'}
+```{r table2,results='asis'}
 print.xtable(x,type="html")
 ```
-# Multicore - Rejection sampler
+### Multicore timings (per iteration)- Rejection sampler
 
 ```{r}
 load("reject_data_T.Rdata")
@@ -105,15 +103,12 @@ options(warn=-1)
 x=xtable(reject_data, type="html", digits=3)
 options(warn=0)
 ```
-```{r table,results='asis'}
+```{r table3,results='asis'}
 print.xtable(x,type="html")
 ```
 
 
-
-
-
-### 2. Metropolis Hastings sampling
+## 2. Metropolis Hastings sampling
 
 
 
@@ -244,7 +239,7 @@ options(warn=-1)
 x=xtable(score_slice_data, type="html", digits=3)
 options(warn=0)
 ```
-```{r table,results='asis'}
+```{r table4,results='asis'}
 print.xtable(x,type="html")
 ```
 
@@ -256,7 +251,7 @@ options(warn=-1)
 x=xtable(slice_data, type="html", digits=3)
 options(warn=0)
 ```
-```{r table,results='asis'}
+```{r table5,results='asis'}
 print.xtable(x,type="html")
 ```
 # multiore - Slice sampler
@@ -266,7 +261,7 @@ options(warn=-1)
 x=xtable(reject_data, type="html", digits=3)
 options(warn=0)
 ```
-```{r table,results='asis'}
+```{r table6,results='asis'}
 print.xtable(x,type="html")
 ```
 
