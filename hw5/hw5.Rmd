@@ -106,39 +106,34 @@ s=c("100",
     "1000000",
     "10000000")
 iteration=rep(s,6)
-table=data.frame("distribution_names"=unlist(reject_data[,1]),"N_iteration"=iteration,
+table1=data.frame("distribution_names"=unlist(reject_data[,1]),"N_iteration"=iteration,
                 time_per_iteration)
 ```
-```{r table,results='asis'}
+```{r table2,results='asis'}
 options(warn=-1)
-x=xtable(table, type="html", digits=6)
+x1=xtable(table1, type="html", digits=6)
 options(warn=0)
-print.xtable(x,type="html")
+print.xtable(x1,type="html")
 
 ```
 ### Multicore timings (per iteration)- Rejection sampler
 
 ```{r}
 load("reject_data_T.Rdata")
-tt<-droplevels(reject_data_T[24,4])
-tt<-as.numeric(levels(tt))
+tt2<-droplevels(reject_data_T[24,4])
+tt2<-as.numeric(levels(tt2))
 
-time_per_iteration=c(as.numeric(levels(reject_data_T[,4])), tt)
+time_per_iteration2=c(as.numeric(levels(reject_data_T[,4])), tt2)
 
-s=c("100", 
-    "10000",
-    "1000000",
-    "10000000")
-iteration=rep(s,6)
-table=data.frame("distribution_names"=unlist(reject_data_T[,1]),"N_iteration"=iteration,
+table2=data.frame("distribution_names"=unlist(reject_data_T[,1]),"N_iteration"=iteration,
                 time_per_iteration)
 
 ```
-```{r table,results='asis'}
+```{r table3,results='asis'}
 options(warn=-1)
-x=xtable(table, type="html", digits=6)
+x2=xtable(table2, type="html", digits=6)
 options(warn=0)
-print.xtable(x,type="html")
+print.xtable(x2,type="html")
 ```
 
 ## 2. Metropolis Hastings sampling
@@ -151,12 +146,8 @@ Approach:
 The code is as below:
 
 ```{r}
-library(xtable)
 
 mh = function(n, dfunc, range, mc=FALSE){
-  library(parallel)
-  library(doMC)
-  library(foreach)
   
   stopifnot(is.function(dfunc))
   stopifnot(is.numeric(n))
@@ -269,11 +260,11 @@ Code is available in mh_final.R file in hw5 folder.
 ```{r}
 load("MHtimes.Rdata")
 options(warn=-1)
-x=xtable(mainmh, type="html", digits=3)
+x3=xtable(mainmh, type="html", digits=3)
 options(warn=0)
 ```
-```{r table44,results='asis'}
-print.xtable(x,type="html")
+```{r table4,results='asis'}
+print.xtable(x3,type="html")
 ```
 
 ## 3. Slice sampling
@@ -397,37 +388,37 @@ slice = function(n, dfunc, range, mc){
 ### Score table for slice sampler when n = 1,000,000
 The code to generate the following table is included in the slice.R file, which is saved under hw5 directory. 
 
-```{r}
-load("score_slice_data.Rdata")
-options(warn=-1)
-x=xtable(score_slice_data, type="html", digits=3)
-options(warn=0)
-```
-```{r table4,results='asis'}
-print.xtable(x,type="html")
-```
-
-###Singlecore (time/iteration) - Slice sampler
-The code to generate the following table is included in the slice.R file, which is saved under hw5 directory. 
-```{r}
-load("slice_data.Rdata")
-options(warn=-1)
-x=xtable(slice_data, type="html", digits=3)
-options(warn=0)
-```
-```{r table5,results='asis'}
-print.xtable(x,type="html")
-```
-###Multicore (time/iteration) - Slice sampler
-```{r}
-load("slice_data_T.Rdata")
-options(warn=-1)
-x=xtable(slice_data_T, type="html", digits=3)
-options(warn=0)
-```
-```{r table6,results='asis'}
-print.xtable(x,type="html")
-```
+# ```{r}
+# load("score_slice_data.Rdata")
+# options(warn=-1)
+# x=xtable(score_slice_data, type="html", digits=3)
+# options(warn=0)
+# ```
+# ```{r table4,results='asis'}
+# print.xtable(x,type="html")
+# ```
+# 
+# ###Singlecore (time/iteration) - Slice sampler
+# The code to generate the following table is included in the slice.R file, which is saved under hw5 directory. 
+# ```{r}
+# load("slice_data.Rdata")
+# options(warn=-1)
+# x=xtable(slice_data, type="html", digits=3)
+# options(warn=0)
+# ```
+# ```{r table5,results='asis'}
+# print.xtable(x,type="html")
+# ```
+# ###Multicore (time/iteration) - Slice sampler
+# ```{r}
+# load("slice_data_T.Rdata")
+# options(warn=-1)
+# x=xtable(slice_data_T, type="html", digits=3)
+# options(warn=0)
+# ```
+# ```{r table6,results='asis'}
+# print.xtable(x,type="html")
+# ```
 
 
 
@@ -441,15 +432,8 @@ The code is present in the R.R file which generates the .Rdata file for the tabl
 
 ```{r}
 ### R function 
-library(xtable)
-source("check_packages.R")
-check_packages(c("parallel","xtable", "doMC", "foreach", "truncnorm", "iterators")) 
 
 R = function(n,dfunc,range,mc){
-  
-  library(parallel)
-  library(doMC)
-  library(foreach)
   
   stopifnot(is.function(dfunc))
   stopifnot(is.numeric(n))
@@ -509,11 +493,11 @@ Code is available in R.R file in hw5 folder.
 ```{r}
 load("Rtimes.Rdata")
 options(warn=-1)
-x=xtable(mainr, type="html", digits=3)
+x4=xtable(mainr, type="html", digits=3)
 options(warn=0)
 ```
-```{r table54,results='asis'}
-print.xtable(x,type="html")
+```{r table5,results='asis'}
+print.xtable(x4,type="html")
 ```
 
 
