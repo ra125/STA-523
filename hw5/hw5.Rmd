@@ -382,7 +382,8 @@ print.xtable(x,type="html")
 ```
 
 ## Single core and Multi core - Slice sampler
-The code to generate the following table is included in the slice.R file, which is saved under hw5 directory. The time shown in the total time column are the times for the whole function. It doesnt display the time/iteration right now but we will change that ASAP.
+The code to generate the following table is included in the slice.R file, which is saved under hw5 directory. The time shown in the total time column are the times for the whole function and the time shown in the per time iteration are the values of the total time devided by the number of iterations.   
+
 ```{r}
 load("slice_data_T.Rdata")
 options(warn=-1)
