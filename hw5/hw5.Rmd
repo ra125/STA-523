@@ -375,7 +375,7 @@ The code to generate the following table is included in the slice.R file, which 
 ```{r}
 load("score_slice_data.Rdata")
 options(warn=-1)
-x=xtable(score_slice_data, type="html")
+x=xtable(as.data.frame(score_slice_data), type="html")
 options(warn=0)
 ```
 ```{r table4444,results='asis'}
@@ -389,7 +389,8 @@ The code to generate the following table is included in the slice.R file, which 
 ```{r}
 load("slice_data_T.Rdata")
 options(warn=-1)
-x=xtable(slice_data_T, type="html",digits=15)
+x=xtable(slice_data_T, type="html",digits=6)
+names(x)=c("names","times","single core total time","single core time per iteration","multi-core total time","multi-core time per iteration")
 options(warn=0)
 ```
 ```{r table5555,results='asis'}
