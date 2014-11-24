@@ -389,7 +389,7 @@ The code to generate the following table is included in the slice.R file, which 
 ```{r}
 load("slice_data_T.Rdata")
 options(warn=-1)
-x=xtable(slice_data_T, type="html",digits=15)
+x=xtable(slice_data_T, type="html")
 options(warn=0)
 ```
 ```{r table5555,results='asis'}
