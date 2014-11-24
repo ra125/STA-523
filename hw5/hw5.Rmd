@@ -394,7 +394,7 @@ options(warn=-1)
 x=xtable(score_slice_data, type="html", digits=3)
 options(warn=0)
 ```
-```{r table4,results='asis'}
+```{r table4444,results='asis'}
 print.xtable(x,type="html")
 ```
 # 
