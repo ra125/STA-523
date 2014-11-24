@@ -543,7 +543,7 @@ slice_all=c(slice_dbetann[,3], slice_dtnorm[,3],
              slice_dtexp[,3], slice_dunif_mix[,3], slice_dunif_mix[,3],
             slice_dtnorm_mix1[,3], slice_dtnorm_mix2[,3])
 
-slice_data=data.frame(cbind(names, iteration, "time"=slice_all) )
+slice_data=data.frame(cbind(names, iteration, "time"=slice_all, "time_per_iteration"=slice_all/iteration) )
 
 ## save as a dataframe
 
@@ -623,7 +623,7 @@ slice_all_T=c(slice_dbetann_T[,3], slice_dtnorm_T[,3],
               slice_dtexp_T[,3], slice_dunif_mix_T[,3], slice_dunif_mix_T[,3],
               slice_dtnorm_mix1_T[,3], slice_dtnorm_mix2_T[,3])
   
-slice_data_T=data.frame(cbind(names, iteration, "time"=slice_all_T) )
+slice_data_T=data.frame(cbind(names, iteration, "time"=slice_all_T, "time_per_iteration"=slice_all_T/iteration) )
   
   ## save as a dataframe
   
