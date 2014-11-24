@@ -92,7 +92,7 @@ dtnorm_mix1 = function(x)
   ifelse(x < 0 | x > 10, 
          0, 
          ( 0.5*dnorm(x,mean=2,sd=2)
-           +0.5*dnorm(x,mean=6,sd=1))/0.90059152)
+           +0.5*dnorm(x,mean=6,sd=1))/0.9206407)
 }
 
 #truncated normal mixture 2
@@ -102,9 +102,8 @@ dtnorm_mix2 = function(x)
          0, 
          ( 0.45*dnorm(x,mean=-4)
            +0.45*dnorm(x,mean= 4)
-           +0.1 *dnorm(x,mean= 0,sd=0.5))/0.4999683)
+           +0.1 *dnorm(x,mean= 0,sd=0.5))/0.55)
 }
-
 
 
 
@@ -145,22 +144,22 @@ s4=10000000
 
 
 reject_score_dbetann_sc<-score(reject(n=s3, dfunc=dbetann, range=c(0,1), mc=FALSE), dbetann)
-reject_score_dbetann_mc<-score(reject(n=s3, dfunc=dbetann, range=c(0,1), mc=FALSE), dbetann)
+reject_score_dbetann_mc<-score(reject(n=s3, dfunc=dbetann, range=c(0,1), mc=TRUE), dbetann)
 
 reject_score_dtnorm_sc<-score(reject(n=s3, dfunc=dtnorm, range=c(-3,3), mc=FALSE),dtnorm)
-reject_score_dtnorm_mc<-score(reject(n=s3, dfunc=dtnorm, range=c(-3,3), mc=FALSE),dtnorm)
+reject_score_dtnorm_mc<-score(reject(n=s3, dfunc=dtnorm, range=c(-3,3), mc=TRUE),dtnorm)
 
 reject_score_dtexp_sc<-score(reject(n=s3, dfunc=dtexp, range=c(0,6), mc=FALSE),dtexp)
-reject_score_dtexp_mc<-score(reject(n=s3, dfunc=dtexp, range=c(0,6), mc=FALSE),dtexp)
+reject_score_dtexp_mc<-score(reject(n=s3, dfunc=dtexp, range=c(0,6), mc=TRUE),dtexp)
 
 reject_score_dunif_mix_sc<-score(reject(n=s3, dfunc=dunif_mix, range=c(-3,4), mc=FALSE),dunif_mix)
-reject_score_dunif_mix_mc<-score(reject(n=s3, dfunc=dunif_mix, range=c(-3,4), mc=FALSE),dunif_mix)
+reject_score_dunif_mix_mc<-score(reject(n=s3, dfunc=dunif_mix, range=c(-3,4), mc=TRUE),dunif_mix)
 
 reject_score_dtnorm_mix1_sc<-score(reject(n=s3, dfunc=dtnorm_mix1, range=c(0,10), mc=FALSE),dtnorm_mix1)
-reject_score_dtnorm_mix1_mc<-score(reject(n=s3, dfunc=dtnorm_mix1, range=c(0,10), mc=FALSE),dtnorm_mix1)
+reject_score_dtnorm_mix1_mc<-score(reject(n=s3, dfunc=dtnorm_mix1, range=c(0,10), mc=TRUE),dtnorm_mix1)
 
 reject_score_dtnorm_mix2_sc<-score(reject(n=s3, dfunc=dtnorm_mix2, range=c(-4,4), mc=FALSE),dtnorm_mix2)
-reject_score_dtnorm_mix2_mc<-score(reject(n=s3, dfunc=dtnorm_mix2, range=c(-4,4), mc=FALSE),dtnorm_mix2)
+reject_score_dtnorm_mix2_mc<-score(reject(n=s3, dfunc=dtnorm_mix2, range=c(-4,4), mc=TRUE),dtnorm_mix2)
 
 score_reject_names=c("reject_score_dbetann_sc","reject_score_dbetann_mc","reject_score_dtnorm_sc","reject_score_dtnorm_mc",
                      "reject_score_dtexp_sc","reject_score_dtexp_mc","reject_score_dunif_mix_sc","reject_score_dunif_mix_mc",
