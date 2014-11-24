@@ -382,7 +382,9 @@ print.xtable(x,type="html")
 ```
 
 ## Single core and Multi core - Slice sampler
+
 The code to generate the following table is included in the slice.R file, which is saved under hw5 directory.
+
 ```{r}
 load("slice_data_T.Rdata")
 options(warn=-1)
