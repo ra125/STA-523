@@ -1,12 +1,14 @@
-
 library(parallel)
+library(doMC)
+library(foreach)
+library(xtable)
 
 reject = function(n, dfunc, range, mc){ 
   stopifnot(is.function(dfunc))
   stopifnot(is.numeric(n))
   stopifnot(is.logical(mc))
   stopifnot(is.vector(range))
-
+  
   if(mc==FALSE){
     mc=1
   } else{
@@ -19,11 +21,11 @@ reject = function(n, dfunc, range, mc){
   }
   
   ## 1) generate values of Xs and Ys from uniform
- 
+  
   rejection=function(n,dfunc,range,mc){  
     proposal_x=runif(n, min(range), max(range))
-    ys<-dfunc(x=proposal_x)
-    proposal_y<-runif(n, min=min(ys), max=max(ys)) #envelop function
+    #     ys<-dfunc(x=proposal_x)
+    #     proposal_y<-runif(n, min=min(ys), max=max(ys)) #envelop function
     
     
     ## 2) reject if Y is larger than the value from dfunc
@@ -32,8 +34,8 @@ reject = function(n, dfunc, range, mc){
     for(i in 2:n) {
       x=proposal_x[i]      
       y=dfunc(x) #target dist. evaluated at x
-      proposal_int=proposal_y[i] #envelop dist. evaluated at x
-      ratio=y/proposal_int # calculate the ratio
+      #       proposal_int=proposal_y[i] #envelop dist. evaluated at x
+      ratio=y/1 # calculate the ratio
       if(runif(1,0,1)<ratio){ 
         result_x[i]=x
       } else{result_x[i]=result_x[i-1]} # end of acceptance condition
@@ -92,7 +94,7 @@ dtnorm_mix1 = function(x)
   ifelse(x < 0 | x > 10, 
          0, 
          ( 0.5*dnorm(x,mean=2,sd=2)
-           +0.5*dnorm(x,mean=6,sd=1))/0.90059152)
+           +0.5*dnorm(x,mean=6,sd=1))/0.9206407)
 }
 
 #truncated normal mixture 2
@@ -102,9 +104,8 @@ dtnorm_mix2 = function(x)
          0, 
          ( 0.45*dnorm(x,mean=-4)
            +0.45*dnorm(x,mean= 4)
-           +0.1 *dnorm(x,mean= 0,sd=0.5))/0.4999683)
+           +0.1 *dnorm(x,mean= 0,sd=0.5))/0.55)
 }
-
 
 
 
@@ -145,30 +146,30 @@ s4=10000000
 
 
 reject_score_dbetann_sc<-score(reject(n=s3, dfunc=dbetann, range=c(0,1), mc=FALSE), dbetann)
-reject_score_dbetann_mc<-score(reject(n=s3, dfunc=dbetann, range=c(0,1), mc=FALSE), dbetann)
+reject_score_dbetann_mc<-score(reject(n=s3, dfunc=dbetann, range=c(0,1), mc=TRUE), dbetann)
 
 reject_score_dtnorm_sc<-score(reject(n=s3, dfunc=dtnorm, range=c(-3,3), mc=FALSE),dtnorm)
-reject_score_dtnorm_mc<-score(reject(n=s3, dfunc=dtnorm, range=c(-3,3), mc=FALSE),dtnorm)
+reject_score_dtnorm_mc<-score(reject(n=s3, dfunc=dtnorm, range=c(-3,3), mc=TRUE),dtnorm)
 
 reject_score_dtexp_sc<-score(reject(n=s3, dfunc=dtexp, range=c(0,6), mc=FALSE),dtexp)
-reject_score_dtexp_mc<-score(reject(n=s3, dfunc=dtexp, range=c(0,6), mc=FALSE),dtexp)
+reject_score_dtexp_mc<-score(reject(n=s3, dfunc=dtexp, range=c(0,6), mc=TRUE),dtexp)
 
 reject_score_dunif_mix_sc<-score(reject(n=s3, dfunc=dunif_mix, range=c(-3,4), mc=FALSE),dunif_mix)
-reject_score_dunif_mix_mc<-score(reject(n=s3, dfunc=dunif_mix, range=c(-3,4), mc=FALSE),dunif_mix)
+reject_score_dunif_mix_mc<-score(reject(n=s3, dfunc=dunif_mix, range=c(-3,4), mc=TRUE),dunif_mix)
 
 reject_score_dtnorm_mix1_sc<-score(reject(n=s3, dfunc=dtnorm_mix1, range=c(0,10), mc=FALSE),dtnorm_mix1)
-reject_score_dtnorm_mix1_mc<-score(reject(n=s3, dfunc=dtnorm_mix1, range=c(0,10), mc=FALSE),dtnorm_mix1)
+reject_score_dtnorm_mix1_mc<-score(reject(n=s3, dfunc=dtnorm_mix1, range=c(0,10), mc=TRUE),dtnorm_mix1)
 
 reject_score_dtnorm_mix2_sc<-score(reject(n=s3, dfunc=dtnorm_mix2, range=c(-4,4), mc=FALSE),dtnorm_mix2)
-reject_score_dtnorm_mix2_mc<-score(reject(n=s3, dfunc=dtnorm_mix2, range=c(-4,4), mc=FALSE),dtnorm_mix2)
+reject_score_dtnorm_mix2_mc<-score(reject(n=s3, dfunc=dtnorm_mix2, range=c(-4,4), mc=TRUE),dtnorm_mix2)
 
 score_reject_names=c("reject_score_dbetann_sc","reject_score_dbetann_mc","reject_score_dtnorm_sc","reject_score_dtnorm_mc",
                      "reject_score_dtexp_sc","reject_score_dtexp_mc","reject_score_dunif_mix_sc","reject_score_dunif_mix_mc",
                      "reject_score_dtnorm_mix1_sc","reject_score_dtnorm_mix1_mc","reject_score_dtnorm_mix2_sc","reject_score_dtnorm_mix2_mc")
 
-score_rejec=c(reject_score_dbetann_sc,reject_score_dbetann_mc,reject_score_dtnorm_sc,reject_score_dtnorm_mc,
-              reject_score_dtexp_sc,reject_score_dtexp_mc,reject_score_dunif_mix_sc,reject_score_dunif_mix_mc,
-              reject_score_dtnorm_mix1_sc,reject_score_dtnorm_mix1_mc,reject_score_dtnorm_mix2_sc,reject_score_dtnorm_mix2_mc)
+score_reject=c(reject_score_dbetann_sc,reject_score_dbetann_mc,reject_score_dtnorm_sc,reject_score_dtnorm_mc,
+               reject_score_dtexp_sc,reject_score_dtexp_mc,reject_score_dunif_mix_sc,reject_score_dunif_mix_mc,
+               reject_score_dtnorm_mix1_sc,reject_score_dtnorm_mix1_mc,reject_score_dtnorm_mix2_sc,reject_score_dtnorm_mix2_mc)
 
 score_reject_data=data.frame(cbind(score_reject_names, score_reject))
 
@@ -228,7 +229,6 @@ reject_single=c(
   "reject_dtnorm",
   "reject_dtexp",
   "reject_dunif_mix",
-  "reject_dunif_mix",
   "reject_dtnorm_mix1",
   "reject_dtnorm_mix2"
 )
@@ -239,17 +239,18 @@ s=c(100,
     10000000)
 
 names=c(rep(reject_single[1],4), rep(reject_single[2],4), rep(reject_single[3],4),
-        rep(reject_single[4],4),rep(reject_single[5],4),rep(reject_single[6],4),
-        rep(reject_single[7],4)  )
+        rep(reject_single[4],4),rep(reject_single[5],4),rep(reject_single[6],4)
+)
 
 
-iteration=rep(s,7)
+iteration=rep(s,6)
 
 reject_all=c(reject_dbetann[,3], reject_dtnorm[,3],
-             reject_dtexp[,3], reject_dunif_mix[,3], reject_dunif_mix[,3],
+             reject_dtexp[,3], reject_dunif_mix[,3],
              reject_dtnorm_mix1[,3], reject_dtnorm_mix2[,3])
 
-reject_data=data.frame(cbind(names, iteration, "time"=reject_all) )
+reject_data=data.frame(cbind(names, iteration, "time"=reject_all,"time_per_iteration"=reject_all/iteration) )
+
 
 ## save as a dataframe
 
@@ -267,72 +268,71 @@ reject_dbetann_T=rbind(
 )
 
 reject_dtnorm_T=rbind(
-  system.time(reject(n=s1, dfunc=dtnorm, range=c(-3,3), mc=TRUE),
-              system.time(reject(n=s2, dfunc=dtnorm, range=c(-3,3), mc=TRUE)),
-              system.time(reject(n=s3, dfunc=dtnorm, range=c(-3,3), mc=TRUE)),
-              system.time(reject(n=s4, dfunc=dtnorm, range=c(-3,3), mc=TRUE))
-  )
-  
-  reject_dtexp_T=rbind(
-    system.time(reject(n=s1, dfunc=dtexp, range=c(0,6), mc=TRUE)),
-    system.time(reject(n=s2, dfunc=dtexp, range=c(0,6), mc=TRUE)),
-    system.time(reject(n=s3, dfunc=dtexp, range=c(0,6), mc=TRUE)),
-    system.time(reject(n=s4, dfunc=dtexp, range=c(0,6), mc=TRUE))
-  )
-  
-  reject_dunif_mix_T=rbind(
-    system.time(reject(n=s1, dfunc=dunif_mix, range=c(-3,4), mc=TRUE)),
-    system.time(reject(n=s2, dfunc=dunif_mix, range=c(-3,4), mc=TRUE)),
-    system.time(reject(n=s3, dfunc=dunif_mix, range=c(-3,4), mc=TRUE)),
-    system.time(reject(n=s4, dfunc=dunif_mix, range=c(-3,4), mc=TRUE))
-  )
-  
-  reject_dtnorm_mix1_T=rbind(
-    system.time(reject(n=s1, dfunc=dtnorm_mix1, range=c(0,10), mc=TRUE)),
-    system.time(reject(n=s2, dfunc=dtnorm_mix1, range=c(0,10), mc=TRUE)),
-    system.time(reject(n=s3, dfunc=dtnorm_mix1, range=c(0,10), mc=TRUE)),
-    system.time(reject(n=s4, dfunc=dtnorm_mix1, range=c(0,10), mc=TRUE))
-  )
-  
-  reject_dtnorm_mix2_T=rbind(
-    system.time(reject(n=s1, dfunc=dtnorm_mix2, range=c(-4,4), mc=TRUE)),
-    system.time(reject(n=s2, dfunc=dtnorm_mix2, range=c(-4,4), mc=TRUE)),
-    system.time(reject(n=s3, dfunc=dtnorm_mix2, range=c(-4,4), mc=TRUE)),
-    system.time(reject(n=s4, dfunc=dtnorm_mix2, range=c(-4,4), mc=TRUE))
-  )
-  
-  
-  reject_single_T=c(
-    "reject_dbetann_T",
-    "reject_dtnorm_T",
-    "reject_dtexp_T",
-    "reject_dunif_mix_T",
-    "reject_dunif_mix_T",
-    "reject_dtnorm_mix1_T",
-    "reject_dtnorm_mix2_T"
-  )
-  
-  s=c(100, 
-      10000,
-      1000000,
-      10000000)
-  
-  names=c(rep(reject_single_T[1],4), rep(reject_single_T[2],4), rep(reject_single_T[3],4),
-          rep(reject_single_T[4],4),rep(reject_single_T[5],4),rep(reject_single_T[6],4),
-          rep(reject_single_T[7],4)  )
-  
-  
-  iteration=rep(s,7)
-  
-  
-  reject_all_T=c(reject_dbetann_T[,3], reject_dtnorm_T[,3],
-                 reject_dtexp_T[,3], reject_dunif_mix_T[,3], reject_dunif_mix_T[,3],
-                 reject_dtnorm_mix1_T[,3], reject_dtnorm_mix2_T[,3])
-  
-  reject_data_T=data.frame(cbind(names, iteration, "time"=reject_all_T) )
-  
-  ## save as a dataframe
-  
-  save(score_reject_data_T, file="score_reject_data.Rdata")
-  
- 
+  system.time(reject(n=s1, dfunc=dtnorm, range=c(-3,3), mc=TRUE)),
+  system.time(reject(n=s2, dfunc=dtnorm, range=c(-3,3), mc=TRUE)),
+  system.time(reject(n=s3, dfunc=dtnorm, range=c(-3,3), mc=TRUE)),
+  system.time(reject(n=s4, dfunc=dtnorm, range=c(-3,3), mc=TRUE))
+)
+
+reject_dtexp_T=rbind(
+  system.time(reject(n=s1, dfunc=dtexp, range=c(0,6), mc=TRUE)),
+  system.time(reject(n=s2, dfunc=dtexp, range=c(0,6), mc=TRUE)),
+  system.time(reject(n=s3, dfunc=dtexp, range=c(0,6), mc=TRUE)),
+  system.time(reject(n=s4, dfunc=dtexp, range=c(0,6), mc=TRUE))
+)
+
+reject_dunif_mix_T=rbind(
+  system.time(reject(n=s1, dfunc=dunif_mix, range=c(-3,4), mc=TRUE)),
+  system.time(reject(n=s2, dfunc=dunif_mix, range=c(-3,4), mc=TRUE)),
+  system.time(reject(n=s3, dfunc=dunif_mix, range=c(-3,4), mc=TRUE)),
+  system.time(reject(n=s4, dfunc=dunif_mix, range=c(-3,4), mc=TRUE))
+)
+
+reject_dtnorm_mix1_T=rbind(
+  system.time(reject(n=s1, dfunc=dtnorm_mix1, range=c(0,10), mc=TRUE)),
+  system.time(reject(n=s2, dfunc=dtnorm_mix1, range=c(0,10), mc=TRUE)),
+  system.time(reject(n=s3, dfunc=dtnorm_mix1, range=c(0,10), mc=TRUE)),
+  system.time(reject(n=s4, dfunc=dtnorm_mix1, range=c(0,10), mc=TRUE))
+)
+
+reject_dtnorm_mix2_T=rbind(
+  system.time(reject(n=s1, dfunc=dtnorm_mix2, range=c(-4,4), mc=TRUE)),
+  system.time(reject(n=s2, dfunc=dtnorm_mix2, range=c(-4,4), mc=TRUE)),
+  system.time(reject(n=s3, dfunc=dtnorm_mix2, range=c(-4,4), mc=TRUE)),
+  system.time(reject(n=s4, dfunc=dtnorm_mix2, range=c(-4,4), mc=TRUE))
+)
+
+
+reject_single_T=c(
+  "reject_dbetann_T",
+  "reject_dtnorm_T",
+  "reject_dtexp_T",
+  "reject_dunif_mix_T",
+  "reject_dtnorm_mix1_T",
+  "reject_dtnorm_mix2_T"
+)
+
+s=c(100, 
+    10000,
+    1000000,
+    10000000)
+
+names=c(rep(reject_single_T[1],4), rep(reject_single_T[2],4), rep(reject_single_T[3],4),
+        rep(reject_single_T[4],4),rep(reject_single_T[5],4),rep(reject_single_T[6],4)
+)
+
+
+iteration=rep(s,6)
+
+
+reject_all_T=c(reject_dbetann_T[,3], reject_dtnorm_T[,3],
+               reject_dtexp_T[,3], reject_dunif_mix_T[,3],
+               reject_dtnorm_mix1_T[,3], reject_dtnorm_mix2_T[,3])
+
+reject_data_T=data.frame(cbind(names, iteration, "time"=reject_all_T,"time_per_iteration"=reject_all_T/iteration) )
+
+## save as a dataframe
+
+save(reject_data_T, file="reject_data_T.Rdata")
+
+
