@@ -330,8 +330,6 @@ slice = function(n, dfunc, range, mc){
     for (i in 1:nc)
     {
       res[i]=runif(1,rangec[1],rangec[2])
-#       stopifnot(check(res[i])==0)
-#       stopifnot(check(dfunc(res[i]))==0)
       k=0
       kk=0
       while (dfunc(res[i])<y) 
@@ -348,17 +346,14 @@ slice = function(n, dfunc, range, mc){
           }
         }
         res[i]=runif(1,rangec[1],rangec[2])
-#         stopifnot(check(res[i])==0)
-#         stopifnot(check(dfunc(res[i]))==0)
         k=k+1
         if(k>10)
         {
           kk=kk+1
-         # print(c(k,kk,res[i],cores))
+
           rangec=range
           res[i]=runif(1,rangec[1],rangec[2])
-#           stopifnot(check(res[i])==0)
-#           stopifnot(check(dfunc(res[i]))==0)
+
           break
         }
       }
